@@ -5,7 +5,7 @@ Regional Forms Table
 
 Store the unique region/form identifies.
 *******/
-CREATE TABLE Regional_Form (
+CREATE TABLE IF NOT EXISTS Regional_Form (
     region_id INT PRIMARY KEY AUTOINCREMENT,
     region_name TEXT NOT NULL -- e.g., 'Alola', 'Galar', 'Hisui', 'Paldea'
 );
@@ -15,7 +15,7 @@ Ability Table
 
 Store the abilitity a Pokémon can have.
 *******/
-CREATE TABLE Ability (
+CREATE TABLE IF NOT EXISTS Ability (
     ability_id INT PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     description TEXT NOT NULL
@@ -26,7 +26,7 @@ Available Game Table
 
 Store the unique game identifies.
 *******/
-CREATE TABLE Game (
+CREATE TABLE IF NOT EXISTS Game (
     game_id INT PRIMARY KEY AUTOINCREMENT,     -- Unique identifier for each game
     game_name TEXT NOT NULL                    -- The name of the game (e.g., Red, Blue, Sword, Shield)
 );
@@ -36,7 +36,7 @@ Move Table
 
 Store a move a Pokemon can learn.
 *******/
-CREATE TABLE Move (
+CREATE TABLE IF NOT EXISTS Move (
     move_id INT PRIMARY KEY AUTOINCREMENT, -- Unique identifier for the move
     move_name TEXT NOT NULL,               -- Name of the move (e.g., "Thunderbolt")
     type TEXT NOT NULL,                    -- Type of the move (e.g., Electric, Water)
@@ -51,7 +51,7 @@ Move Learn Method Table
 
 Store how a Pokemon can learn the move.
 *******/
-CREATE TABLE Move_Learn_Method (
+CREATE TABLE IF NOT EXISTS Move_Learn_Method (
     method_id INT PRIMARY KEY AUTOINCREMENT, -- Unique identifier for the learn method
     method_name TEXT NOT NULL                -- Name of the method (e.g., "Level Up", "TM", "HM", "Eggmove", "TR")
 );
@@ -62,7 +62,7 @@ Pokemon Table
 Stores basic information about each Pokémon.
 A junction table to link Pokémon with their regional forms.
 *******/
-CREATE TABLE Pokemon (
+CREATE TABLE IF NOT EXISTS Pokemon (
     pokedex_number INT NOT NULL,
     region_id INT, -- References the region in the Regional_Form table. NULL for a Pokemon not being a regional variant
     name TEXT NOT NULL,
@@ -84,7 +84,7 @@ Pokemon Ability Table
 Stores the information about the Pokemon's ability
 A junction table to link Pokémon with their abilities.
 *******/
-CREATE TABLE Pokemon_Ability (
+CREATE TABLE IF NOT EXISTS Pokemon_Ability (
     pokedex_number INT NOT NULL,
     region_id INT,
     ability_id INT,
@@ -101,7 +101,7 @@ Evolution Table
 
 Stores a Pokemon's evolution information.
 *******/
-CREATE TABLE Evolution (
+CREATE TABLE IF NOT EXISTS Evolution (
     evolution_id INT PRIMARY KEY AUTOINCREMENT,
     base_pokedex_number INT NOT NULL, -- The Pokémon before evolution
     base_region_id INT, -- The region/form of the base Pokémon
@@ -120,7 +120,7 @@ Pokemon Location Table
 Stores the location where the Pokemoin is found in each game.
 A junction table to link Pokémon with their game locations.
 *******/
-CREATE TABLE Pokemon_Location (
+CREATE TABLE IF NOT EXISTS Pokemon_Location (
     location_id PRIMARY KEY AUTOINCREMENT,     -- Unique identifier for each location entry
     pokedex_number INT NOT NULL,               -- Reference to the Pokémon's Pokédex number
     region_id INT,                             -- Reference to the Pokémon's regional form
@@ -138,7 +138,7 @@ Pokemon Moveset Table
 Stores the moveset of the Pokemon for each game.
 A junction table to link Pokémon with their game locations.
 *******/
-CREATE TABLE Pokemon_Moveset (
+CREATE TABLE IF NOT EXISTS Pokemon_Moveset (
     pokedex_number INT NOT NULL,           -- Reference to the Pokémon's Pokédex number
     region_id INT,                         -- Reference to the Pokémon's region (for regional forms)
     move_id INT NOT NULL,                  -- Reference to the move
