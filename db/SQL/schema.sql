@@ -7,7 +7,7 @@ Store the unique region/form identifies.
 *******/
 CREATE TABLE IF NOT EXISTS Regional_Form (
     region_id INT PRIMARY KEY AUTOINCREMENT,
-    region_name TEXT NOT NULL -- e.g., 'Alola', 'Galar', 'Hisui', 'Paldea'
+    region_name TEXT NOT NULL UNIQUE -- e.g., 'Alola', 'Galar', 'Hisui', 'Paldea'
 );
 
 /*******
@@ -17,7 +17,7 @@ Store the abilitity a Pokémon can have.
 *******/
 CREATE TABLE IF NOT EXISTS Ability (
     ability_id INT PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
+    name TEXT NOT NULL UNIQUE,
     description TEXT NOT NULL
 );
 
@@ -28,7 +28,7 @@ Store the unique game identifies.
 *******/
 CREATE TABLE IF NOT EXISTS Game (
     game_id INT PRIMARY KEY AUTOINCREMENT,     -- Unique identifier for each game
-    game_name TEXT NOT NULL                    -- The name of the game (e.g., Red, Blue, Sword, Shield)
+    game_name TEXT NOT NULL UNIQUE             -- The name of the game (e.g., Red, Blue, Sword, Shield)
 );
 
 /*******
@@ -38,7 +38,7 @@ Store a move a Pokemon can learn.
 *******/
 CREATE TABLE IF NOT EXISTS Move (
     move_id INT PRIMARY KEY AUTOINCREMENT, -- Unique identifier for the move
-    move_name TEXT NOT NULL,               -- Name of the move (e.g., "Thunderbolt")
+    move_name TEXT NOT NULL UNIQUE,        -- Name of the move (e.g., "Thunderbolt")
     type TEXT NOT NULL,                    -- Type of the move (e.g., Electric, Water)
     category TEXT,                         -- Category of the move (Physical, Special, Status)
     power INT,                             -- Base power of the move (e.g., 90 for Thunderbolt)
@@ -53,7 +53,7 @@ Store how a Pokemon can learn the move.
 *******/
 CREATE TABLE IF NOT EXISTS Move_Learn_Method (
     method_id INT PRIMARY KEY AUTOINCREMENT, -- Unique identifier for the learn method
-    method_name TEXT NOT NULL                -- Name of the method (e.g., "Level Up", "TM", "HM", "Eggmove", "TR")
+    method_name TEXT NOT NULL UNIQUE         -- Name of the method (e.g., "Level Up", "TM", "HM", "Eggmove", "TR")
 );
 
 /*******
