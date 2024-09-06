@@ -39,6 +39,7 @@ Store a move a Pokemon can learn.
 CREATE TABLE IF NOT EXISTS Move (
     move_id INT PRIMARY KEY AUTOINCREMENT, -- Unique identifier for the move
     move_name TEXT NOT NULL UNIQUE,        -- Name of the move (e.g., "Thunderbolt")
+    description TEXT NOT NULL,
     type TEXT NOT NULL,                    -- Type of the move (e.g., Electric, Water)
     category TEXT,                         -- Category of the move (Physical, Special, Status)
     power INT,                             -- Base power of the move (e.g., 90 for Thunderbolt)

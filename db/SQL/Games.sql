@@ -1,21 +1,21 @@
 BEGIN TRANSACTION;
 
 INSERT INTO Game (game_name)
-VALUES ("Let's Go Eevee");
+VALUES ('Let''s Go Eevee');
 
 INSERT INTO Game (game_name)
-VALUES ("Let's Go Pikachu");
+VALUES ('Let''s Go Pikachu');
 
 INSERT INTO Game (game_name)
-VALUES ("Sword");
+VALUES ('Sword');
 
 INSERT INTO Game (game_name)
-VALUES ("Shield");
+VALUES ('Shield');
 
 INSERT INTO Game (game_name)
-VALUES ("Scarlet");
+VALUES ('Scarlet');
 
 INSERT INTO Game (game_name)
-VALUES ("Violet");
+VALUES ('Violet');
 
 COMMIT TRANSACTION;

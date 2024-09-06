@@ -1,15 +1,15 @@
 BEGIN TRANSACTION;
 
 INSERT INTO Regional_Form (region_name)
-VALUES ("Alolan");
+VALUES ('Alolan');
 
 INSERT INTO Regional_Form (region_name)
-VALUES ("Galarian");
+VALUES ('Galarian');
 
 INSERT INTO Regional_Form (region_name)
-VALUES ("Hisuian");
+VALUES ('Hisuian');
 
 INSERT INTO Regional_Form (region_name)
-VALUES ("Paldean");
+VALUES ('Paldean');
 
 COMMIT TRANSACTION;
