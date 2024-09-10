@@ -54,7 +54,7 @@ Store how a Pokemon can learn the move.
 *******/
 CREATE TABLE IF NOT EXISTS Move_Learn_Method (
     method_id INT PRIMARY KEY AUTOINCREMENT, -- Unique identifier for the learn method
-    method_name TEXT NOT NULL UNIQUE         -- Name of the method (e.g., "Level Up", "TM", "HM", "Eggmove", "TR")
+    method_name TEXT NOT NULL UNIQUE         -- Name of the method (e.g., "Level Up", "TM", "HM", "TR", "Eggmove", "Move Tutor")
 );
 
 /*******
