@@ -2,7 +2,7 @@ BEGIN TRANSACTION;
 
 INSERT INTO Move (move_name, description, type, category, power, accuracy, pp)
 VALUES 
-("Absorb", "Grass", "Special", 20, 100.00, 25),
+('Absorb', 'A nutrient-draining attack. The user''s HP is restored by up to half the damage taken by the target.', 'Grass', 'Special', 20, 100.00, 25),
 ('Accelerock', 'The user smashes into the target at high speed. This move always goes first.', 'Rock', 'Physical', 40, 100.00, 20),
 ('Acid', 'The opposing Pokemon are attacked with a spray of harsh acid. This may also lower their Sp. Def stat.', 'Poison', 'Special', 40, 100.00, 30),
 ('Acid Armor', 'The user alters its cellular structure to liquefy itself, sharply raising its Defense stat.', 'Poison', 'Status', 0, 100.00, 20),
@@ -191,7 +191,7 @@ VALUES
 ('Drill Run', 'The user crashes into its target while rotating its body like a drill. Critical hits land more easily.', 'Ground', 'Physical', 80, 95.00, 10),
 ('Drum Beating', 'The user plays its drum, controlling the drum''s roots to attack the target. This also lowers the target''s Speed stat.', 'Grass', 'Physical', 80, 100.00, 10),
 ('Dual Chop', 'The user attacks its target by hitting it with brutal strikes. The target is hit twice in a row.', 'Dragon', 'Physical', 40, 90.00, 15),
-('Dual Wingbeat' 'The user slams the target with its wings to inflict damage. The target is hit twice in a row.', 'Flying', 'Physical', 40, 90.00, 10),
+('Dual Wingbeat', 'The user slams the target with its wings to inflict damage. The target is hit twice in a row.', 'Flying', 'Physical', 40, 90.00, 10),
 ('Dynamax Cannon', 'The user unleashes a strong beam from its core. This move deals twice the damage if the target is Dynamaxed.', 'Dragon', 'Special', 100, 100.00, 5),
 ('Dynamic Punch', 'The user punches the target with full, concentrated power. This confuses the target if it hits.', 'Fighting', 'Physical', 100, 50.00, 5),
 ('Earth Power', 'The user makes the ground under the target erupt with power. This may also lower the target''s Sp. Def stat.', 'Ground', 'Special', 90, 100.00, 10),
@@ -216,7 +216,7 @@ VALUES
 ('Eruption', 'The user attacks opposing Pokemon with explosive fury. The lower the user''s HP, the lower the move''s power.', 'Fire', 'Special', 150, 100.00, 5),
 ('Esper Wing', 'The user slashes the target with aura-enriched wings. This also boosts the user''s Speed stat. This move has a heightened chance of landing a critical hit.', 'Psychic', 'Special', 80, 100.00, 10),
 ('Eternabeam', 'This is Eternatus''s most powerful attack in its original form. The user can''t move on the next turn.', 'Dragon', 'Status', 160, 90.00, 5),
-('Expanding Force', 'The user attacks the target with its psychic power. When the ground is Psychic Terrain, this move''s power is boosted and it damages all opposing Pokemon.', 'Psychic', 'Special'. 80, 100.00, 10),
+('Expanding Force', 'The user attacks the target with its psychic power. When the ground is Psychic Terrain, this move''s power is boosted and it damages all opposing Pokemon.', 'Psychic', 'Special', 80, 100.00, 10),
 ('Explosion', 'The user attacks everything around it by causing a tremendous explosion. The user faints upon using this move.', 'Normal', 'Physical', 250, 100.00, 5),
 ('Extrasensory', 'The user attacks with an odd, unseeable power. This may also make the target flinch.', 'Psychic', 'Special', 80, 100.00, 20),
 ('Extreme Speed', 'The user charges the target at blinding speed. This move always goes first.', 'Normal', 'Physical', 80, 100.00, 5),
