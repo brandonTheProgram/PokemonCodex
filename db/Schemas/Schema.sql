@@ -112,7 +112,8 @@ CREATE TABLE IF NOT EXISTS Pokemon_Evolution (
     evolution_condition TEXT NOT NULL,          -- The condition on how the Pokemon evolves
     
     -- Key Constraints
-    PRIMARY KEY (base_pokedex_number, base_region_id) REFERENCES Pokemon(pokedex_number, region_id),
+    PRIMARY KEY (base_pokedex_number, base_region_id, evolved_pokedex_number, evolved_region_id) REFERENCES Pokemon(pokedex_number, region_id, pokedex_number, region_id)
+    FOREIGN KEY (base_pokedex_number, base_region_id) REFERENCES Pokemon(pokedex_number, region_id),
     FOREIGN KEY (evolved_pokedex_number, evolved_region_id) REFERENCES Pokemon(pokedex_number, region_id)
 );
 
