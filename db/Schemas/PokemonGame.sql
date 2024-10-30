@@ -1,6 +1,6 @@
 BEGIN TRANSACTION;
 
-INSERT INTO Game (game_name)
+INSERT INTO Pokemon_Game (game_name)
 VALUES 
 ('Let''s Go Eevee'),
 ('Let''s Go Pikachu'),

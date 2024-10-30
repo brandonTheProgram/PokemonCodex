@@ -1,6 +1,6 @@
 BEGIN TRANSACTION;
 
-INSERT INTO Move (move_name, description, type_id, category_id, power, accuracy, pp)
+INSERT INTO Pokemon_Move (move_name, description, type_id, category_id, power, accuracy, pp)
 VALUES 
 ('Absorb', 'A nutrient-draining attack. The user''s HP is restored by up to half the damage taken by the target.', 12, 2, 20, 100.00, 25),
 ('Accelerock', 'The user smashes into the target at high speed. This move always goes first.', 6, 1, 40, 100.00, 20),

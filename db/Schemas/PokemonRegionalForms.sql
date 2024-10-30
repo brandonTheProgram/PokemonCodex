@@ -1,6 +1,6 @@
 BEGIN TRANSACTION;
 
-INSERT INTO Regional_Form (region_name)
+INSERT INTO Pokemon_Regional_Form (region_name)
 VALUES 
 ('Alolan'),
 ('Galarian'),

@@ -1,6 +1,6 @@
 BEGIN TRANSACTION;
 
-INSERT INTO Ability (name, description)
+INSERT INTO Pokemon_Ability (name, description)
 VALUES
 ('Adaptability', 'Powers up moves of the same type'),
 ('Aerilate', 'Turn Normal-type moves into Flying-type moves'),
