@@ -3,17 +3,21 @@ project(PokemonCodex)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 
-add_library(sqlite3 STATIC
-    external/sqlite3/sqlite3.c
-)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/SQLiteCpp)
 
-target_include_directories(sqlite3 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/sqlite3)
+include_directories(include)
 
 set(SOURCES
     main.cpp
+    source/SQLManager.cpp
 )
 
 add_executable(PokemonCodex ${SOURCES})
 
-target_link_libraries(PokemonCodex PRIVATE sqlite3)
+target_compile_definitions(PokemonCodex PRIVATE DATABASE_PATH="${CMAKE_SOURCE_DIR}/db/Data/Pokedex.db")
+
+target_link_libraries(PokemonCodex PRIVATE SQLiteCpp)
