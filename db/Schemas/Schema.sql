@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS Pokemon_Evolution (
     evolution_condition TEXT NOT NULL,          -- The condition on how the Pokemon evolves
     
     -- Key Constraints
-    PRIMARY KEY (base_pokedex_number, base_region_id, evolved_pokedex_number, evolved_region_id) REFERENCES Pokemon(pokedex_number, region_id, pokedex_number, region_id)
+    PRIMARY KEY (base_pokedex_number, base_region_id, evolved_pokedex_number, evolved_region_id),
     FOREIGN KEY (base_pokedex_number, base_region_id) REFERENCES Pokemon(pokedex_number, region_id),
     FOREIGN KEY (evolved_pokedex_number, evolved_region_id) REFERENCES Pokemon(pokedex_number, region_id)
 );
@@ -129,7 +129,24 @@ CREATE TABLE IF NOT EXISTS Pokemon_Location (
     location_name TEXT NOT NULL,                   -- The name of the location(s) (Route 1, Viridian Forest, etc.)
     
     -- Key Constraints
-    PRIMARY KEY (pokedex_number, region_id) REFERENCES Pokemon(pokedex_number, region_id),
+    PRIMARY KEY (pokedex_number, region_id, game_id),
+    FOREIGN KEY (pokedex_number, region_id) REFERENCES Pokemon(pokedex_number, region_id),
+    FOREIGN KEY (game_id) REFERENCES Pokemon_Game(game_id)
+);
+
+/*******
+Pokémon Technical Moves Table
+
+Store the TM/TR details for each Pokémon move in the games.
+*******/
+CREATE TABLE IF NOT EXISTS Pokemon_Technical_Move (
+    move_id INTEGER NOT NULL,                -- Reference to the move in Pokemon_Move
+    game_id INTEGER NOT NULL,                -- Reference to the game in Pokemon_Game
+    techncial_number INTEGER NOT NULL,       -- TM/TR number for the move in the specified game
+
+    -- Key Constraints
+    PRIMARY KEY (move_id, game_id),
+    FOREIGN KEY (move_id) REFERENCES Pokemon_Move(move_id),
     FOREIGN KEY (game_id) REFERENCES Pokemon_Game(game_id)
 );
 
@@ -139,33 +156,17 @@ Pokémon Moveset Table
 Store the movesets for each Pokémon in a specific game along with learning method details.
 *******/
 CREATE TABLE IF NOT EXISTS Pokemon_Moveset (
-    pokedex_number INTEGER NOT NULL,           -- Reference to the Pokémon's Pokédex number
-    region_id INTEGER,                         -- Reference to the Pokémon's region (for regional forms)
-    move_id INTEGER NOT NULL,                  -- Reference to the move
-    method_id INTEGER NOT NULL,                -- Reference to how the move is learned
-    level_learned INTEGER,                     -- Level at which the move is learned (relevant for Level Up method)
-    technical_number INTEGER,                  -- TM/TR number (relevant for TM, TR, etc)
-    game_id INTEGER NOT NULL,                  -- Reference to the specific game (Red, Blue, Sword, etc.)
-
-    -- Key Constraints
-    PRIMARY KEY (pokedex_number, region_id, move_id, method_id, game_id),
-    FOREIGN KEY (pokedex_number, region_id) REFERENCES Pokemon(pokedex_number, region_id),
-    FOREIGN KEY (move_id) REFERENCES Pokemon_Move(move_id),
-    FOREIGN KEY (game_id) REFERENCES Pokemon_Game(game_id)
-);
-
-CREATE TABLE IF NOT EXISTS Pokemon_Moveset (
     pokedex_number INTEGER NOT NULL,       -- Reference to the Pokémon's Pokédex number
     region_id INTEGER,                     -- References the region in the Pokemon_Regional_Form table. NULL for a Pokémon not being a regional variant
     move_id INTEGER NOT NULL,              -- Reference to the move in the Pokemon_Move table
     game_id INTEGER NOT NULL,              -- Reference to the game in the Pokemon_Game table
-    learn_method TEXT NOT NULL,            -- Method of learning the move (e.g., "Level Up", "TM", "Egg Move")
-    learn_parameter INTEGER,               -- Parameter for the learning method (level for leveling up, TM number, etc.)
+    level_learned INTEGER,                 -- What level the Pokémon can learn the move
+    techncial_number INTEGER,              -- Reference to the game in the Pokemon_Technical_Move table
     
     -- Key Constraints
     PRIMARY KEY (pokedex_number, region_id, move_id, game_id),
+    FOREIGN KEY (move_id, game_id, techncial_number) REFERENCES Pokemon_Move_TM_TR(move_id, game_id, techncial_number),
     FOREIGN KEY (pokedex_number, region_id) REFERENCES Pokemon(pokedex_number, region_id),
-    FOREIGN KEY (move_id) REFERENCES Pokemon_Move(move_id),
     FOREIGN KEY (game_id) REFERENCES Pokemon_Game(game_id)
 );
 
@@ -183,10 +184,6 @@ CREATE INDEX idx_pokemon_move ON Pokemon_Move(move_id);
 -- Compound indexes
 CREATE INDEX idx_pokemon_evolution_base ON Pokemon_Evolution(base_pokedex_number, base_region_id);
 CREATE INDEX idx_pokemon_evolution_evolved ON Pokemon_Evolution(evolved_pokedex_number, evolved_region_id);
-CREATE INDEX idx_pokemon_location ON Pokemon_Location(pokedex_number, region_id, game_id );
-CREATE INDEX idx_pokemon_moveset_pokedex_region_move ON Pokemon_Moveset(pokedex_number, region_id, move_id, game_id);
-
--- Unique index for pokedex_number and region_id combination
-CREATE UNIQUE INDEX idx_pokemon_pokedex_region_unique ON Pokemon(pokedex_number, region_id);
+CREATE INDEX idx_pokemon_move_game ON Pokemon_Technical_Move(move_id, game_id);
 
 COMMIT TRANSACTION;

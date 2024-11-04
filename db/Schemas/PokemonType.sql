@@ -1,2 +1,24 @@
-INSERT INTO Pokemon_Type (type_name) VALUES
-('Normal'), ('Fighting'), ('Flying'), ('Poison'), ('Ground'), ('Rock'), ('Bug'), ('Ghost'), ('Steel'), ('Fire'), ('Water'), ('Grass'), ('Electric'), ('Psychic'), ('Ice'), ('Dragon'), ('Dark'), ('Fairy');
+BEGIN TRANSACTION;
+
+INSERT INTO Pokemon_Type (type_name) 
+VALUES
+('Normal'), 
+('Fighting'), 
+('Flying'), 
+('Poison'), 
+('Ground'), 
+('Rock'), 
+('Bug'), 
+('Ghost'), 
+('Steel'), 
+('Fire'), 
+('Water'), 
+('Grass'), 
+('Electric'), 
+('Psychic'), 
+('Ice'), 
+('Dragon'), 
+('Dark'), 
+('Fairy');
+
+COMMIT TRANSACTION;
