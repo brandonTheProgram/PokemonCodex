@@ -48,7 +48,7 @@ Store the unique Pokémon available game identifiers.
 *******/
 CREATE TABLE IF NOT EXISTS Pokemon_Game (
     game_id INTEGER PRIMARY KEY AUTOINCREMENT, -- Unique identifier for each game
-    game_name TEXT NOT NULL UNIQUE             -- The name of the game (e.g., Red, Blue, Sword, Shield)
+    game_name TEXT NOT NULL UNIQUE             -- The name of the game (e.g., Sword, Shield)
 );
 
 /*******

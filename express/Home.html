@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex Home</title>
+    <style>
+        /* Basic styling for buttons and layout */
+        #pokedex-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .pokedex-button {
+            padding: 10px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pokédex</h1>
+    <div id="pokedex-container"></div>
+
+    <script>
+        // Fetch Pokédex images from the backend and create buttons
+        async function loadPokedexImages() {
+            try {
+                const response = await fetch('/pokedex');
+                const pokedexImages = await response.json();
+
+                const container = document.getElementById('pokedex-container');
+
+                pokedexImages.forEach(image => {
+                    const button = document.createElement('button');
+                    button.className = 'pokedex-button';
+                    button.textContent = `${image}`;
+                    // button.onclick = () => {
+                    //     // Redirect to the Pokémon details page when clicked
+                    //     window.location.href = `/pokemon/${number}`;
+                    // };
+                    container.appendChild(button);
+                });
+            } catch (error) {
+                console.error('Failed to load Pokédex images:', error);
+            }
+        }
+
+        // Load buttons on page load
+        window.onload = loadPokedexImages;
+    </script>
+</body>
+</html>

@@ -1,19 +1,11 @@
-#include <iostream>
-#include "SQLManager.h"
+#include <httplib.h>
+#include "HttpRouter.h"
 
 int main()
 {
-    SQLManager sqlManager(DATABASE_PATH);
+    httplib::Server server;
+    HttpRouter router(server); // Initialize routes
 
-    sqlManager.prepareStatement("SELECT * FROM Pokemon;");
-    auto results = sqlManager.fetchResults();
-
-    for (const auto& row : results) {
-        for (const auto& col : row) {
-            std::cout << col << " ";
-        }
-        std::cout << "\n";
-    }
-
+    server.listen("localhost", 8080);
     return 0;
 }

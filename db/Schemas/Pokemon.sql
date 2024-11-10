@@ -21,7 +21,7 @@ VALUES
 (17, NULL, 'Pidgeotto', '17.png', 'Bird Pokémon', 1, 3, 119, 263, 22, 'It flies over its wide territory in search of prey, downing it with its highly developed claws.'),
 (18, NULL, 'Pidgeot', '18.png', 'Bird Pokémon', 1, 3, 119, 263, 22, 'By flapping its wings with all its might, Pidgeot can make a gust of wind capable of bending tall trees.'),
 (19, NULL, 'Rattata', '19.png', 'Mouse Pokémon', 1, NULL, 204, 90, 100, 'It''s cautious in the extreme, and its hardy vitality lets it live in any kind of environment.'),
-(19, 1, 'Rattata', '19-alolalola.png', 'Mouse Pokémon', 17, 1, 81, 100, 272, 'Its whiskers provide it with a keen sense of smell, enabling it to pick up the scent of hidden food and locate it instantly.'),
+(19, 1, 'Rattata', '19-alola.png', 'Mouse Pokémon', 17, 1, 81, 100, 272, 'Its whiskers provide it with a keen sense of smell, enabling it to pick up the scent of hidden food and locate it instantly.'),
 (20, NULL, 'Raticate', '20.png', 'Mouse Pokémon', 1, NULL, 204, 90, 100, 'It whittles down its constantly growing fangs by gnawing on hard things. It can chew apart cinder block walls.'),
 (20, 1, 'Raticate', '20-alola.png', 'Mouse Pokémon', 17, 1, 81, 100, 272, 'It makes its Rattata underlings gather food for it, dining solely on the most nutritious and delicious fare.'),
 (21, NULL, 'Spearow', '21.png', 'Tiny Bird Pokémon', 1, 3, 119, NULL, 228, 'It flaps its small wings busily to fly. Using its beak, it searches in grass for prey.'),

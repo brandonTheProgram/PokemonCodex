@@ -2,10 +2,9 @@ BEGIN TRANSACTION;
 
 INSERT INTO Pokemon_Game (game_name)
 VALUES 
-('Let''s Go Eevee'),
-('Let''s Go Pikachu'),
 ('Sword'),
 ('Shield'),
+('Legends: Arceus'),
 ('Scarlet'),
 ('Violet');
 

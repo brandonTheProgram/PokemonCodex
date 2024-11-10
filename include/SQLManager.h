@@ -1,3 +1,6 @@
+#ifndef SQLMANAGER_H_
+#define SQLMANAGER_H_
+
 #include <SQLiteCpp/SQLiteCpp.h>
 #include <string>
 #include <vector>
@@ -16,3 +19,5 @@ class SQLManager
         SQLite::Database db_;
         std::unique_ptr<SQLite::Statement> stmt_;
 };
+
+#endif
