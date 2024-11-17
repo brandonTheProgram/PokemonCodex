@@ -11,3 +11,12 @@ if [ -d "$BUILD_DIR" ]; then
 else
     echo "Build directory does not exist."
 fi
+
+# Check if the log directory exists
+if [ -d "logs" ]; then
+    echo "Removing logs directory"
+    rm -rf "logs"  # Use -rf to recursively delete the directory and its contents
+    echo "logs directory removed."
+else
+    echo "logs directory does not exist."
+fi

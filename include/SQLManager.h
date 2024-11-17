@@ -4,6 +4,7 @@
 #include <SQLiteCpp/SQLiteCpp.h>
 #include <string>
 #include <vector>
+#include "Logger.h"
 
 class SQLManager
 {
@@ -13,11 +14,14 @@ class SQLManager
 
         void executeQuery(const std::string& query);
         void prepareStatement(const std::string& query);
+        void bind(const int& index, const int& value);
+        void bind(const int& index, const std::string& value);
         std::vector<std::vector<std::string>> fetchResults();
 
     private:
         SQLite::Database db_;
         std::unique_ptr<SQLite::Statement> stmt_;
+        Logger& logger;
 };
 
 #endif

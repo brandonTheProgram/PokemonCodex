@@ -3,6 +3,8 @@
 
 int main()
 {
+    Logger::getInstance().info("Starting the application");
+    
     httplib::Server server;
     HttpRouter router(server); // Initialize routes
 

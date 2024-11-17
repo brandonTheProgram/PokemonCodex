@@ -14,6 +14,7 @@ public:
 
 private:
     Pokedex pokedex;
+    Logger& logger;
 };
 
 #endif

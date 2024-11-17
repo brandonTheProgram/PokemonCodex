@@ -19,3 +19,8 @@ cmake --build .
 
 # Go back to the original directory
 cd ..
+
+# Check if the logs directory exists. If not, create it.
+if [ ! -d "logs" ]; then
+  mkdir "logs"
+fi
