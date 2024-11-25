@@ -6,15 +6,15 @@
 #include <iomanip>
 #include <filesystem>
 
-Logger& Logger::getInstance() {
-    static Logger instance;
+Logger& Logger::getInstance(const std::string& fileName) {
+    static Logger instance(LOG_DIR + "/" + fileName);
     return instance;
 }
 
-Logger::Logger() : logFileName_("../logs/log.txt") {
+Logger::Logger(const std::string& fileName) : logFileName_(fileName) {
     // Create the directory if it doesn't exist
-    if (!std::filesystem::exists("../logs")) {
-        std::filesystem::create_directories("../logs");
+    if (!std::filesystem::exists(LOG_DIR)) {
+        std::filesystem::create_directories(LOG_DIR);
     }
 }
 

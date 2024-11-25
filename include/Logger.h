@@ -3,7 +3,8 @@
 
 #include <string>
 #include <mutex>
-#include <fstream>
+
+const std::string LOG_DIR = "../logs";
 
 class Logger {
     public:
@@ -14,7 +15,7 @@ class Logger {
         };
 
         // Get the singleton instance
-        static Logger& getInstance();
+        static Logger& getInstance(const std::string& fileName = "log.txt");
 
         // Log a message with a specific level
         void log(const std::string& message, Level level);
@@ -25,7 +26,7 @@ class Logger {
         void critical(const std::string& message);
 
     private:
-        Logger();                      // Private constructor
+        Logger(const std::string& fileName);                      // Private constructor
         ~Logger();                     // Private destructor
         Logger(const Logger&) = delete;            // Delete copy constructor
         Logger& operator=(const Logger&) = delete; // Delete assignment operator

@@ -4,7 +4,7 @@
 BUILD_DIR="build"
 
 # Set the executable name
-EXECUTABLE_NAME="PokemonCodex"
+EXECUTABLE_NAME="UnitTests"
 
 # Check if the build directory exists. If not, warn the user.
 if [ -d "$BUILD_DIR" ]; then
@@ -13,7 +13,7 @@ if [ -d "$BUILD_DIR" ]; then
 
   # Check if the executable exists
   if [[ -f "$EXECUTABLE_NAME" ]]; then
-    # Run the executable
+    echo "Starting the unit tests"
     ./"$EXECUTABLE_NAME"
   else
     echo "Executable not found. Please make sure the project is built."
