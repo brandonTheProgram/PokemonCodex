@@ -10,6 +10,12 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/SQLiteCpp)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/jsoncpp)
 
+if(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX") # Treat warnings as errors for MSVC
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror") # Treat warnings as errors for other compilers
+endif()
+
 add_subdirectory(source)
 
 add_subdirectory(tests)
