@@ -59,7 +59,7 @@ app.get('/region/:region', async (req, res) => {
         // Render Region.ejs
         res.render('Region', {
             region: region,
-            pokemonData: pokemonData 
+            pokemons: pokemonData 
         });
     } catch (error) {
         console.error('Error fetching data from backend:', error);

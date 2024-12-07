@@ -3,15 +3,24 @@
 #include <fstream>
 #include <thread>
 #include <filesystem>
+#include <cstdlib>
+
+#pragma warning(disable : 4996)
 
 class LoggerTest : public ::testing::Test {
 protected:
-    void SetUp() override {}
+    void SetUp() override {
+        _putenv("LOG_DIR=../logs");
+        std::string logDirEnv = std::getenv("LOG_DIR");
+        testLogFileDir = logDirEnv + "/";
+    }
 
-    void TearDown() override {}
+    void TearDown() override {
+        _putenv("LOG_DIR=");
+    }
 
     const std::string testLogFile = "test_log.txt";
-    const std::string testLogFileDir = LOG_DIR + "/";
+    std::string testLogFileDir;
 };
 
 TEST_F(LoggerTest, LogFileCreation) {
