@@ -66,6 +66,20 @@ Json::Value Pokedex::getRegionData(const std::string& region) {
     return regionData;
 }
 
+Json::Value Pokedex::getRegionNames() const {
+    Json::Value regionNames(Json::arrayValue);
+
+    for(int i = 1; i < static_cast<int>(Region::ALL); ++i) {
+        Json::Value region(Json::objectValue);
+
+        region["name"] = this->regionEnumToString(static_cast<Region>(i));
+
+        regionNames.append(region);
+    }
+
+    return regionNames;
+}
+
 RegionPair Pokedex::getRegionPair(const Region& regionEnum) const {
     RegionPair regionPair;
 

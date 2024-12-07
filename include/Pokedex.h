@@ -48,6 +48,7 @@ public:
     ~Pokedex() = default;
 
     Json::Value getRegionData(const std::string& region);
+    Json::Value getRegionNames() const;
 
 private:
     RegionPair getRegionPair(const Region& regionEnum) const;

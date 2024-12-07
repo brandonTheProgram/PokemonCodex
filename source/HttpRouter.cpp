@@ -7,6 +7,18 @@ HttpRouter::HttpRouter(httplib::Server &server) : pokedex(), logger(Logger::getI
 
 void HttpRouter::initializeRoutes(httplib::Server &server)
 {
+    server.Get("/GetRegionNames", [this](const httplib::Request &req, httplib::Response &res) {
+        Json::StreamWriterBuilder writer;
+
+        std::string output = Json::writeString(writer, this->pokedex.getRegionNames());
+
+        if(output.empty()) {
+            logger.warning("HttpRouter::initializeRoutes Received no Pokemon information from the database");
+        }
+
+        res.set_content(output, "application/json");
+    });
+
     server.Get(R"(/region/([a-zA-Z]+))", [this](const httplib::Request &req, httplib::Response &res) {
         Json::StreamWriterBuilder writer;
                 
