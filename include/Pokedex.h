@@ -49,13 +49,13 @@ public:
 
     Json::Value getRegionData(const std::string& region);
     Json::Value getRegionNames() const;
+    Json::Value getLatestsPokemon();
 
 private:
     RegionPair getRegionPair(const Region& regionEnum) const;
     Region stringToRegionEnum(const std::string& region) const;
     std::string regionEnumToString(const Region& region) const;
-    RegionalForm stringToRegionalFormEnum(const std::string& regionalForm) const;
-    std::string regionalFormEnumToString(const RegionalForm& regionalForm) const;
+    Json::Value pokemonButtonDataToJsonValue(const std::vector<std::vector<std::string>>& results) const;
 
     SQLManager sqlManager;
     Logger& logger;

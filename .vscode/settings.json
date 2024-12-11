@@ -83,6 +83,18 @@
         "unordered_map": "cpp",
         "unordered_set": "cpp",
         "variant": "cpp",
-        "xhash": "cpp"
+        "xhash": "cpp",
+        "valarray": "cpp",
+        "cfenv": "cpp",
+        "cinttypes": "cpp",
+        "complex": "cpp",
+        "coroutine": "cpp",
+        "csetjmp": "cpp",
+        "cstdarg": "cpp",
+        "cwctype": "cpp",
+        "numeric": "cpp",
+        "source_location": "cpp",
+        "stdfloat": "cpp",
+        "strstream": "cpp"
     }
 }

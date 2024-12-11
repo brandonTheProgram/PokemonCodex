@@ -1,13 +1,24 @@
 #include <httplib.h>
 #include "HttpRouter.h"
+#include "Config.h"
 
 int main()
 {
-    Logger::getInstance().info("Starting the application");
-    
-    httplib::Server server;
-    HttpRouter router(server); // Initialize routes
+    try
+    {
+        Config::getInstance().load("../config.json");
 
-    server.listen("localhost", 8080);
+        Logger::getInstance().info("Starting the application");
+    
+        httplib::Server server;
+        HttpRouter router(server); // Initialize routes
+
+        server.listen("localhost", 8080);
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << "Error: " << e.what() << "\n";
+    }
+    
     return 0;
 }

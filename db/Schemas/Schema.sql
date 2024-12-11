@@ -186,4 +186,6 @@ CREATE INDEX idx_pokemon_evolution_base ON Pokemon_Evolution(base_pokedex_number
 CREATE INDEX idx_pokemon_evolution_evolved ON Pokemon_Evolution(evolved_pokedex_number, evolved_region_id);
 CREATE INDEX idx_pokemon_move_game ON Pokemon_Technical_Move(move_id, game_id);
 
+CREATE INDEX idx_region_pokemon ON Pokemon(pokedex_number, region_id, name, image);
+
 COMMIT TRANSACTION;

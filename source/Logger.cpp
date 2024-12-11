@@ -1,34 +1,27 @@
 #include "Logger.h"
+#include "Config.h"
 #include <ctime>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
 #include <filesystem>
-#include <cstdlib>
-
-#pragma warning(disable : 4996)
 
 Logger& Logger::getInstance(const std::string& fileName) {
-    const char* logDirEnv = std::getenv("LOG_DIR");
-    if (logDirEnv != nullptr) {
-        std::string logDirStr = logDirEnv;
-        static Logger instance(logDirStr, logDirStr + "/" + fileName);
-        return instance;
-    }
-
-    throw std::invalid_argument("A log directory was not supplied in the CMakeLists. Please add it under: LOG_DIR");
+    std::string logDir = Config::getInstance().get("LOG_DIR");
+    
+    static Logger instance(logDir, logDir + "/" + fileName);
+    return instance;
 }
 
 Logger::Level Logger::getCurrentLogLevel() {
-    const char* logLevelEnv = std::getenv("LOG_LEVEL");
-    if (logLevelEnv != nullptr) {
-        std::string loglevelStr = logLevelEnv;
-        if (loglevelStr == "DEBUG") return Level::DEBUG;
-        if (loglevelStr == "INFO") return Level::INFO;
-        if (loglevelStr == "WARNING") return Level::WARNING;
-        if (loglevelStr == "CRITICAL") return Level::CRITICAL;
-    }
+    std::string logLevel = Config::getInstance().get("LOG_LEVEL");
+
+    if (logLevel == "DEBUG") return Level::DEBUG;
+    if (logLevel == "INFO") return Level::INFO;
+    if (logLevel == "WARNING") return Level::WARNING;
+    if (logLevel == "CRITICAL") return Level::CRITICAL;
+
     return Level::INFO;  // Default log level is INFO
 }
 

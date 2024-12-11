@@ -19,6 +19,18 @@ void HttpRouter::initializeRoutes(httplib::Server &server)
         res.set_content(output, "application/json");
     });
 
+    server.Get("/getLatestsPokemon", [this](const httplib::Request &req, httplib::Response &res) {
+        Json::StreamWriterBuilder writer;
+
+        std::string output = Json::writeString(writer, this->pokedex.getLatestsPokemon());
+
+        if(output.empty()) {
+            logger.warning("HttpRouter::initializeRoutes Received no Pokemon information from the database");
+        }
+
+        res.set_content(output, "application/json");
+    });
+
     server.Get(R"(/region/([a-zA-Z]+))", [this](const httplib::Request &req, httplib::Response &res) {
         Json::StreamWriterBuilder writer;
                 

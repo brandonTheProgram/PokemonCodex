@@ -39,3 +39,24 @@
 
 </div>
 <!-- Regions End -->
+
+<!-- Lastest Start -->
+<section class="pb-4 pt-4">
+    <div class="d-flex mb-2 align-items-center">
+        <h2>Latest Pokemon</h2>
+    </div>
+
+    <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+        <% if(latest != '') { %>
+            <% latest.forEach(function(latestPokemon, index) { %>
+                <a href="/pokemon/<%= latestPokemon.pokedex_number %><%= latestPokemon.region_id !== 'NULL' ? '/' + latestPokemon.region_id : '' %>" class="col text-center region__link">
+                    <div class="pokemon__button shadow">
+                        <img src="<%= latestPokemon.image %>" width="200" height="200"  alt=<%- latestPokemon.name %> loading="lazy">
+                    </div>
+                    <div class="pt-1">#<%- latestPokemon.pokedex_number %> <%- latestPokemon.name %></div>
+                </a>
+            <% }) %>
+        <% } %>
+    </div>
+</section>
+<!-- Lastest End -->

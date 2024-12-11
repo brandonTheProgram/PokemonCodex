@@ -3,8 +3,11 @@
 # Set variables for the project directories
 BUILD_DIR="build"
 
-# Check if the build directory exists. If not, create it.
+# Check if the build directory exists. If not, create it. If it does, clean than make it
 if [ ! -d "$BUILD_DIR" ]; then
+  mkdir "$BUILD_DIR"
+else
+  ./clean.sh
   mkdir "$BUILD_DIR"
 fi
 

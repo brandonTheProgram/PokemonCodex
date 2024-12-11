@@ -6,6 +6,7 @@ set(SOURCES
     Logger.cpp
     Pokedex.cpp
     SQLManager.cpp
+    Config.cpp
 )
 
 add_library(PokemonCodexLib ${SOURCES})
@@ -20,7 +21,5 @@ target_include_directories(PokemonCodexLib PUBLIC
 target_link_libraries(PokemonCodexLib PRIVATE SQLiteCpp jsoncpp_static)
 
 add_executable(PokemonCodex ${SOURCES})
-
-target_compile_definitions(PokemonCodexLib PUBLIC DATABASE_PATH="${CMAKE_SOURCE_DIR}/db/Data/Pokedex.db")
 
 target_link_libraries(PokemonCodex PokemonCodexLib)

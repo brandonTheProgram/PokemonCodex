@@ -1,73 +1,43 @@
 
 #include "Pokedex.h"
+#include "Config.h"
 
-Pokedex::Pokedex() : sqlManager(DATABASE_PATH), logger(Logger::getInstance()) {}
+Pokedex::Pokedex() : sqlManager(Config::getInstance().get("DATABASE_PATH")), logger(Logger::getInstance()) {}
 
 Json::Value Pokedex::getRegionData(const std::string& region) {    
     Json::Value regionData(Json::arrayValue);
+
+    this->logger.debug("Pokedex::getRegionData invoked");
 
     // Get the region enum based on the value passed in from the front end
     Region regionEnum = this->stringToRegionEnum(region);
     
     if(regionEnum == Region::UNSUPPORTED) {
-        return regionData;
+        return Json::Value{};
     }
 
     // Get the respective region range
     RegionPair regionPair = this->getRegionPair(regionEnum);
 
     if(regionPair.first == 0 && regionPair.second) {
-        return regionData;
+        return Json::Value{};
     }
 
     // Grab the Pokemon from the respective region
-    logger.info("Pokedex::getRegionData Grabbing the Pokemon from the " + region + " region");
+    this->logger.info("Pokedex::getRegionData Grabbing the Pokemon from the " + region + " region");
     this->sqlManager.prepareStatement("SELECT pokedex_number, region_id, name, image FROM Pokemon WHERE pokedex_number BETWEEN ? AND ?;");
     this->sqlManager.bind(1, regionPair.first);
     this->sqlManager.bind(2, regionPair.second);
 
     auto results = this->sqlManager.fetchResults();
 
-    for (const auto& row : results) {
-        Json::Value pokemon(Json::objectValue);
-
-        pokemon["pokedex_number"] = row.at(0);
-        pokemon["region_id"] = row.at(1);
-        pokemon["name"] = row.at(2);
-        pokemon["image"] = row.at(3);
-
-        // Apply the region form to the name if present
-        std::string regionId = pokemon["region_id"].asString();
-        if(regionId != "NULL") {
-            // Append the name of the regional form to the Pokemon's name
-            switch(static_cast<RegionalForm>(std::stoi(regionId))) {
-                case RegionalForm::ALOLA:
-                    pokemon["name"] = Json::Value("Alolan " + pokemon["name"].asString());
-                    break;
-                case RegionalForm::GALAR:
-                    pokemon["name"] = Json::Value("Galarian " + pokemon["name"].asString());
-                    break;
-                case RegionalForm::HISIUI:
-                    pokemon["name"] = Json::Value("Hisuian " + pokemon["name"].asString());
-                    break;
-                case RegionalForm::PALDEA:
-                    pokemon["name"] = Json::Value("Paldean " + pokemon["name"].asString());
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        logger.info("Pokedex::getRegionData Found: " + pokemon["name"].asString());
-
-        regionData.append(pokemon);
-    }
-
-    return regionData;
+    return this->pokemonButtonDataToJsonValue(results);
 }
 
 Json::Value Pokedex::getRegionNames() const {
     Json::Value regionNames(Json::arrayValue);
+
+    this->logger.debug("Pokedex::getRegionNames invoked");
 
     for(int i = 1; i < static_cast<int>(Region::ALL); ++i) {
         Json::Value region(Json::objectValue);
@@ -80,8 +50,50 @@ Json::Value Pokedex::getRegionNames() const {
     return regionNames;
 }
 
+Json::Value Pokedex::getLatestsPokemon() {
+    Json::Value latestPokemon(Json::arrayValue);
+
+    this->logger.debug("Pokedex::getLatestsPokemon invoked");
+
+    // Grab the amount of latest Pokemon from the env variable
+    int limit = 1;
+    std::string latestLimit = Config::getInstance().get("LATEST_LIMIT");
+
+    try {
+        limit = std::stoi(latestLimit);
+    }
+    catch (const std::invalid_argument& e) {
+        (void) e;
+        this->logger.warning("The limit of " + std::string(latestLimit) + " is an invalid argument. The latests Pokemon will be limited to 1");
+    } 
+    catch (const std::out_of_range& e) {
+        (void) e;
+        this->logger.warning("The limit of " + std::string(latestLimit) + " is not a valid range fort std::stoi. The latests Pokemon will be limited to 1");
+    }
+
+    // Get the latest region range
+    RegionPair regionPair = this->getRegionPair(Region::ALL);
+
+    // Grab the latest Pokemon
+    if(limit < regionPair.first || limit > regionPair.second) {
+        this->logger.warning("The limit of " + std::to_string(limit) + " is out of range. The latests Pokemon will be limited to 1");
+        this->sqlManager.prepareStatement("SELECT pokedex_number, region_id, name, image FROM Pokemon ORDER BY pokedex_number DESC LIMIT 1;");
+    }
+    else {
+        this->logger.info("Pokedex::getLatestsPokemon Grabbing the latests " + std::to_string(limit) + " Pokemon");
+        this->sqlManager.prepareStatement("SELECT pokedex_number, region_id, name, image FROM Pokemon ORDER BY pokedex_number DESC LIMIT ?;");
+        this->sqlManager.bind(1, limit);
+    }
+
+    auto results = this->sqlManager.fetchResults();
+
+    return this->pokemonButtonDataToJsonValue(results);
+}
+
 RegionPair Pokedex::getRegionPair(const Region& regionEnum) const {
     RegionPair regionPair;
+
+    this->logger.debug("Pokedex::getRegionPair invoked");
 
     switch(regionEnum) {
         case Region::KANTO:
@@ -115,12 +127,14 @@ RegionPair Pokedex::getRegionPair(const Region& regionEnum) const {
             regionPair = ALL_PAIR;
             break;
         default:
-            logger.warning("Pokedex::getRegionPair The region enum is not supported: " + static_cast<int>(regionEnum));
+            this->logger.warning("Pokedex::getRegionPair The region enum is not supported: " + static_cast<int>(regionEnum));
     }
     return regionPair;
 }
 
 Region Pokedex::stringToRegionEnum(const std::string& region) const {
+    this->logger.debug("Pokedex::stringToRegionEnum invoked");
+
     if(region == "Kanto") {
         return Region::KANTO;
     }
@@ -152,12 +166,14 @@ Region Pokedex::stringToRegionEnum(const std::string& region) const {
         return Region::ALL;
     }
     else {
-        logger.warning("Pokedex::stringToRegionEnum The region: " + region + " is currently unsupported");
+        this->logger.warning("Pokedex::stringToRegionEnum The region: " + region + " is currently unsupported");
         return Region::UNSUPPORTED;
     }
 }
 
 std::string Pokedex::regionEnumToString(const Region& region) const {
+    this->logger.debug("Pokedex::regionEnumToString invoked");
+
     if(region == Region::KANTO) {
         return "Kanto";
     }
@@ -189,7 +205,51 @@ std::string Pokedex::regionEnumToString(const Region& region) const {
         return "All";
     }
     else {
-        logger.warning("Pokedex::regionEnumToString The region enum is not supported: " + static_cast<int>(region));
+        this->logger.warning("Pokedex::regionEnumToString The region enum is not supported: " + static_cast<int>(region));
         return "UNSUPPORTED";
     }
+}
+
+Json::Value Pokedex::pokemonButtonDataToJsonValue(const std::vector<std::vector<std::string>>& results) const {
+    Json::Value pokemonButtons(Json::arrayValue);
+
+    this->logger.debug("Pokedex::pokemonButtonDataToJsonValue invoked");
+
+    for (const auto& row : results) {
+        Json::Value pokemon(Json::objectValue);
+
+        pokemon["pokedex_number"] = row.at(0);
+        pokemon["region_id"] = row.at(1);
+        pokemon["name"] = row.at(2);
+        pokemon["image"] = row.at(3);
+
+        // Apply the region form to the name if present
+        std::string regionId = pokemon["region_id"].asString();
+        if(regionId != "NULL") {
+            // Append the name of the regional form to the Pokemon's name
+            switch(static_cast<RegionalForm>(std::stoi(regionId))) {
+                case RegionalForm::ALOLA:
+                    pokemon["name"] = Json::Value("Alolan " + pokemon["name"].asString());
+                    break;
+                case RegionalForm::GALAR:
+                    pokemon["name"] = Json::Value("Galarian " + pokemon["name"].asString());
+                    break;
+                case RegionalForm::HISIUI:
+                    pokemon["name"] = Json::Value("Hisuian " + pokemon["name"].asString());
+                    break;
+                case RegionalForm::PALDEA:
+                    pokemon["name"] = Json::Value("Paldean " + pokemon["name"].asString());
+                    break;
+                default:
+                    this->logger.warning("Pokedex::pokemonButtonDataToJsonValue The regional form enum is not supported: " + std::stoi(regionId));
+                    break;
+            }
+        }
+
+        logger.debug("Pokedex::pokemonButtonDataToJsonValue Found: " + pokemon["name"].asString());
+
+        pokemonButtons.append(pokemon);
+    }
+
+    return pokemonButtons;
 }
