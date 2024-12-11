@@ -47,15 +47,16 @@ public:
     Pokedex();
     ~Pokedex() = default;
 
-    Json::Value getRegionData(const std::string& region);
-    Json::Value getRegionNames() const;
+    Json::Value getRegionData(const std::string& region, const bool& shouldLimit = false);
     Json::Value getLatestsPokemon();
+    Json::Value getRegionNames() const;
 
 private:
     RegionPair getRegionPair(const Region& regionEnum) const;
     Region stringToRegionEnum(const std::string& region) const;
     std::string regionEnumToString(const Region& region) const;
     Json::Value pokemonButtonDataToJsonValue(const std::vector<std::vector<std::string>>& results) const;
+    int getLimitEnvVar(const bool& latest = false) const;
 
     SQLManager sqlManager;
     Logger& logger;

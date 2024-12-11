@@ -4,8 +4,9 @@
 
 Pokedex::Pokedex() : sqlManager(Config::getInstance().get("DATABASE_PATH")), logger(Logger::getInstance()) {}
 
-Json::Value Pokedex::getRegionData(const std::string& region) {    
+Json::Value Pokedex::getRegionData(const std::string& region, const bool& shouldLimit) {    
     Json::Value regionData(Json::arrayValue);
+    int limit;
 
     this->logger.debug("Pokedex::getRegionData invoked");
 
@@ -27,7 +28,52 @@ Json::Value Pokedex::getRegionData(const std::string& region) {
     this->logger.info("Pokedex::getRegionData Grabbing the Pokemon from the " + region + " region");
     this->sqlManager.prepareStatement("SELECT pokedex_number, region_id, name, image FROM Pokemon WHERE pokedex_number BETWEEN ? AND ?;");
     this->sqlManager.bind(1, regionPair.first);
-    this->sqlManager.bind(2, regionPair.second);
+
+    // Grab the start of the region for the homepage
+    if(shouldLimit) {
+        limit = this->getLimitEnvVar();
+
+        if(((regionPair.second - regionPair.first) - limit) >= 0) {
+            this->sqlManager.bind(2, regionPair.first + limit - 1);
+        }
+        else {
+            this->sqlManager.bind(2, regionPair.first + 1);
+        }
+    }
+    else {
+        this->sqlManager.bind(2, regionPair.second);
+    }
+
+    auto results = this->sqlManager.fetchResults();
+
+    if(shouldLimit && results.size() > limit) {
+        results.resize(limit);
+    }
+
+    return this->pokemonButtonDataToJsonValue(results);
+}
+
+Json::Value Pokedex::getLatestsPokemon() {
+    Json::Value latestPokemon(Json::arrayValue);
+
+    this->logger.debug("Pokedex::getLatestsPokemon invoked");
+
+    // Grab the amount of latest Pokemon from the env variable
+    int limit = this->getLimitEnvVar(true);
+
+    // Get the latest region range
+    RegionPair regionPair = this->getRegionPair(Region::ALL);
+
+    // Grab the latest Pokemon
+    if(limit < regionPair.first || limit > regionPair.second) {
+        this->logger.warning("The limit of " + std::to_string(limit) + " is out of range. The latests Pokemon will be limited to 1");
+        this->sqlManager.prepareStatement("SELECT pokedex_number, region_id, name, image FROM Pokemon ORDER BY pokedex_number DESC LIMIT 1;");
+    }
+    else {
+        this->logger.info("Pokedex::getLatestsPokemon Grabbing the latests " + std::to_string(limit) + " Pokemon");
+        this->sqlManager.prepareStatement("SELECT pokedex_number, region_id, name, image FROM Pokemon ORDER BY pokedex_number DESC LIMIT ?;");
+        this->sqlManager.bind(1, limit);
+    }
 
     auto results = this->sqlManager.fetchResults();
 
@@ -48,46 +94,6 @@ Json::Value Pokedex::getRegionNames() const {
     }
 
     return regionNames;
-}
-
-Json::Value Pokedex::getLatestsPokemon() {
-    Json::Value latestPokemon(Json::arrayValue);
-
-    this->logger.debug("Pokedex::getLatestsPokemon invoked");
-
-    // Grab the amount of latest Pokemon from the env variable
-    int limit = 1;
-    std::string latestLimit = Config::getInstance().get("LATEST_LIMIT");
-
-    try {
-        limit = std::stoi(latestLimit);
-    }
-    catch (const std::invalid_argument& e) {
-        (void) e;
-        this->logger.warning("The limit of " + std::string(latestLimit) + " is an invalid argument. The latests Pokemon will be limited to 1");
-    } 
-    catch (const std::out_of_range& e) {
-        (void) e;
-        this->logger.warning("The limit of " + std::string(latestLimit) + " is not a valid range fort std::stoi. The latests Pokemon will be limited to 1");
-    }
-
-    // Get the latest region range
-    RegionPair regionPair = this->getRegionPair(Region::ALL);
-
-    // Grab the latest Pokemon
-    if(limit < regionPair.first || limit > regionPair.second) {
-        this->logger.warning("The limit of " + std::to_string(limit) + " is out of range. The latests Pokemon will be limited to 1");
-        this->sqlManager.prepareStatement("SELECT pokedex_number, region_id, name, image FROM Pokemon ORDER BY pokedex_number DESC LIMIT 1;");
-    }
-    else {
-        this->logger.info("Pokedex::getLatestsPokemon Grabbing the latests " + std::to_string(limit) + " Pokemon");
-        this->sqlManager.prepareStatement("SELECT pokedex_number, region_id, name, image FROM Pokemon ORDER BY pokedex_number DESC LIMIT ?;");
-        this->sqlManager.bind(1, limit);
-    }
-
-    auto results = this->sqlManager.fetchResults();
-
-    return this->pokemonButtonDataToJsonValue(results);
 }
 
 RegionPair Pokedex::getRegionPair(const Region& regionEnum) const {
@@ -252,4 +258,27 @@ Json::Value Pokedex::pokemonButtonDataToJsonValue(const std::vector<std::vector<
     }
 
     return pokemonButtons;
+}
+
+int Pokedex::getLimitEnvVar(const bool& latest) const {
+    int limit = 1;
+    std::string envVar;
+
+    try {
+        if(latest) {
+            envVar = Config::getInstance().get("LATEST_LIMIT");
+            this->logger.debug("Found the latest limit environment variable: " + envVar);
+        }
+        else {
+            envVar = Config::getInstance().get("STARTING_LIMIT");
+            this->logger.debug("Found the starting limit environment variable: " + envVar);
+        }
+
+        limit = std::stoi(envVar);
+    }
+    catch(const std::exception& e) {
+        this->logger.warning("Pokedex::getLimitEnvVar: " + std::string(e.what()));
+    }
+
+    return limit;
 }
