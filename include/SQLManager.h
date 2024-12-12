@@ -2,8 +2,10 @@
 #define SQLMANAGER_H_
 
 #include <SQLiteCpp/SQLiteCpp.h>
+
 #include <string>
 #include <vector>
+
 #include "Logger.h"
 
 class SQLManager

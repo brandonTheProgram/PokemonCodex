@@ -1,17 +1,22 @@
 #include "Config.h"
-#include <fstream>
+
 #include <json/json.h>
 
-Config& Config::getInstance() {
+#include <fstream>
+
+Config& Config::getInstance()
+{
     static Config instance;
     return instance;
 }
 
-void Config::load(const std::string& filePath) {
+void Config::load(const std::string& filePath)
+{
     std::lock_guard<std::mutex> lock(configMutex);
 
     std::ifstream configFile(filePath);
-    if (!configFile.is_open()) {
+    if (!configFile.is_open())
+    {
         throw std::runtime_error("Unable to open config file: " + filePath);
     }
 
@@ -20,25 +25,32 @@ void Config::load(const std::string& filePath) {
     Json::CharReaderBuilder builder;
     std::string errs;
 
-    if (!Json::parseFromStream(builder, configFile, &root, &errs)) {
+    if (!Json::parseFromStream(builder, configFile, &root, &errs))
+    {
         throw std::runtime_error("Error parsing JSON: " + errs);
     }
 
     // Iterate through the JSON and populate the map
-    for (const auto& key : root.getMemberNames()) {
+    for (const auto& key : root.getMemberNames())
+    {
         const auto& value = root[key];
-        if (value.isString()) {
+        if (value.isString())
+        {
             this->environment[key] = value.asString();
-        } else {
+        }
+        else
+        {
             // Handle other types as needed, converting them to strings
             this->environment[key] = value.toStyledString();
         }
-    } 
+    }
 }
 
-std::string Config::get(const std::string& key) const {
+std::string Config::get(const std::string& key) const
+{
     auto it = this->environment.find(key);
-    if (it != this->environment.end()) {
+    if (it != this->environment.end())
+    {
         return it->second;
     }
     throw std::runtime_error("Key not found in environment: " + key);

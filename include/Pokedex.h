@@ -1,9 +1,11 @@
 #ifndef POKEDEX_H_
 #define POKEDEX_H_
 
-#include "SQLManager.h"
-#include <utility>
 #include <json/json.h>
+
+#include <utility>
+
+#include "SQLManager.h"
 
 enum class RegionalForm
 {
@@ -43,23 +45,24 @@ const RegionPair ALL_PAIR{1, 1025};
 
 class Pokedex
 {
-public:
-    Pokedex();
-    ~Pokedex() = default;
+    public:
+        Pokedex();
+        ~Pokedex() = default;
 
-    Json::Value getRegionData(const std::string& region, const bool& shouldLimit = false);
-    Json::Value getLatestsPokemon();
-    Json::Value getRegionNames() const;
+        Json::Value getRegionData(const std::string& region, const bool& shouldLimit = false);
+        Json::Value getLatestsPokemon();
+        Json::Value getRegionNames() const;
 
-private:
-    RegionPair getRegionPair(const Region& regionEnum) const;
-    Region stringToRegionEnum(const std::string& region) const;
-    std::string regionEnumToString(const Region& region) const;
-    Json::Value pokemonButtonDataToJsonValue(const std::vector<std::vector<std::string>>& results) const;
-    int getLimitEnvVar(const bool& latest = false) const;
+    private:
+        RegionPair getRegionPair(const Region& regionEnum) const;
+        Region stringToRegionEnum(const std::string& region) const;
+        std::string regionEnumToString(const Region& region) const;
+        Json::Value pokemonButtonDataToJsonValue(
+            const std::vector<std::vector<std::string>>& results) const;
+        int getLimitEnvVar(const bool& latest = false) const;
 
-    SQLManager sqlManager;
-    Logger& logger;
+        SQLManager sqlManager;
+        Logger& logger;
 };
 
 #endif

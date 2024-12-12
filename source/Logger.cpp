@@ -1,20 +1,24 @@
 #include "Logger.h"
-#include "Config.h"
-#include <ctime>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <iomanip>
-#include <filesystem>
 
-Logger& Logger::getInstance(const std::string& fileName) {
+#include <ctime>
+#include <filesystem>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+
+#include "Config.h"
+
+Logger& Logger::getInstance(const std::string& fileName)
+{
     std::string logDir = Config::getInstance().get("LOG_DIR");
-    
+
     static Logger instance(logDir, logDir + "/" + fileName);
     return instance;
 }
 
-Logger::Level Logger::getCurrentLogLevel() {
+Logger::Level Logger::getCurrentLogLevel()
+{
     std::string logLevel = Config::getInstance().get("LOG_LEVEL");
 
     if (logLevel == "DEBUG") return Level::DEBUG;
@@ -25,47 +29,59 @@ Logger::Level Logger::getCurrentLogLevel() {
     return Level::INFO;  // Default log level is INFO
 }
 
-Logger::Logger(const std::string& logDir,
-               const std::string& fileName) : logFileName_(fileName), currentLevel_(getCurrentLogLevel()) {
+Logger::Logger(const std::string& logDir, const std::string& fileName)
+    : logFileName(fileName), currentLevel(this->getCurrentLogLevel())
+{
     // Create the directory if it doesn't exist
-    if (!std::filesystem::exists(logDir)) {
+    if (!std::filesystem::exists(logDir))
+    {
         std::filesystem::create_directories(logDir);
     }
 }
 
 Logger::~Logger() = default;
 
-void Logger::log(const std::string& message, Level level) {
-    if (static_cast<int>(level) >= static_cast<int>(currentLevel_)) { 
-        std::lock_guard<std::mutex> lock(mutex_);
-        std::ofstream logFile(logFileName_, std::ios_base::app);
-        if (logFile.is_open()) {
-            logFile << "[" << getCurrentTime() << "] [" << levelToString(level) << "] " << message << std::endl;
+void Logger::log(const std::string& message, Level level)
+{
+    if (static_cast<int>(level) >= static_cast<int>(currentLevel))
+    {
+        std::lock_guard<std::mutex> lock(this->loggerMutex);
+        std::ofstream logFile(logFileName, std::ios_base::app);
+        if (logFile.is_open())
+        {
+            logFile << "[" << this->getCurrentTime() << "] [" << this->levelToString(level) << "] "
+                    << message << std::endl;
             logFile.close();
         }
-        else {
+        else
+        {
             std::cerr << "Unable to open/create the log file";
         }
     }
 }
 
-void Logger::debug(const std::string& message) {
-    log(message, Level::DEBUG);
+void Logger::debug(const std::string& message)
+{
+    this->log(message, Level::DEBUG);
 }
 
-void Logger::info(const std::string& message) {
-    log(message, Level::INFO);
+void Logger::info(const std::string& message)
+{
+    this->log(message, Level::INFO);
 }
 
-void Logger::warning(const std::string& message) {
-    log(message, Level::WARNING);
+void Logger::warning(const std::string& message)
+{
+    this->log(message, Level::WARNING);
 }
 
-void Logger::critical(const std::string& message) {
-    log(message, Level::CRITICAL);
+void Logger::critical(const std::string& message)
+{
+    this->log(message, Level::CRITICAL);
 }
 
-std::string Logger::getCurrentTime() {
+std::string Logger::getCurrentTime() const
+{
     auto now = std::time(nullptr);
     std::tm timeStruct{};
     localtime_s(&timeStruct, &now);
@@ -74,12 +90,19 @@ std::string Logger::getCurrentTime() {
     return oss.str();
 }
 
-std::string Logger::levelToString(Level level) {
-    switch (level) {
-        case Level::DEBUG:      return "DEBUG";
-        case Level::INFO:       return "INFO";
-        case Level::WARNING:    return "WARNING";
-        case Level::CRITICAL:   return "CRITICAL";
-        default:                return "UNKNOWN";
+std::string Logger::levelToString(const Level& level) const
+{
+    switch (level)
+    {
+        case Level::DEBUG:
+            return "DEBUG";
+        case Level::INFO:
+            return "INFO";
+        case Level::WARNING:
+            return "WARNING";
+        case Level::CRITICAL:
+            return "CRITICAL";
+        default:
+            return "UNKNOWN";
     }
 }

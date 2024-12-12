@@ -10,6 +10,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/SQLiteCpp)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/jsoncpp)
 
+# Set the clang-format command
+find_program(CLANG_FORMAT_EXECUTABLE clang-format)
+
+if(NOT CLANG_FORMAT_EXECUTABLE)
+    message(FATAL_ERROR "clang-format not found! Please install it to use auto-formatting.")
+endif()
+
 if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX") # Treat warnings as errors for MSVC
 else()

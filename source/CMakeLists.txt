@@ -11,6 +11,13 @@ set(SOURCES
 
 add_library(PokemonCodexLib ${SOURCES})
 
+add_custom_target(
+    format
+    COMMAND ${CMAKE_COMMAND} -E echo "Running clang-format"
+    COMMAND clang-format -i ${CMAKE_SOURCE_DIR}/source/*.cpp ${CMAKE_SOURCE_DIR}/include/*.h
+    COMMENT "Running clang-format to fix code style"
+)
+
 target_include_directories(PokemonCodexLib PUBLIC 
     ${CMAKE_SOURCE_DIR}/include 
     ${CMAKE_SOURCE_DIR}/external/cpp-httplib
@@ -18,8 +25,21 @@ target_include_directories(PokemonCodexLib PUBLIC
     ${CMAKE_SOURCE_DIR}/external/jsoncpp/include
 )
 
+# Link libraries to PokemonCodexLib
 target_link_libraries(PokemonCodexLib PRIVATE SQLiteCpp jsoncpp_static)
 
 add_executable(PokemonCodex ${SOURCES})
 
+# Link libraries to the executable
 target_link_libraries(PokemonCodex PokemonCodexLib)
+
+# Ensure format runs before building the executable
+add_dependencies(PokemonCodex format)
+
+# Run format as a PRE_BUILD command to ensure it's done before building
+add_custom_command(
+    TARGET PokemonCodex PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E echo "Running clang-format before building executable"
+    COMMAND clang-format -i ${CMAKE_SOURCE_DIR}/source/*.cpp ${CMAKE_SOURCE_DIR}/include/*.h
+    COMMENT "Running clang-format before building executable"
+)

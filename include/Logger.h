@@ -1,12 +1,14 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include <string>
 #include <mutex>
+#include <string>
 
-class Logger {
+class Logger
+{
     public:
-        enum class Level {
+        enum class Level
+        {
             DEBUG,
             INFO,
             WARNING,
@@ -30,18 +32,17 @@ class Logger {
 
     private:
         Logger(const std::string& logDir,
-               const std::string& fileName);            // Private constructor
-        ~Logger();                                      // Private destructor
-        Logger(const Logger&) = delete;                 // Delete copy constructor
-        Logger& operator=(const Logger&) = delete;      // Delete assignment operator
+               const std::string& fileName);                  // Private constructor
+        ~Logger();                                            // Private destructor
+        Logger(const Logger&) = delete;                       // Delete copy constructor
+        Logger& operator=(const Logger&) = delete;            // Delete assignment operator
 
-        std::string getCurrentTime();                   // Helper to get current time
-        std::string levelToString(Level level);         // Helper to convert enum to string
+        std::string getCurrentTime() const;                   // Helper to get current time
+        std::string levelToString(const Level& level) const;  // Helper to convert enum to string
 
-        std::string logFileName_;                       // Name of the log file
-        std::string logFileDir_;
-        std::mutex mutex_;                              // To ensure thread safety
-        Level currentLevel_;;                           // Current log level
+        std::string logFileName;                              // Name of the log file
+        std::mutex loggerMutex;                               // To ensure thread safety
+        Level currentLevel;                                   // Current log level
 };
 
-#endif // LOGGER_H
+#endif                                                        // LOGGER_H

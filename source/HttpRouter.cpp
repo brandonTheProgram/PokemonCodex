@@ -1,83 +1,115 @@
-#include <string>
 #include "HttpRouter.h"
 
-HttpRouter::HttpRouter(httplib::Server &server) : pokedex(), logger(Logger::getInstance()) {
+#include <string>
+
+HttpRouter::HttpRouter(httplib::Server &server) : pokedex(), logger(Logger::getInstance())
+{
     this->initializeRoutes(server);
 }
 
 void HttpRouter::initializeRoutes(httplib::Server &server)
 {
-    server.Get("/GetRegionNames", [this](const httplib::Request &req, httplib::Response &res) {
-        Json::StreamWriterBuilder writer;
+    server.Get("/GetRegionNames",
+               [this](const httplib::Request &req, httplib::Response &res)
+               {
+                   Json::StreamWriterBuilder writer;
 
-        this->logger.debug("HttpRouter::initializeRoutes GetRegionNames envoked");
+                   this->logger.debug("HttpRouter::initializeRoutes GetRegionNames envoked");
 
-        std::string output = Json::writeString(writer, this->pokedex.getRegionNames());
+                   std::string output = Json::writeString(writer, this->pokedex.getRegionNames());
 
-        if(output.empty()) {
-            logger.warning("HttpRouter::initializeRoutes Received no Pokemon information from the database");
-        }
+                   if (output.empty())
+                   {
+                       logger.warning(
+                           "HttpRouter::initializeRoutes Received no Pokemon information from the "
+                           "database");
+                   }
 
-        res.set_content(output, "application/json");
-    });
+                   res.set_content(output, "application/json");
+               });
 
-    server.Get("/getLatestsPokemon", [this](const httplib::Request &req, httplib::Response &res) {
-        Json::StreamWriterBuilder writer;
+    server.Get("/getLatestsPokemon",
+               [this](const httplib::Request &req, httplib::Response &res)
+               {
+                   Json::StreamWriterBuilder writer;
 
-        this->logger.debug("HttpRouter::initializeRoutes getLatestsPokemon envoked");
+                   this->logger.debug("HttpRouter::initializeRoutes getLatestsPokemon envoked");
 
-        std::string output = Json::writeString(writer, this->pokedex.getLatestsPokemon());
+                   std::string output =
+                       Json::writeString(writer, this->pokedex.getLatestsPokemon());
 
-        if(output.empty()) {
-            logger.warning("HttpRouter::initializeRoutes Received no Pokemon information from the database");
-        }
+                   if (output.empty())
+                   {
+                       logger.warning(
+                           "HttpRouter::initializeRoutes Received no Pokemon information from the "
+                           "database");
+                   }
 
-        res.set_content(output, "application/json");
-    });
+                   res.set_content(output, "application/json");
+               });
 
-    server.Get(R"(/region/([a-zA-Z]+))", [this](const httplib::Request &req, httplib::Response &res) {
-        Json::StreamWriterBuilder writer;
+    server.Get(
+        R"(/region/([a-zA-Z]+))",
+        [this](const httplib::Request &req, httplib::Response &res)
+        {
+            Json::StreamWriterBuilder writer;
 
-        this->logger.debug("HttpRouter::initializeRoutes /region/ envoked");
-                
-        std::string region = req.matches[1].str();
+            this->logger.debug("HttpRouter::initializeRoutes /region/ envoked");
 
-        if(region.empty()) {
-            logger.warning("HttpRouter::initializeRoutes Received no region from the page");
-        }
-        else {
-            logger.info("HttpRouter::initializeRoutes Received the region: " + region + " from the page");
-        }
+            std::string region = req.matches[1].str();
 
-        std::string output = Json::writeString(writer, this->pokedex.getRegionData(region));
+            if (region.empty())
+            {
+                logger.warning("HttpRouter::initializeRoutes Received no region from the page");
+            }
+            else
+            {
+                logger.info("HttpRouter::initializeRoutes Received the region: " + region +
+                            " from the page");
+            }
 
-        if(output.empty()) {
-            logger.warning("HttpRouter::initializeRoutes Received no Pokemon information from the database");
-        }
+            std::string output = Json::writeString(writer, this->pokedex.getRegionData(region));
 
-        res.set_content(output, "application/json");
-    });
+            if (output.empty())
+            {
+                logger.warning(
+                    "HttpRouter::initializeRoutes Received no Pokemon information from the "
+                    "database");
+            }
 
-    server.Get(R"(/getStarting/([a-zA-Z]+))", [this](const httplib::Request &req, httplib::Response &res) {
-        Json::StreamWriterBuilder writer;
+            res.set_content(output, "application/json");
+        });
 
-        this->logger.debug("HttpRouter::initializeRoutes getStarting envoked");
-                
-        std::string region = req.matches[1].str();
+    server.Get(
+        R"(/getStarting/([a-zA-Z]+))",
+        [this](const httplib::Request &req, httplib::Response &res)
+        {
+            Json::StreamWriterBuilder writer;
 
-        if(region.empty()) {
-            logger.warning("HttpRouter::initializeRoutes Received no region from the page");
-        }
-        else {
-            logger.info("HttpRouter::initializeRoutes Received the region: " + region + " from the page");
-        }
+            this->logger.debug("HttpRouter::initializeRoutes getStarting envoked");
 
-        std::string output = Json::writeString(writer, this->pokedex.getRegionData(region, true));
+            std::string region = req.matches[1].str();
 
-        if(output.empty()) {
-            logger.warning("HttpRouter::initializeRoutes Received no Pokemon information from the database");
-        }
+            if (region.empty())
+            {
+                logger.warning("HttpRouter::initializeRoutes Received no region from the page");
+            }
+            else
+            {
+                logger.info("HttpRouter::initializeRoutes Received the region: " + region +
+                            " from the page");
+            }
 
-        res.set_content(output, "application/json");
-    });
+            std::string output =
+                Json::writeString(writer, this->pokedex.getRegionData(region, true));
+
+            if (output.empty())
+            {
+                logger.warning(
+                    "HttpRouter::initializeRoutes Received no Pokemon information from the "
+                    "database");
+            }
+
+            res.set_content(output, "application/json");
+        });
 }
