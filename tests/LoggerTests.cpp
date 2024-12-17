@@ -10,7 +10,7 @@
 class LoggerTest : public ::testing::Test {
 protected:
     void SetUp() override {
-        _putenv("LOG_DIR=../logs");
+        _putenv("LOG_DIR=logs");
         std::string logDirEnv = std::getenv("LOG_DIR");
         testLogFileDir = logDirEnv + "/";
     }
