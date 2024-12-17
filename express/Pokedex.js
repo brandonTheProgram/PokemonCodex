@@ -30,7 +30,7 @@ app.get('/', async (req, res) => {
 
     try {        
         // Send request to C++ backend (httplib) on port 8080 and get data from the respones
-        const regionNamesResponse = await axios.get(`http://localhost:8080/GetRegionNames`);
+        const regionNamesResponse = await axios.get(`http://localhost:8080/getRegionData`);
         const regionNames = regionNamesResponse.data;
 
         const latestPokemonResponse = await axios.get(`http://localhost:8080/getLatestsPokemon`);

@@ -9,14 +9,14 @@ HttpRouter::HttpRouter(httplib::Server &server) : pokedex(), logger(Logger::getI
 
 void HttpRouter::initializeRoutes(httplib::Server &server)
 {
-    server.Get("/GetRegionNames",
+    server.Get("/getRegionData",
                [this](const httplib::Request &req, httplib::Response &res)
                {
                    Json::StreamWriterBuilder writer;
 
-                   this->logger.debug("HttpRouter::initializeRoutes GetRegionNames envoked");
+                   this->logger.debug("HttpRouter::initializeRoutes getRegionData envoked");
 
-                   std::string output = Json::writeString(writer, this->pokedex.getRegionNames());
+                   std::string output = Json::writeString(writer, this->pokedex.getRegionData());
 
                    if (output.empty())
                    {
@@ -68,7 +68,8 @@ void HttpRouter::initializeRoutes(httplib::Server &server)
                             " from the page");
             }
 
-            std::string output = Json::writeString(writer, this->pokedex.getRegionData(region));
+            std::string output =
+                Json::writeString(writer, this->pokedex.getRegionPokemonData(region));
 
             if (output.empty())
             {
@@ -101,7 +102,7 @@ void HttpRouter::initializeRoutes(httplib::Server &server)
             }
 
             std::string output =
-                Json::writeString(writer, this->pokedex.getRegionData(region, true));
+                Json::writeString(writer, this->pokedex.getRegionPokemonData(region, true));
 
             if (output.empty())
             {

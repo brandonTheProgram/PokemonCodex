@@ -23,20 +23,12 @@
         <% regions.forEach(function(region, index) { %>
             <a href="/region/<%- region.name %>" class="col text-center region__link">
                 <div class="region__img shadow">
-                    <img src="/icons/<%- region.name %>.png" width="220" height="200"  alt=<%- region.name %> loading="lazy">
+                    <img src="<%= region.image %>" width="220" height="200"  alt=<%- region.name %> loading="lazy">
                 </div>
                 <div class="pt-1"><%- region.name %> Region</div>
             </a>
         <% }) %>
     <% } %>
-
-    <a href="/region/All" class="col text-center region__link">
-        <div class="region__img shadow">
-            <img src="/icons/ViewAll.png" width="220" height="200"  alt="View All" loading="lazy">
-        </div>
-        <div class="pt-1">View All</div>
-    </a>
-
 </div>
 <!-- Regions End -->
 

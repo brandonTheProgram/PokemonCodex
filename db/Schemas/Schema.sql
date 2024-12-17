@@ -11,6 +11,19 @@ CREATE TABLE IF NOT EXISTS Pokemon_Type (
 );
 
 /*******
+Pokémon Region Table
+
+Store the unique regions in the Pokémon world.
+*******/
+CREATE TABLE IF NOT EXISTS Pokemon_Region (
+    region_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE, -- e.g., 'Kanto', 'Johto'
+    image TEXT NOT NULL,
+    start INTEGER NOT NULL,
+    end INTEGER NOT NULL
+);
+
+/*******
 Pokémon Move Category Table
 
 Store the unique Pokémon move category identifiers.
