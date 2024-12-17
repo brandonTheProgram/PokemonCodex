@@ -24,6 +24,22 @@ CREATE TABLE IF NOT EXISTS Pokemon_Region (
 );
 
 /*******
+Pokémon Type Effectiveness Table
+
+Represents the interaction between attacking types and defending types, including a damage multiplier.
+*******/
+CREATE TABLE IF NOT EXISTS Pokemon_Type_Effectiveness (
+    type_effectiveness_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    attacking_type_id INTEGER NOT NULL, -- Reference to the attacker's Pokémon type (from Pokemon_Move_Type table)
+    defending_type_id INTEGER NOT NULL, -- Reference to the defending's Pokémon type (from Pokemon_Move_Type table)
+    damage_multiplier REAL NOT NULL,    -- Effectiveness multiplier (e.g., 2.0, 0.5, 0.0)
+
+    -- Foreign key constraints to ensure valid type IDs
+    FOREIGN KEY (attacking_type_id) REFERENCES Pokemon_Type(type_id),
+    FOREIGN KEY (defending_type_id) REFERENCES Pokemon_Type(type_id)
+);
+
+/*******
 Pokémon Move Category Table
 
 Store the unique Pokémon move category identifiers.
