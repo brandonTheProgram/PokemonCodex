@@ -18,6 +18,7 @@ class SQLManager
         void prepareStatement(const std::string& query);
         void bind(const int& index, const int& value);
         void bind(const int& index, const std::string& value);
+        void bind(const int& index, const int* value);
         std::vector<std::vector<std::string>> fetchResults();
 
     private:

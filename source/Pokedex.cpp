@@ -10,6 +10,7 @@ Pokedex::Pokedex()
       regions()
 {
     this->initializeRegions();
+    this->initializePokemonTypes();
 }
 
 Json::Value Pokedex::getRegionPokemonData(const std::string& region, const bool& shouldLimit)
@@ -17,7 +18,7 @@ Json::Value Pokedex::getRegionPokemonData(const std::string& region, const bool&
     Json::Value regionData(Json::arrayValue);
     int limit;
 
-    this->logger.debug("Pokedex::getRegionPokemonData invoked");
+    this->logger.debug("Pokedex::getRegionPokemonData invoked for " + region);
 
     if (this->regions.find(region) == this->regions.end())
     {
@@ -27,7 +28,7 @@ Json::Value Pokedex::getRegionPokemonData(const std::string& region, const bool&
 
     // Get the respective region range
     std::uint32_t start = this->regions[region].start;
-    std::uint32_t end = this->regions[region].end;
+    std::uint32_t end   = this->regions[region].end;
 
     // Grab the Pokemon from the respective region
     this->logger.info("Pokedex::getRegionPokemonData Grabbing the Pokemon from the " + region +
@@ -83,7 +84,7 @@ Json::Value Pokedex::getLatestsPokemon()
 
     // Get the latest region range
     std::uint32_t start = this->regions["All"].start;
-    std::uint32_t end = this->regions["All"].end;
+    std::uint32_t end   = this->regions["All"].end;
 
     // Grab the latest Pokemon
     if (limit < start || limit > end)
@@ -109,6 +110,137 @@ Json::Value Pokedex::getLatestsPokemon()
     return this->pokemonButtonDataToJsonValue(results);
 }
 
+Json::Value Pokedex::getPokemonData(const std::string& pokedexNumber,
+                                    const std::string& regionalFormId)
+{
+    Json::Value targetPokemon(Json::objectValue);
+
+    this->logger.debug("Pokedex::getPokemonData invoked for Pokedex Number: " + pokedexNumber +
+                       " and Regional Form: " + regionalFormId);
+
+    // Grab the target Pokemon basic information
+    this->sqlManager.prepareStatement(
+        "SELECT * FROM Pokemon WHERE pokedex_number = ? AND region_id IS ?;");
+    this->sqlManager.bind(1, pokedexNumber);
+
+    try
+    {
+        if (regionalFormId.empty())
+        {
+            this->sqlManager.bind(2, nullptr);
+        }
+        else
+        {
+            this->sqlManager.bind(2, std::stoi(regionalFormId));
+        }
+
+        auto results = this->sqlManager.fetchResults();
+
+        if (results.empty())
+        {
+            this->logger.warning("No Pokemon was found that matching the Pokedex Number " +
+                                 pokedexNumber);
+            return targetPokemon;
+        }
+
+        // Popualte variables with info grabbed from the database
+        std::string pokedexNumber    = results[0].at(0);
+        std::string regionId         = results[0].at(1);
+        std::string name             = results[0].at(2);
+        std::string image            = results[0].at(3);
+        std::string species          = results[0].at(4);
+        std::string primaryType      = results[0].at(5);
+        std::string secondaryType    = results[0].at(6);
+        std::string primaryAbility   = results[0].at(7);
+        std::string secondaryAbility = results[0].at(8);
+        std::string hiddenAbility    = results[0].at(9);
+        std::string description      = results[0].at(10);
+
+        // Modify name based on regional form
+        if (!regionalFormId.empty())
+        {
+            // Append the name of the regional form to the Pokemon's name
+            name = this->queryRegionalFormTable(std::stoi(regionalFormId)) + " " + name;
+        }
+
+        // Modify pokemon type(s) into strings and query for the type effectivess based on the
+        // values
+        if (secondaryType == "NULL")
+        {
+            targetPokemon["type_effectiveness"] =
+                this->queryTypeEffectivnessTable(std::stoi(primaryType), 0);
+            secondaryType = "";
+        }
+        else
+        {
+            targetPokemon["type_effectiveness"] =
+                this->queryTypeEffectivnessTable(std::stoi(primaryType), std::stoi(secondaryType));
+            secondaryType = this->queryTypeTable(std::stoi(secondaryType));
+        }
+        primaryType = this->queryTypeTable(std::stoi(primaryType));
+
+        // Modify pokemon ability(s) into strings
+        primaryAbility = this->queryAbilityTable(std::stoi(primaryAbility));
+
+        if (secondaryAbility == "NULL")
+        {
+            secondaryAbility = "";
+        }
+        else
+        {
+            secondaryAbility = this->queryAbilityTable(std::stoi(secondaryAbility));
+        }
+
+        if (hiddenAbility == "NULL")
+        {
+            hiddenAbility = "";
+        }
+        else
+        {
+            hiddenAbility = this->queryAbilityTable(std::stoi(hiddenAbility));
+        }
+
+        // Grab the target Pokemon's evolutionary line
+
+        targetPokemon["pokedex_number"]    = pokedexNumber;
+        targetPokemon["region_id"]         = regionId;
+        targetPokemon["name"]              = name;
+        targetPokemon["image"]             = image;
+        targetPokemon["species"]           = species;
+        targetPokemon["primary_type"]      = primaryType;
+        targetPokemon["secondary_type"]    = secondaryType;
+        targetPokemon["primary_ability"]   = primaryAbility;
+        targetPokemon["secondary_ability"] = secondaryAbility;
+        targetPokemon["hidden_ability"]    = hiddenAbility;
+        targetPokemon["description"]       = description;
+    }
+    catch (const std::invalid_argument& e)
+    {
+        this->logger.critical("Pokedex::getPokemonData caught an exception: " +
+                              std::string(e.what()));
+        return Json::Value(Json::objectValue);
+    }
+
+    return targetPokemon;
+}
+
+Json::Value Pokedex::getPokemonTypes() const
+{
+    Json::Value pokemonTypes(Json::arrayValue);
+
+    this->logger.debug("Pokedex::getPokemonTypes invoked");
+
+    for (std::string pokemonType : this->pokemonTypes)
+    {
+        Json::Value type(Json::objectValue);
+        type["name"] = pokemonType;
+
+        pokemonTypes.append(type);
+    }
+
+    return pokemonTypes;
+}
+
 Json::Value Pokedex::getRegionData() const
 {
     Json::Value regionNames(Json::arrayValue);
@@ -118,7 +250,7 @@ Json::Value Pokedex::getRegionData() const
     for (std::string key : this->keys)
     {
         Json::Value region(Json::objectValue);
-        region["name"] = key;
+        region["name"]  = key;
         region["image"] = this->regions.at(key).image;
 
         regionNames.append(region);
@@ -144,21 +276,57 @@ void Pokedex::initializeRegions()
             "in the database");
     }
 
-    for (const auto& row : results)
+    try
     {
-        std::string name = Json::Value(row.at(0)).asString();
-        std::string image = Json::Value(row.at(1)).asString();
-        std::uint32_t start = std::stoi(Json::Value(row.at(2)).asString());
-        std::uint32_t end = std::stoi(Json::Value(row.at(3)).asString());
+        for (const auto& row : results)
+        {
+            std::string name    = Json::Value(row.at(0)).asString();
+            std::string image   = Json::Value(row.at(1)).asString();
+            std::uint32_t start = std::stoi(Json::Value(row.at(2)).asString());
+            std::uint32_t end   = std::stoi(Json::Value(row.at(3)).asString());
 
-        this->regions[row.at(0)] = Region(name, image, start, end);
-        this->keys.push_back(name);
+            this->regions[row.at(0)] = Region(name, image, start, end);
+            this->keys.push_back(name);
+        }
+    }
+    catch (const std::invalid_argument& e)
+    {
+        this->logger.critical("Pokedex::initializeRegions caught an exception: " +
+                              std::string(e.what()));
+        throw e;
     }
 }
 
-std::string Pokedex::getRegionalFormName(const std::uint32_t& id)
+void Pokedex::initializePokemonTypes()
 {
-    this->logger.debug("Pokedex::getRegionalFormName invoked");
+    this->logger.debug("Pokedex::initializePokemonTypes invoked");
+
+    this->sqlManager.prepareStatement("SELECT type_name FROM Pokemon_Type;");
+
+    auto results = this->sqlManager.fetchResults();
+
+    if (results.empty())
+    {
+        this->logger.critical(
+            "No Pokemon Types were found in the database, verify that Pokemon_Type table is "
+            "populated "
+            "in the database");
+        throw std::runtime_error(
+            "No Pokemon Types were found in the database, verify that Pokemon_Type table is "
+            "populated "
+            "in the database");
+    }
+
+    for (const auto& row : results)
+    {
+        std::string name = Json::Value(row.at(0)).asString();
+        this->pokemonTypes.push_back(name);
+    }
+}
+
+std::string Pokedex::queryRegionalFormTable(const std::uint32_t& id)
+{
+    this->logger.debug("Pokedex::queryRegionalFormTable invoked to query: " + std::to_string(id));
 
     std::string regionalFormName = "";
 
@@ -177,6 +345,114 @@ std::string Pokedex::getRegionalFormName(const std::uint32_t& id)
     return Json::Value(results[0].at(0)).asString();
 }
 
+std::string Pokedex::queryTypeTable(const std::uint32_t& id)
+{
+    this->logger.debug("Pokedex::queryTypeTable invoked to query: " + std::to_string(id));
+
+    std::string type = "";
+
+    this->sqlManager.prepareStatement("SELECT type_name FROM Pokemon_Type WHERE type_id = ?;");
+    this->sqlManager.bind(1, id);
+    auto results = this->sqlManager.fetchResults();
+
+    if (results.empty())
+    {
+        this->logger.warning("No type was found that matches the id of " + std::to_string(id));
+        return type;
+    }
+
+    return Json::Value(results[0].at(0)).asString();
+}
+
+std::string Pokedex::queryAbilityTable(const std::uint32_t& id)
+{
+    this->logger.debug("Pokedex::queryAbilityTable invoked to query: " + std::to_string(id));
+
+    std::string ability = "";
+
+    this->sqlManager.prepareStatement(
+        "SELECT name, description FROM Pokemon_Ability WHERE ability_id = ?;");
+    this->sqlManager.bind(1, id);
+    auto results = this->sqlManager.fetchResults();
+
+    if (results.empty())
+    {
+        this->logger.warning("No ability was found that matches the id of " + std::to_string(id));
+        return ability;
+    }
+
+    return Json::Value(results[0].at(0)).asString() + ": " +
+           Json::Value(results[0].at(1)).asString();
+}
+
+Json::Value Pokedex::queryTypeEffectivnessTable(const std::uint32_t& primaryTypeId,
+                                                const std::uint32_t& secondaryTypeId)
+{
+    this->logger.debug("Pokedex::queryTypeEffectivnessTable invoked to query: " +
+                       std::to_string(primaryTypeId) + " and " + std::to_string(secondaryTypeId));
+
+    Json::Value pokemonTypeEffective(Json::arrayValue);
+
+    this->sqlManager.prepareStatement(
+        "SELECT defending_type_id, attacking_type_id, damage_multiplier "
+        "FROM Pokemon_Type_Effectivness "
+        "WHERE attacking_type_id IN (?, ?);");
+    this->sqlManager.bind(1, primaryTypeId);
+    this->sqlManager.bind(2, secondaryTypeId);
+    auto results = this->sqlManager.fetchResults();
+
+    if (results.empty())
+    {
+        this->logger.warning("No type effectiveness was found for the provided type IDs: " +
+                             std::to_string(primaryTypeId) + " and " +
+                             std::to_string(secondaryTypeId));
+        return pokemonTypeEffective;
+    }
+
+    // Create a map to store effectiveness grouped by defending_type_id
+    std::unordered_map<std::uint32_t, double> effectivenessMap;
+
+    try
+    {
+        // Process the results for both primary and secondary types
+        for (const auto& row : results)
+        {
+            std::uint32_t defendingTypeId = static_cast<std::uint32_t>(std::stoul(row[0]));
+            std::uint32_t attackingTypeId = static_cast<std::uint32_t>(std::stoul(row[1]));
+            double damageMultiplier       = std::stod(row[2]);
+
+            if (attackingTypeId == primaryTypeId)
+            {
+                // Initialize with primary type damage multipliers
+                effectivenessMap[defendingTypeId] = damageMultiplier;
+            }
+            else if (attackingTypeId == secondaryTypeId)
+            {
+                // Combine with existing primary type multiplier (if present)
+                if (effectivenessMap.find(defendingTypeId) != effectivenessMap.end())
+                {
+                    effectivenessMap[defendingTypeId] *= damageMultiplier;
+                }
+            }
+        }
+
+        for (auto i : effectivenessMap)
+        {
+            Json::Value typeEffectiveness;
+            typeEffectiveness["damage_multiplier"] = i.second;
+            pokemonTypeEffective.append(typeEffectiveness);
+        }
+    }
+    catch (const std::invalid_argument& e)
+    {
+        this->logger.critical("Pokedex::queryTypeEffectivnessTable caught an exception: " +
+                              std::string(e.what()));
+        return Json::Value(Json::arrayValue);
+    }
+
+    return pokemonTypeEffective;
+}
+
 Json::Value Pokedex::pokemonButtonDataToJsonValue(
     const std::vector<std::vector<std::string>>& results)
 {
@@ -184,27 +460,37 @@ Json::Value Pokedex::pokemonButtonDataToJsonValue(
 
     this->logger.debug("Pokedex::pokemonButtonDataToJsonValue invoked");
 
-    for (const auto& row : results)
+    try
     {
-        Json::Value pokemon(Json::objectValue);
-
-        pokemon["pokedex_number"] = row.at(0);
-        pokemon["region_id"] = row.at(1);
-        pokemon["name"] = row.at(2);
-        pokemon["image"] = row.at(3);
-
-        // Apply the region form to the name if present
-        std::string regionId = pokemon["region_id"].asString();
-        if (regionId != "NULL")
+        for (const auto& row : results)
         {
-            // Append the name of the regional form to the Pokemon's name
-            pokemon["name"] = Json::Value(this->getRegionalFormName(std::stoi(regionId)) + " " +
-                                          pokemon["name"].asString());
+            Json::Value pokemon(Json::objectValue);
+
+            pokemon["pokedex_number"] = row.at(0);
+            pokemon["region_id"]      = row.at(1);
+            pokemon["name"]           = row.at(2);
+            pokemon["image"]          = row.at(3);
+
+            // Apply the region form to the name if present
+            std::string regionId = pokemon["region_id"].asString();
+            if (regionId != "NULL")
+            {
+                // Append the name of the regional form to the Pokemon's name
+                pokemon["name"] = Json::Value(this->queryRegionalFormTable(std::stoi(regionId)) +
+                                              " " + pokemon["name"].asString());
+            }
+
+            logger.debug("Pokedex::pokemonButtonDataToJsonValue Found: " +
+                         pokemon["name"].asString());
+
+            pokemonButtons.append(pokemon);
         }
-
-        logger.debug("Pokedex::pokemonButtonDataToJsonValue Found: " + pokemon["name"].asString());
-
-        pokemonButtons.append(pokemon);
+    }
+    catch (const std::invalid_argument& e)
+    {
+        this->logger.critical("Pokedex::pokemonButtonDataToJsonValue caught an exception: " +
+                              std::string(e.what()));
+        return Json::Value(Json::arrayValue);
     }
 
     return pokemonButtons;
@@ -232,7 +518,8 @@ std::uint32_t Pokedex::getLimitEnvVar(const bool& latest) const
     }
     catch (const std::exception& e)
     {
-        this->logger.warning("Pokedex::getLimitEnvVar: " + std::string(e.what()));
+        this->logger.critical("Pokedex::getLimitEnvVar caught an exception: " +
+                              std::string(e.what()));
     }
 
     return limit;

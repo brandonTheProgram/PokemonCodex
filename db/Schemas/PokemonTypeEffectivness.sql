@@ -1,5 +1,5 @@
 BEGIN TRANSACTION;
-INSERT INTO Pokemon_Type_Effectiveness (attacking_type_id, defending_type_id, damage_multiplier)
+INSERT INTO Pokemon_Type_Effectivness (attacking_type_id, defending_type_id, damage_multiplier)
 VALUES
 
 -- Normal

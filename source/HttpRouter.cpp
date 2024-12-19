@@ -20,9 +20,13 @@ void HttpRouter::initializeRoutes(httplib::Server &server)
 
                    if (output.empty())
                    {
+                       res.status = 404;  // Not Found
                        logger.warning(
-                           "HttpRouter::initializeRoutes Received no Pokemon information from the "
+                           "HttpRouter::initializeRoutes Received no region information from the "
                            "database");
+                       res.set_content("{\"error\": \"Region Data not found\"}",
+                                       "application/json");
+                       return;
                    }
 
                    res.set_content(output, "application/json");
@@ -40,9 +44,12 @@ void HttpRouter::initializeRoutes(httplib::Server &server)
 
                    if (output.empty())
                    {
+                       res.status = 404;  // Not Found
                        logger.warning(
                            "HttpRouter::initializeRoutes Received no Pokemon information from the "
                            "database");
+                       res.set_content("{\"error\": \"Pokemon not found\"}", "application/json");
+                       return;
                    }
 
                    res.set_content(output, "application/json");
@@ -53,6 +60,7 @@ void HttpRouter::initializeRoutes(httplib::Server &server)
         [this](const httplib::Request &req, httplib::Response &res)
         {
             Json::StreamWriterBuilder writer;
+            std::string output = "";
 
             this->logger.debug("HttpRouter::initializeRoutes /region/ envoked");
 
@@ -60,22 +68,27 @@ void HttpRouter::initializeRoutes(httplib::Server &server)
 
             if (region.empty())
             {
+                res.status = 404;  // Not Found
                 logger.warning("HttpRouter::initializeRoutes Received no region from the page");
+                res.set_content("{\"error\": \"No region received\"}", "application/json");
+                return;
             }
             else
             {
                 logger.info("HttpRouter::initializeRoutes Received the region: " + region +
                             " from the page");
-            }
 
-            std::string output =
-                Json::writeString(writer, this->pokedex.getRegionPokemonData(region));
+                output = Json::writeString(writer, this->pokedex.getRegionPokemonData(region));
 
-            if (output.empty())
-            {
-                logger.warning(
-                    "HttpRouter::initializeRoutes Received no Pokemon information from the "
-                    "database");
+                if (output.empty())
+                {
+                    res.status = 404;  // Not Found
+                    logger.warning(
+                        "HttpRouter::initializeRoutes Received no Pokemon information from the "
+                        "database");
+                    res.set_content("{\"error\": \"Pokemon not found\"}", "application/json");
+                    return;
+                }
             }
 
             res.set_content(output, "application/json");
@@ -86,6 +99,7 @@ void HttpRouter::initializeRoutes(httplib::Server &server)
         [this](const httplib::Request &req, httplib::Response &res)
         {
             Json::StreamWriterBuilder writer;
+            std::string output = "";
 
             this->logger.debug("HttpRouter::initializeRoutes getStarting envoked");
 
@@ -93,24 +107,95 @@ void HttpRouter::initializeRoutes(httplib::Server &server)
 
             if (region.empty())
             {
+                res.status = 404;  // Not Found
                 logger.warning("HttpRouter::initializeRoutes Received no region from the page");
+                res.set_content("{\"error\": \"No region received\"}", "application/json");
+                return;
             }
             else
             {
                 logger.info("HttpRouter::initializeRoutes Received the region: " + region +
                             " from the page");
-            }
 
-            std::string output =
-                Json::writeString(writer, this->pokedex.getRegionPokemonData(region, true));
+                output =
+                    Json::writeString(writer, this->pokedex.getRegionPokemonData(region, true));
 
-            if (output.empty())
-            {
-                logger.warning(
-                    "HttpRouter::initializeRoutes Received no Pokemon information from the "
-                    "database");
+                if (output.empty())
+                {
+                    res.status = 404;  // Not Found
+                    logger.warning(
+                        "HttpRouter::initializeRoutes Received no Pokemon information from the "
+                        "database");
+                    res.set_content("{\"error\": \"Pokemon not found\"}", "application/json");
+                    return;
+                }
             }
 
             res.set_content(output, "application/json");
         });
+
+    server.Get(
+        R"(/pokemon/(\d+)(?:/(\d+))?)",
+        [this](const httplib::Request &req, httplib::Response &res)
+        {
+            Json::StreamWriterBuilder writer;
+            std::string output;
+
+            this->logger.debug("HttpRouter::initializeRoutes /pokemon/ envoked");
+
+            std::string pokedexNumber  = req.matches[1].str();
+            std::string regionalFormId = req.matches.size() > 2 ? req.matches[2].str() : "";
+
+            if (pokedexNumber.empty())
+            {
+                res.status = 404;  // Not Found
+                logger.warning(
+                    "HttpRouter::initializeRoutes Received no pokdex number from the page");
+                res.set_content("{\"error\": \"No pokdex number received\"}", "application/json");
+                return;
+            }
+            else
+            {
+                logger.info("HttpRouter::initializeRoutes Received the Pokemon: " + pokedexNumber +
+                            " from the page");
+
+                output = Json::writeString(
+                    writer, this->pokedex.getPokemonData(pokedexNumber, regionalFormId));
+
+                if (output.empty())
+                {
+                    res.status = 404;  // Not Found
+                    logger.warning(
+                        "HttpRouter::initializeRoutes Received no Pokemon information from the "
+                        "database");
+                    res.set_content("{\"error\": \"Pokemon not found\"}", "application/json");
+                    return;
+                }
+            }
+
+            res.set_content(output, "application/json");
+        });
+
+    server.Get("/getPokemonTypes",
+               [this](const httplib::Request &req, httplib::Response &res)
+               {
+                   Json::StreamWriterBuilder writer;
+
+                   this->logger.debug("HttpRouter::initializeRoutes getPokemonTypes envoked");
+
+                   std::string output = Json::writeString(writer, this->pokedex.getPokemonTypes());
+
+                   if (output.empty())
+                   {
+                       res.status = 404;  // Not Found
+                       logger.warning(
+                           "HttpRouter::initializeRoutes Received no Pokemon information from the "
+                           "database");
+                       res.set_content("{\"error\": \"Pokemon types not found\"}",
+                                       "application/json");
+                       return;
+                   }
+
+                   res.set_content(output, "application/json");
+               });
 }

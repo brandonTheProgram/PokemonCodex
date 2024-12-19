@@ -28,7 +28,7 @@ Pokémon Type Effectiveness Table
 
 Represents the interaction between attacking types and defending types, including a damage multiplier.
 *******/
-CREATE TABLE IF NOT EXISTS Pokemon_Type_Effectiveness (
+CREATE TABLE IF NOT EXISTS Pokemon_Type_Effectivness (
     type_effectiveness_id INTEGER PRIMARY KEY AUTOINCREMENT,
     attacking_type_id INTEGER NOT NULL, -- Reference to the attacker's Pokémon type (from Pokemon_Move_Type table)
     defending_type_id INTEGER NOT NULL, -- Reference to the defending's Pokémon type (from Pokemon_Move_Type table)

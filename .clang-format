@@ -8,3 +8,5 @@ IndentAccessModifiers: true
 AlignTrailingComments:
   Kind: Always
   OverEmptyLines: 2
+AlignConsecutiveAssignments:
+  Enabled: true

@@ -32,11 +32,19 @@ class Pokedex
         Json::Value getRegionPokemonData(const std::string& region,
                                          const bool& shouldLimit = false);
         Json::Value getLatestsPokemon();
+        Json::Value getPokemonData(const std::string& pokedexNumber,
+                                   const std::string& regionalFormId);
+        Json::Value getPokemonTypes() const;
         Json::Value getRegionData() const;
 
     private:
         void initializeRegions();
-        std::string getRegionalFormName(const std::uint32_t& id);
+        void initializePokemonTypes();
+        std::string queryRegionalFormTable(const std::uint32_t& id);
+        std::string queryTypeTable(const std::uint32_t& id);
+        std::string queryAbilityTable(const std::uint32_t& id);
+        Json::Value queryTypeEffectivnessTable(const std::uint32_t& primaryTypeId,
+                                               const std::uint32_t& secondaryTypeId);
         Json::Value pokemonButtonDataToJsonValue(
             const std::vector<std::vector<std::string>>& results);
         std::uint32_t getLimitEnvVar(const bool& latest = false) const;
@@ -44,6 +52,7 @@ class Pokedex
         SQLManager sqlManager;
         Logger& logger;
         std::vector<std::string> keys;
+        std::vector<std::string> pokemonTypes;
         std::unordered_map<std::string, Region> regions;
 };
 

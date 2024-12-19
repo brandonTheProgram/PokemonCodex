@@ -42,7 +42,8 @@ void SQLManager::prepareStatement(const std::string& query)
 
 void SQLManager::bind(const int& index, const int& value)
 {
-    this->logger.debug("SQLManager::bind invoked");
+    this->logger.debug("SQLManager::bind invoked to bind " + std::to_string(value) + " to index " +
+                       std::to_string(index));
 
     try
     {
@@ -58,7 +59,8 @@ void SQLManager::bind(const int& index, const int& value)
 
 void SQLManager::bind(const int& index, const std::string& value)
 {
-    this->logger.debug("SQLManager::bind invoked");
+    this->logger.debug("SQLManager::bind invoked to bind " + value + " to index " +
+                       std::to_string(index));
 
     try
     {
@@ -71,9 +73,25 @@ void SQLManager::bind(const int& index, const std::string& value)
     }
 }
 
+void SQLManager::bind(const int& index, const int* value)
+{
+    (void)value;
+    this->logger.debug("SQLManager::bind invoked to bind NULL to index " + std::to_string(index));
+
+    try
+    {
+        this->stmt_->bind(index);
+    }
+    catch (const SQLite::Exception& e)
+    {
+        this->logger.critical("SQLManager::bind Failed to bind: NULL to index: " +
+                              std::to_string(index) + ". Error message: " + std::string(e.what()));
+    }
+}
+
 std::vector<std::vector<std::string>> SQLManager::fetchResults()
 {
-    this->logger.debug("SQLManager::bind fetchResults");
+    this->logger.debug("SQLManager::fetchResults");
 
     std::vector<std::vector<std::string>> results;
 

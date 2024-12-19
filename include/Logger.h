@@ -34,7 +34,7 @@ class Logger
         Logger(const std::string& logDir,
                const std::string& fileName);                  // Private constructor
         ~Logger();                                            // Private destructor
-        Logger(const Logger&) = delete;                       // Delete copy constructor
+        Logger(const Logger&)            = delete;            // Delete copy constructor
         Logger& operator=(const Logger&) = delete;            // Delete assignment operator
 
         std::string getCurrentTime() const;                   // Helper to get current time
