@@ -35,7 +35,12 @@
         </div>
 
         <!-- Display the Pokemon's description -->
-        <div class="row"><%- pokemon.description  %></div>
+        <div class="container">
+          <h3>Description</h3>
+          <div class="row">
+            <%- pokemon.description %>
+          </div>
+        </div>
 
         <p></p>
 
@@ -55,11 +60,13 @@
                     (Hidden) <%- pokemon.hidden_ability %>
                 </div> 
             <% } %>
+            <br>
         </div>
 
         <!-- Display the Pokemon's type effectiveness -->
         <% if (pokemonTypes != null) { %>
           <table>
+            <h3>Weakness</h3>
             <thead>
                 <tr>
                   <% pokemonTypes.forEach(pokemonType => { %>
@@ -70,12 +77,16 @@
             <tbody>
                 <tr>
                     <% pokemon.type_effectiveness.forEach(effectiveness => { %>
-                        <td><%= effectiveness.damage_multiplier %></td>
+                        <td class="<% if (effectiveness.damage_multiplier === 2) { %>twice_damage<%} else if (effectiveness.damage_multiplier === 1) { %>normal_damge<%} else if (effectiveness.damage_multiplier === 0.5) { %>half_damage<%} else if (effectiveness.damage_multiplier === 0.25) { %>quarter_damage<%} else { %>no_damage<%} %>">
+                          <%= effectiveness.damage_multiplier %>
+                        </td>
                     <% }); %>
                 </tr>
             </tbody>
           </table>
         <% } %>
+
+        <!-- Display the Pokemon's evolutionary line -->
     </div>
 <% } else { %> 
     <p>No Pokemon Found</p>

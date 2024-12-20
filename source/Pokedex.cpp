@@ -396,7 +396,7 @@ Json::Value Pokedex::queryTypeEffectivnessTable(const std::uint32_t& primaryType
     this->sqlManager.prepareStatement(
         "SELECT defending_type_id, attacking_type_id, damage_multiplier "
         "FROM Pokemon_Type_Effectivness "
-        "WHERE attacking_type_id IN (?, ?);");
+        "WHERE attacking_type_id IN (?, ?)  ORDER BY defending_type_id ASC;");
     this->sqlManager.bind(1, primaryTypeId);
     this->sqlManager.bind(2, secondaryTypeId);
     auto results = this->sqlManager.fetchResults();
@@ -421,18 +421,13 @@ Json::Value Pokedex::queryTypeEffectivnessTable(const std::uint32_t& primaryType
             std::uint32_t attackingTypeId = static_cast<std::uint32_t>(std::stoul(row[1]));
             double damageMultiplier       = std::stod(row[2]);
 
-            if (attackingTypeId == primaryTypeId)
+            if (effectivenessMap.find(defendingTypeId) != effectivenessMap.end())
             {
-                // Initialize with primary type damage multipliers
-                effectivenessMap[defendingTypeId] = damageMultiplier;
+                effectivenessMap[defendingTypeId] *= damageMultiplier;
             }
-            else if (attackingTypeId == secondaryTypeId)
+            else
             {
-                // Combine with existing primary type multiplier (if present)
-                if (effectivenessMap.find(defendingTypeId) != effectivenessMap.end())
-                {
-                    effectivenessMap[defendingTypeId] *= damageMultiplier;
-                }
+                effectivenessMap[defendingTypeId] = damageMultiplier;
             }
         }
 

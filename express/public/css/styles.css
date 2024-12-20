@@ -14,7 +14,18 @@ a {
     color: var(--bs-dark);
 }
 
-/* Region Card */
+table, th {
+    border:1px solid black;
+    border-collapse: collapse;
+    border-spacing: 0;
+    text-align: center;
+  }
+td {
+    border: 1px solid black;
+    word-wrap: break-all;
+    text-align: center;
+}
+
 .region__link {
     text-align: center;
     display: block;
@@ -58,14 +69,22 @@ a {
     object-fit: cover;
 }
 
-table, th {
-    border:1px solid black;
-    border-collapse: collapse;
-    border-spacing: 0;
-    text-align: center;
-  }
-td {
-    border: 1px solid black;
-    word-wrap: break-all;
-    text-align: center;
+.normal_damge {
+    background-color: white;
+}
+
+.twice_damage {
+    background-color: green;
+}
+
+.half_damage {
+    background-color: red;
+}
+
+.quarter_damage {
+    background-color: orange;
+}
+
+.no_damage {
+    background-color: yellow;
 }
