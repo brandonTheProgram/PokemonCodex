@@ -87,6 +87,35 @@
         <% } %>
 
         <!-- Display the Pokemon's evolutionary line -->
+        <div class="container">
+          <br>
+          <% if (pokemon.evolutionary_line && pokemon.evolutionary_line.length > 0) { %>
+            <h3>Evolutionary Line</h3>
+            <div class="row">
+              <% pokemon.evolutionary_line.forEach(evolution => { %>
+                <div class="col-4 text-center">
+                  <a href="/pokemon/<%= evolution.base.pokedex_number %><%= evolution.base.region_id !== 'NULL' ? '/' + evolution.base.region_id : '' %>" class="col text-center region__link">
+                    <div class="pokemon__button shadow">
+                        <img src="<%= evolution.base.image %>" width="200" height="200"  alt=<%- evolution.base.name %> loading="lazy">
+                    </div>
+                    <div class="pt-1">#<%- evolution.base.pokedex_number %> <%- evolution.base.name %></div>
+                  </a>
+                </div>
+                <div class="col-4 text-center">
+                  <h5><%- evolution.evolution_condition %></h5>
+                </div>
+                <div class="col-4 text-center">
+                  <a href="/pokemon/<%= evolution.evolved.pokedex_number %><%= evolution.evolved.region_id !== 'NULL' ? '/' + evolution.evolved.region_id : '' %>" class="col text-center region__link">
+                    <div class="pokemon__button shadow">
+                        <img src="<%= evolution.evolved.image %>" width="200" height="200"  alt=<%- evolution.evolved.name %> loading="lazy">
+                    </div>
+                    <div class="pt-1">#<%- evolution.evolved.pokedex_number %> <%- evolution.evolved.name %></div>
+                  </a>
+                </div>
+              <% }); %>
+            </div>
+          <% } %>
+        </div>
     </div>
 <% } else { %> 
     <p>No Pokemon Found</p>

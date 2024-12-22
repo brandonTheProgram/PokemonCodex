@@ -139,9 +139,10 @@ CREATE TABLE IF NOT EXISTS Pokemon_Evolution (
     base_region_id INTEGER,                     -- References the region in the Pokemon_Regional_Form table. NULL for a Pokémon not being a regional variant
     evolved_region_id INTEGER,                  -- References the region in the Pokemon_Regional_Form table. NULL for a Pokémon not being a regional variant
     evolution_condition TEXT NOT NULL,          -- The condition on how the Pokemon evolves
+    chain_id INTEGER NOT NULL,                  -- Identifier for the evolutionary chain
     
     -- Key Constraints
-    PRIMARY KEY (base_pokedex_number, base_region_id, evolved_pokedex_number, evolved_region_id),
+    PRIMARY KEY (base_pokedex_number, base_region_id, evolved_pokedex_number, evolved_region_id, chain_id),
     FOREIGN KEY (base_pokedex_number, base_region_id) REFERENCES Pokemon(pokedex_number, region_id),
     FOREIGN KEY (evolved_pokedex_number, evolved_region_id) REFERENCES Pokemon(pokedex_number, region_id)
 );

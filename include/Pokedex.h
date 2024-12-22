@@ -23,6 +23,28 @@ struct Region
         }
 };
 
+struct EvolutionData
+{
+        std::uint32_t basePokedexNumber;
+        std::uint32_t evolvedPokedexNumber;
+        std::uint32_t baseRegionId;
+        std::uint32_t evolvedRegionId;
+        std::string evolutionCondition;
+        int depth;
+
+        // Constructor for easy initialization
+        EvolutionData(std::uint32_t base, std::uint32_t evolved, std::uint32_t baseRegion,
+                      std::uint32_t evolvedRegion, const std::string& condition, int d)
+            : basePokedexNumber(base),
+              evolvedPokedexNumber(evolved),
+              baseRegionId(baseRegion),
+              evolvedRegionId(evolvedRegion),
+              evolutionCondition(condition),
+              depth(d)
+        {
+        }
+};
+
 class Pokedex
 {
     public:
@@ -45,6 +67,7 @@ class Pokedex
         std::string queryAbilityTable(const std::uint32_t& id);
         Json::Value queryTypeEffectivnessTable(const std::uint32_t& primaryTypeId,
                                                const std::uint32_t& secondaryTypeId);
+        Json::Value queryEvolutionTable(const std::uint32_t& targetPokedexNumber);
         Json::Value pokemonButtonDataToJsonValue(
             const std::vector<std::vector<std::string>>& results);
         std::uint32_t getLimitEnvVar(const bool& latest = false) const;

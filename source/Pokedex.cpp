@@ -200,8 +200,6 @@ Json::Value Pokedex::getPokemonData(const std::string& pokedexNumber,
             hiddenAbility = this->queryAbilityTable(std::stoi(hiddenAbility));
         }
 
-        // Grab the target Pokemon's evolutionary line
-
         targetPokemon["pokedex_number"]    = pokedexNumber;
         targetPokemon["region_id"]         = regionId;
         targetPokemon["name"]              = name;
@@ -213,6 +211,7 @@ Json::Value Pokedex::getPokemonData(const std::string& pokedexNumber,
         targetPokemon["secondary_ability"] = secondaryAbility;
         targetPokemon["hidden_ability"]    = hiddenAbility;
         targetPokemon["description"]       = description;
+        targetPokemon["evolutionary_line"] = this->queryEvolutionTable(std::stoi(pokedexNumber));
     }
     catch (const std::invalid_argument& e)
     {
@@ -417,8 +416,8 @@ Json::Value Pokedex::queryTypeEffectivnessTable(const std::uint32_t& primaryType
         // Process the results for both primary and secondary types
         for (const auto& row : results)
         {
-            std::uint32_t defendingTypeId = static_cast<std::uint32_t>(std::stoul(row[0]));
-            std::uint32_t attackingTypeId = static_cast<std::uint32_t>(std::stoul(row[1]));
+            std::uint32_t defendingTypeId = std::stoi(row[0]);
+            std::uint32_t attackingTypeId = std::stoi(row[1]);
             double damageMultiplier       = std::stod(row[2]);
 
             if (effectivenessMap.find(defendingTypeId) != effectivenessMap.end())
@@ -446,6 +445,134 @@ Json::Value Pokedex::queryTypeEffectivnessTable(const std::uint32_t& primaryType
     }
 
     return pokemonTypeEffective;
+}
+
+Json::Value Pokedex::queryEvolutionTable(const std::uint32_t& targetPokedexNumber)
+{
+    this->logger.debug("Pokedex::queryEvolutionTable invoked to query: " +
+                       std::to_string(targetPokedexNumber));
+
+    Json::Value evolutionList(Json::arrayValue);
+
+    this->sqlManager.prepareStatement(
+        "SELECT base_pokedex_number, evolved_pokedex_number, base_region_id, evolved_region_id, "
+        "evolution_condition "
+        "FROM Pokemon_Evolution "
+        "WHERE chain_id = (SELECT chain_id FROM Pokemon_Evolution WHERE base_pokedex_number = ? OR "
+        "evolved_pokedex_number = ? LIMIT 1);");
+
+    this->sqlManager.bind(1, targetPokedexNumber);
+    this->sqlManager.bind(2, targetPokedexNumber);
+
+    auto results = this->sqlManager.fetchResults();
+
+    if (results.empty())
+    {
+        this->logger.debug("No Pokemon Evolution Line was found for the provided Pokemon: " +
+                           std::to_string(targetPokedexNumber));
+        return evolutionList;
+    }
+
+    std::vector<EvolutionData> evolutionData;
+
+    try
+    {
+        for (const auto& row : results)
+        {
+            std::uint32_t basePokedexNumber    = std::stoi(row[0]);
+            std::uint32_t evolvedPokedexNumber = std::stoi(row[1]);
+            std::uint32_t baseRegionId         = (row[2] == "NULL") ? 0 : std::stoi(row[2]);
+            std::uint32_t evolvedRegionId      = (row[3] == "NULL") ? 0 : std::stoi(row[3]);
+            std::string condition              = row[4];
+
+            // Assign depth based on relationship to targetPokedexNumber
+            int depth = 0;   // Default depth
+            if (evolvedPokedexNumber == targetPokedexNumber)
+            {
+                depth = -1;  // Pre-evolution
+            }
+            else if (basePokedexNumber == targetPokedexNumber)
+            {
+                depth = 0;  // Target Pokemon
+            }
+            else if (basePokedexNumber > targetPokedexNumber)
+            {
+                depth = 1;  // Evolution
+            }
+
+            evolutionData.emplace_back(basePokedexNumber, evolvedPokedexNumber, baseRegionId,
+                                       evolvedRegionId, condition, depth);
+        }
+
+        // Sort the data by depth and Pokédex number
+        std::sort(evolutionData.begin(), evolutionData.end(),
+                  [](const EvolutionData& a, const EvolutionData& b)
+                  {
+                      if (a.depth != b.depth) return a.depth < b.depth;
+                      return a.basePokedexNumber < b.basePokedexNumber;
+                  });
+
+        // Convert sorted data into JSON
+        for (const auto& data : evolutionData)
+        {
+            Json::Value entry(Json::objectValue);
+
+            // Fetch data to turn the evolutionary line into buttons
+            this->sqlManager.prepareStatement(
+                "SELECT pokedex_number, region_id, name, image FROM Pokemon WHERE pokedex_number = "
+                "? AND region_id IS ?;");
+            this->sqlManager.bind(1, data.basePokedexNumber);
+
+            if (data.baseRegionId == 0)
+            {
+                this->sqlManager.bind(2, nullptr);
+            }
+            else
+            {
+                this->sqlManager.bind(2, data.baseRegionId);
+            }
+
+            auto baseButtonData    = this->sqlManager.fetchResults();
+            Json::Value baseButton = this->pokemonButtonDataToJsonValue(baseButtonData);
+
+            this->sqlManager.prepareStatement(
+                "SELECT pokedex_number, region_id, name, image FROM Pokemon WHERE pokedex_number = "
+                "? AND region_id IS ?;");
+            this->sqlManager.bind(1, data.evolvedPokedexNumber);
+
+            if (data.evolvedRegionId == 0)
+            {
+                this->sqlManager.bind(2, nullptr);
+            }
+            else
+            {
+                this->sqlManager.bind(2, data.evolvedRegionId);
+            }
+
+            auto evolvedButtonData    = this->sqlManager.fetchResults();
+            Json::Value evolvedButton = this->pokemonButtonDataToJsonValue(evolvedButtonData);
+
+            // Populate the entry
+            entry["base"]                = baseButton[0];
+            entry["evolved"]             = evolvedButton[0];
+            entry["evolution_condition"] = data.evolutionCondition;
+
+            evolutionList.append(entry);
+        }
+
+        Json::StreamWriterBuilder builder;
+        builder["indentation"] = "";
+
+        this->logger.debug(Json::writeString(builder, evolutionList));
+
+        return evolutionList;
+    }
+    catch (const std::invalid_argument& e)
+    {
+        this->logger.critical("Pokedex::queryEvolutionTable caught an exception: " +
+                              std::string(e.what()));
+        return Json::Value(Json::arrayValue);
+    }
 }
 
 Json::Value Pokedex::pokemonButtonDataToJsonValue(
