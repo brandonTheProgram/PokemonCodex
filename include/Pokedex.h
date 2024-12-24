@@ -30,18 +30,29 @@ struct EvolutionData
         std::uint32_t baseRegionId;
         std::uint32_t evolvedRegionId;
         std::string evolutionCondition;
-        int depth;
 
         // Constructor for easy initialization
+        EvolutionData() = default;
+
         EvolutionData(std::uint32_t base, std::uint32_t evolved, std::uint32_t baseRegion,
-                      std::uint32_t evolvedRegion, const std::string& condition, int d)
+                      std::uint32_t evolvedRegion, const std::string& condition)
             : basePokedexNumber(base),
               evolvedPokedexNumber(evolved),
               baseRegionId(baseRegion),
               evolvedRegionId(evolvedRegion),
-              evolutionCondition(condition),
-              depth(d)
+              evolutionCondition(condition)
         {
+        }
+};
+
+struct pair_hash
+{
+        template <class T1, class T2>
+        std::size_t operator()(const std::pair<T1, T2>& pair) const
+        {
+            auto h1 = std::hash<T1>{}(pair.first);
+            auto h2 = std::hash<T2>{}(pair.second);
+            return h1 ^ (h2 << 1);  // Combine hashes
         }
 };
 
@@ -71,6 +82,7 @@ class Pokedex
         Json::Value pokemonButtonDataToJsonValue(
             const std::vector<std::vector<std::string>>& results);
         std::uint32_t getLimitEnvVar(const bool& latest = false) const;
+        void connectEvolutionaryChain(std::vector<EvolutionData>& evolutionaryChain) const;
 
         SQLManager sqlManager;
         Logger& logger;

@@ -1,4 +1,4 @@
-<% if (pokemon != null) { %>
+<% if (Object.keys(pokemon).length != 0) { %>
 
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -6,6 +6,20 @@
           <li class="breadcrumb-item active" aria-current="page"><%- pokemon.name %>  </li>
         </ol>
     </nav>
+
+    <!-- Navigation Buttons for Next and Previous Pokémon -->
+    <div class="d-flex justify-content-between mb-3">
+      <% let prevPokedexNumber = parseInt(pokemon.pokedex_number) - 1; %>
+      <% if (prevPokedexNumber > 0) { %>
+        <a href="/pokemon/<%= prevPokedexNumber %>" class="btn btn-primary">
+          Previous Pokémon (#<%= prevPokedexNumber %>)
+        </a>
+      <% } %>
+      <% let nextPokedexNumber = parseInt(pokemon.pokedex_number) + 1; %>
+      <a href="/pokemon/<%= nextPokedexNumber %>" class="btn btn-success">
+          Next Pokémon (#<%= nextPokedexNumber %>)
+      </a>
+    </div>
 
     <div class="row">
         <!-- Display the Pokemon's Image -->
@@ -87,36 +101,67 @@
         <% } %>
 
         <!-- Display the Pokemon's evolutionary line -->
-        <div class="container">
+        <div class="container text-center">
           <br>
           <% if (pokemon.evolutionary_line && pokemon.evolutionary_line.length > 0) { %>
-            <h3>Evolutionary Line</h3>
-            <div class="row">
+              <h3 align="left">Evolutionary Line</h3>
               <% pokemon.evolutionary_line.forEach(evolution => { %>
-                <div class="col-4 text-center">
-                  <a href="/pokemon/<%= evolution.base.pokedex_number %><%= evolution.base.region_id !== 'NULL' ? '/' + evolution.base.region_id : '' %>" class="col text-center region__link">
-                    <div class="pokemon__button shadow">
-                        <img src="<%= evolution.base.image %>" width="200" height="200"  alt=<%- evolution.base.name %> loading="lazy">
-                    </div>
-                    <div class="pt-1">#<%- evolution.base.pokedex_number %> <%- evolution.base.name %></div>
-                  </a>
-                </div>
-                <div class="col-4 text-center">
-                  <h5><%- evolution.evolution_condition %></h5>
-                </div>
-                <div class="col-4 text-center">
-                  <a href="/pokemon/<%= evolution.evolved.pokedex_number %><%= evolution.evolved.region_id !== 'NULL' ? '/' + evolution.evolved.region_id : '' %>" class="col text-center region__link">
-                    <div class="pokemon__button shadow">
-                        <img src="<%= evolution.evolved.image %>" width="200" height="200"  alt=<%- evolution.evolved.name %> loading="lazy">
-                    </div>
-                    <div class="pt-1">#<%- evolution.evolved.pokedex_number %> <%- evolution.evolved.name %></div>
-                  </a>
-                </div>
+                <div class="row justify-content-center align-items-center mb-2">
+                      <!-- Base Pokémon -->
+                      <div class="col-auto text-center">
+                          <a href="/pokemon/<%= evolution.base.pokedex_number %><%= evolution.base.region_id !== 'NULL' ? '/' + evolution.base.region_id : '' %>" class="region__link">
+                              <div class="pokemon__button shadow">
+                                  <img src="<%= evolution.base.image %>" width="200" height="200" alt="<%- evolution.base.name %>" loading="lazy">
+                              </div>
+                              <div class="pt-1">#<%- evolution.base.pokedex_number %> <%- evolution.base.name %></div>
+                          </a>
+                      </div>
+      
+                      <!-- Evolution Condition -->
+                      <div class="col-auto text-center">
+                          <h5 class="mb-0">
+                              <i class="bi bi-arrow-right"></i>
+                              <i class="<% 
+                                if (evolution.evolution_condition.includes('Happiness')) 
+                                { %>
+                                  bi bi-heart-fill text-danger
+                                <% } 
+                                else if (evolution.evolution_condition.includes('Stone')) 
+                                { %>
+                                  bi bi-gem text-primary
+                                <% } 
+                                else if (evolution.evolution_condition.includes('Trade')) 
+                                { %>
+                                  bi bi-arrow-repeat
+                                <% } 
+                                else if (evolution.evolution_condition.includes('Level')) 
+                                { %>
+                                  bi bi-bar-chart text-success
+                                <% } 
+                                else 
+                                { %>
+                                  bi bi-gear text-info
+                                <% } %>"></i>
+                          </h5>
+                          <h6><%- evolution.evolution_condition %></h6>
+                      </div>
+      
+                      <!-- Evolved Pokémon -->
+                      <div class="col-auto text-center">
+                          <a href="/pokemon/<%= evolution.evolved.pokedex_number %><%= evolution.evolved.region_id !== 'NULL' ? '/' + evolution.evolved.region_id : '' %>" class="region__link">
+                              <div class="pokemon__button shadow">
+                                  <img src="<%= evolution.evolved.image %>" width="200" height="200" alt="<%- evolution.evolved.name %>" loading="lazy">
+                              </div>
+                              <div class="pt-1">#<%- evolution.evolved.pokedex_number %> <%- evolution.evolved.name %></div>
+                          </a>
+                      </div>
+                  </div>
               <% }); %>
-            </div>
           <% } %>
-        </div>
+        </div>      
     </div>
 <% } else { %> 
-    <p>No Pokemon Found</p>
+  <div class="alert alert-warning text-center" role="alert">
+    No Pokémon data found. Please try again or return to the <a href="/">homepage</a>.
+  </div>
 <% } %> 

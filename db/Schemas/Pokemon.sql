@@ -104,7 +104,7 @@ VALUES
 (80, NULL, 'Slowbro', 'https://i.imgur.com/TChxa43.png', 'Hermit Crab Pokémon', 11, 14, 157, 162, 197, 'If the tail-biting Shellder is thrown off in a harsh battle, this Pokémon reverts to being an ordinary Slowpoke.'),
 (80, 2, 'Slowbro', 'https://i.imgur.com/RvIRgud.png', 'Hermit Crab Pokémon', 4, 14, 190, 162, 197, 'If this Pokémon squeezes the tongue of the Shellder biting it, the Shellder will launch a toxic liquid from the tip of its shell.'),
 (81, NULL, 'Magnemite', 'https://i.imgur.com/L2V24oS.png', 'Magnet Pokémon', 13, 9, 135, 250, 5, 'It moves while constantly hovering. It discharges electromagnetic waves and so on from the units at its sides.'),
-(28, NULL, 'Magneton', 'https://i.imgur.com/HTvDJ6X.png', 'Magnet Pokémon', 13, 9, 135, 250, 5, 'Three Magnemite are linked by a strong magnetic force. Earaches will occur if you get too close.'),
+(82, NULL, 'Magneton', 'https://i.imgur.com/HTvDJ6X.png', 'Magnet Pokémon', 13, 9, 135, 250, 5, 'Three Magnemite are linked by a strong magnetic force. Earaches will occur if you get too close.'),
 (83, NULL, 'Farfetch''d', 'https://i.imgur.com/X3MbznH.png', 'Wild Duck Pokémon', 1, 3, 119, 112, 49, 'It can''t live without the stalk it holds. That''s why it defends the stalk from attackers with its life.'),
 (83, 2, 'Farfetch''d', 'https://i.imgur.com/SN8INT2.png', 'Wild Duck Pokémon', 2, NULL, 242, NULL, 212, 'The Farfetch''d of the Galar region are brave warriors, and they wield thick, tough leeks in battle.'),
 (84, NULL, 'Doduo', 'https://i.imgur.com/Uitg4MG.png', 'Twin Bird Pokémon', 1, 3, 204, 58, 263, 'The brains in its two heads appear to communicate emotions to each other with a telepathic power.'),

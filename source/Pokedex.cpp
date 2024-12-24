@@ -485,32 +485,12 @@ Json::Value Pokedex::queryEvolutionTable(const std::uint32_t& targetPokedexNumbe
             std::uint32_t evolvedRegionId      = (row[3] == "NULL") ? 0 : std::stoi(row[3]);
             std::string condition              = row[4];
 
-            // Assign depth based on relationship to targetPokedexNumber
-            int depth = 0;   // Default depth
-            if (evolvedPokedexNumber == targetPokedexNumber)
-            {
-                depth = -1;  // Pre-evolution
-            }
-            else if (basePokedexNumber == targetPokedexNumber)
-            {
-                depth = 0;  // Target Pokemon
-            }
-            else if (basePokedexNumber > targetPokedexNumber)
-            {
-                depth = 1;  // Evolution
-            }
-
             evolutionData.emplace_back(basePokedexNumber, evolvedPokedexNumber, baseRegionId,
-                                       evolvedRegionId, condition, depth);
+                                       evolvedRegionId, condition);
         }
 
-        // Sort the data by depth and Pokédex number
-        std::sort(evolutionData.begin(), evolutionData.end(),
-                  [](const EvolutionData& a, const EvolutionData& b)
-                  {
-                      if (a.depth != b.depth) return a.depth < b.depth;
-                      return a.basePokedexNumber < b.basePokedexNumber;
-                  });
+        // Connect the evolution data to form an evolutionary chain
+        this->connectEvolutionaryChain(evolutionData);
 
         // Convert sorted data into JSON
         for (const auto& data : evolutionData)
@@ -623,6 +603,8 @@ std::uint32_t Pokedex::getLimitEnvVar(const bool& latest) const
     std::uint32_t limit = 1;
     std::string envVar;
 
+    this->logger.debug("Pokedex::getLimitEnvVar invoked");
+
     try
     {
         if (latest)
@@ -645,4 +627,25 @@ std::uint32_t Pokedex::getLimitEnvVar(const bool& latest) const
     }
 
     return limit;
+}
+
+void Pokedex::connectEvolutionaryChain(std::vector<EvolutionData>& evolutionaryChain) const
+{
+    this->logger.debug("Pokedex::connectEvolutionaryChain invoked");
+
+    std::vector<EvolutionData> connected;
+    connected.push_back(evolutionaryChain.front());
+
+    for (std::uint32_t i = 1; i < evolutionaryChain.size(); ++i)
+    {
+        for (std::uint32_t j = i; j < evolutionaryChain.size(); ++j)
+        {
+            if (evolutionaryChain[i].basePokedexNumber == connected.back().evolvedPokedexNumber)
+            {
+                std::swap(evolutionaryChain[i], evolutionaryChain[j]);
+                break;
+            }
+        }
+        connected.push_back(evolutionaryChain[i]);
+    }
 }
