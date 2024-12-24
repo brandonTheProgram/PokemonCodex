@@ -91,7 +91,7 @@
             <tbody>
                 <tr>
                     <% pokemon.type_effectiveness.forEach(effectiveness => { %>
-                        <td class="<% if (effectiveness.damage_multiplier === 2) { %>twice_damage<%} else if (effectiveness.damage_multiplier === 1) { %>normal_damge<%} else if (effectiveness.damage_multiplier === 0.5) { %>half_damage<%} else if (effectiveness.damage_multiplier === 0.25) { %>quarter_damage<%} else { %>no_damage<%} %>">
+                        <td class="<% if (effectiveness.damage_multiplier === 4) { %>quadrice_damge<%} else if (effectiveness.damage_multiplier === 2) { %>twice_damage<%} else if (effectiveness.damage_multiplier === 1) { %>normal_damge<%} else if (effectiveness.damage_multiplier === 0.5) { %>half_damage<%} else if (effectiveness.damage_multiplier === 0.25) { %>quarter_damage<%} else { %>no_damage<%} %>">
                           <%= effectiveness.damage_multiplier %>
                         </td>
                     <% }); %>

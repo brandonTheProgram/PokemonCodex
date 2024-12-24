@@ -674,13 +674,24 @@ void Pokedex::connectEvolutionaryChain(std::vector<EvolutionData>& evolutionaryC
         }
     }
 
-    // Sort the evolutionary chain by depth
+    // Sort the evolutionary chain by depth, prioritizing pre-evolutions and regional splits
     std::sort(evolutionaryChain.begin(), evolutionaryChain.end(),
               [&](const EvolutionData& a, const EvolutionData& b)
               {
                   auto keyA = std::make_pair(a.basePokedexNumber, a.baseRegionId);
                   auto keyB = std::make_pair(b.basePokedexNumber, b.baseRegionId);
 
-                  return depthMap[keyA] < depthMap[keyB];
+                  // Primary sorting by depth
+                  if (depthMap[keyA] != depthMap[keyB]) return depthMap[keyA] < depthMap[keyB];
+
+                  // Secondary sorting: prioritize non-regional forms over regional forms
+                  if (a.baseRegionId != b.baseRegionId) return a.baseRegionId < b.baseRegionId;
+
+                  // Tertiary sorting: prioritize evolved regional forms consistently
+                  if (a.evolvedRegionId != b.evolvedRegionId)
+                      return a.evolvedRegionId < b.evolvedRegionId;
+
+                  // Final fallback: order by Pokédex numbers
+                  return a.evolvedPokedexNumber < b.evolvedPokedexNumber;
               });
 }

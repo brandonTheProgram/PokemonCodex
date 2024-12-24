@@ -245,7 +245,7 @@ VALUES
 (387, 388, NULL, NULL, 'Level 18', 147),
 (388, 389, NULL, NULL, 'Level 32', 147),
 (390, 391, NULL, NULL, 'Level 14', 148),
-(392, 393, NULL, NULL, 'Level 36', 148),
+(391, 392, NULL, NULL, 'Level 36', 148),
 (393, 394, NULL, NULL, 'Level 16', 149),
 (394, 395, NULL, NULL, 'Level 36', 149),
 (396, 397, NULL, NULL, 'Level 14', 150),
