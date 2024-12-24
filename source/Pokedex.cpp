@@ -1,6 +1,8 @@
 
 #include "Pokedex.h"
 
+#include <functional>
+
 #include "Config.h"
 
 Pokedex::Pokedex()
@@ -633,19 +635,52 @@ void Pokedex::connectEvolutionaryChain(std::vector<EvolutionData>& evolutionaryC
 {
     this->logger.debug("Pokedex::connectEvolutionaryChain invoked");
 
-    std::vector<EvolutionData> connected;
-    connected.push_back(evolutionaryChain.front());
+    // Map to store depth values for sorting
+    std::unordered_map<std::pair<std::uint32_t, std::uint32_t>, int, pair_hash> depthMap;
 
-    for (std::uint32_t i = 1; i < evolutionaryChain.size(); ++i)
+    // Define assignDepth as a std::function to allow recursion
+    std::function<void(const EvolutionData&, int)> assignDepth =
+        [&](const EvolutionData& data, int depth)
     {
-        for (std::uint32_t j = i; j < evolutionaryChain.size(); ++j)
+        auto key = std::make_pair(data.basePokedexNumber, data.baseRegionId);
+        if (depthMap.find(key) == depthMap.end())
         {
-            if (evolutionaryChain[i].basePokedexNumber == connected.back().evolvedPokedexNumber)
+            depthMap[key] = depth;
+
+            // Look for evolutions starting from this Pokémon
+            for (const auto& evolution : evolutionaryChain)
             {
-                std::swap(evolutionaryChain[i], evolutionaryChain[j]);
-                break;
+                if (evolution.basePokedexNumber == data.evolvedPokedexNumber &&
+                    evolution.baseRegionId == data.evolvedRegionId)
+                {
+                    assignDepth(evolution, depth + 1);
+                }
             }
         }
-        connected.push_back(evolutionaryChain[i]);
+    };
+
+    // Start assigning depths from Pokémon with no predecessors
+    for (const auto& data : evolutionaryChain)
+    {
+        auto key = std::make_pair(data.basePokedexNumber, data.baseRegionId);
+        if (std::none_of(evolutionaryChain.begin(), evolutionaryChain.end(),
+                         [&](const EvolutionData& other)
+                         {
+                             return other.evolvedPokedexNumber == data.basePokedexNumber &&
+                                    other.evolvedRegionId == data.baseRegionId;
+                         }))
+        {
+            assignDepth(data, 0);  // Start from depth 0
+        }
     }
+
+    // Sort the evolutionary chain by depth
+    std::sort(evolutionaryChain.begin(), evolutionaryChain.end(),
+              [&](const EvolutionData& a, const EvolutionData& b)
+              {
+                  auto keyA = std::make_pair(a.basePokedexNumber, a.baseRegionId);
+                  auto keyB = std::make_pair(b.basePokedexNumber, b.baseRegionId);
+
+                  return depthMap[keyA] < depthMap[keyB];
+              });
 }
