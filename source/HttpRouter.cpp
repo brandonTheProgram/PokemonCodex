@@ -198,4 +198,34 @@ void HttpRouter::initializeRoutes(httplib::Server &server)
 
                    res.set_content(output, "application/json");
                });
+
+    server.Get(
+        R"(/search/([a-zA-Z]+))",
+        [this](const httplib::Request &req, httplib::Response &res)
+        {
+            Json::StreamWriterBuilder writer;
+            std::string output = "";
+
+            this->logger.debug("HttpRouter::initializeRoutes search envoked");
+
+            std::string searchTerm = req.matches[1].str();
+
+            if (searchTerm.empty())
+            {
+                res.status = 404;  // Not Found
+                logger.warning(
+                    "HttpRouter::initializeRoutes Received no search term from the page");
+                res.set_content("{\"error\": \"No search term received\"}", "application/json");
+                return;
+            }
+            else
+            {
+                logger.info("HttpRouter::initializeRoutes Received the search term: " + searchTerm +
+                            " from the page");
+
+                output = Json::writeString(writer, this->pokedex.getSearchPokemon(searchTerm));
+            }
+
+            res.set_content(output, "application/json");
+        });
 }

@@ -67,6 +67,7 @@ class Pokedex
         Json::Value getLatestsPokemon();
         Json::Value getPokemonData(const std::string& pokedexNumber,
                                    const std::string& regionalFormId);
+        Json::Value getSearchPokemon(const std::string& name);
         Json::Value getPokemonTypes() const;
         Json::Value getRegionData() const;
 

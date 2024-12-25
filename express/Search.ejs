@@ -1,0 +1,23 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Search results for: <%= searchTerm %></li>
+    </ol>
+</nav>
+
+<% if(pokemons != '') { %>
+    <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3 mb-4">
+        <% pokemons.forEach(function(pokemon, index) { %>
+            <a href="/pokemon/<%= pokemon.pokedex_number %><%= pokemon.region_id !== 'NULL' ? '/' + pokemon.region_id : '' %>" class="col text-center region__link">
+                <div class="pokemon__button shadow">
+                    <img src="<%= pokemon.image %>" width="200" height="200"  alt=<%- pokemon.name %> loading="lazy">
+                </div>
+                <div class="pt-1">#<%- pokemon.pokedex_number %> <%- pokemon.name %></div>
+            </a>
+        <% }) %>
+    </div>
+<% } else { %> 
+    <div class="alert alert-warning text-center" role="alert">
+        No Pokémon data found. Please try again or return to the <a href="/">homepage</a>.
+    </div>
+<% } %> 

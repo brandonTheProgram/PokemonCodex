@@ -104,6 +104,34 @@ app.get('/pokemon/:pokedex_number/:region_id?', async (req, res) => {
     }
 });
 
+app.get('/search', async (req, res) => {
+    try {
+        const searchTerm = req.query.searchTerm || '';
+
+        if (searchTerm.trim() === '') 
+        {
+            return res.render('Search', {
+                pokemons: '',
+                searchTerm: searchTerm
+            });
+        }
+
+        // Send request to C++ backend (httplib) on port 8080 and get data from the respones
+        const pokemonResponse = await axios.get(`http://localhost:8080/search/${searchTerm}`);
+
+        const pokemonData = pokemonResponse.data;
+
+        // Render Search.ejs
+        res.render('Search', {
+            pokemons: pokemonData,
+            searchTerm: searchTerm
+        });
+    } catch (error) {
+    console.error('Error fetching data from backend:', error);
+    res.status(500).send('Internal Server Error');
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });

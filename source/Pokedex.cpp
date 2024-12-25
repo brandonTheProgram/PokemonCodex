@@ -17,7 +17,6 @@ Pokedex::Pokedex()
 
 Json::Value Pokedex::getRegionPokemonData(const std::string& region, const bool& shouldLimit)
 {
-    Json::Value regionData(Json::arrayValue);
     int limit;
 
     this->logger.debug("Pokedex::getRegionPokemonData invoked for " + region);
@@ -65,6 +64,27 @@ Json::Value Pokedex::getRegionPokemonData(const std::string& region, const bool&
     {
         results.resize(limit);
     }
+
+    return this->pokemonButtonDataToJsonValue(results);
+}
+
+Json::Value Pokedex::getSearchPokemon(const std::string& name)
+{
+    this->logger.debug("Pokedex::getSearchPokemon invoked for " + name);
+
+    if (name.empty())
+    {
+        this->logger.warning("The user entered an empty Pokemon name into the serach bar");
+        return Json::Value{};
+    }
+
+    // Grab the Pokemon from the respective region
+    this->logger.info("Pokedex::getRegionPokemonData Searching for the Pokemon named " + name);
+    this->sqlManager.prepareStatement(
+        "SELECT pokedex_number, region_id, name, image FROM Pokemon WHERE name LIKE ?;");
+    this->sqlManager.bind(1, name + '%');
+
+    auto results = this->sqlManager.fetchResults();
 
     return this->pokemonButtonDataToJsonValue(results);
 }
