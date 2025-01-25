@@ -156,7 +156,7 @@ CREATE TABLE IF NOT EXISTS Pokemon_Location (
     pokedex_number INTEGER NOT NULL,               -- Reference to the Pokémon's Pokédex number
     region_id INTEGER,                             -- References the region in the Pokemon_Regional_Form table. NULL for a Pokémon not being a regional variant
     game_id INTEGER NOT NULL,                      -- References the game in the Pokemon_Game table. NULL for a Pokémon not being a regional variant
-    location_name TEXT NOT NULL,                   -- The name of the location(s) (Route 1, Viridian Forest, etc.)
+    location_name TEXT,                   -- The name of the location(s) (Route 1, Viridian Forest, etc.)
     
     -- Key Constraints
     PRIMARY KEY (pokedex_number, region_id, game_id),

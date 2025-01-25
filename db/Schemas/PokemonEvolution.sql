@@ -2,6 +2,8 @@ BEGIN TRANSACTION;
 
 INSERT INTO Pokemon_Evolution (base_pokedex_number, evolved_pokedex_number, base_region_id, evolved_region_id, evolution_condition, chain_id)
 VALUES 
+
+-- Kanto
 (1, 2, NULL, NULL, 'Level 16', 1),
 (2, 3, NULL, NULL, 'Level 32', 1),
 (4, 5, NULL, NULL, 'Level 16', 2),
@@ -116,6 +118,8 @@ VALUES
 (140, 141, NULL, NULL, 'Level 40', 63),
 (147, 148, NULL, NULL, 'Level 30', 64),
 (148, 149, NULL, NULL, 'Level 55', 64),
+
+-- Johto
 (152, 153, NULL, NULL, 'Level 16', 65),
 (153, 154, NULL, NULL, 'Level 32', 65),
 (155, 156, NULL, NULL, 'Level 14 or Lvel 17 in Legends: Arceus', 66),
@@ -173,6 +177,8 @@ VALUES
 (240, 126, NULL, NULL, 'Level 30', 58),
 (246, 247, NULL, NULL, 'Level 30', 101),
 (247, 248, NULL, NULL, 'Level 55', 101),
+
+-- Hoenn
 (252, 253, NULL, NULL, 'Level 16', 102),
 (253, 254, NULL, NULL, 'Level 36', 102),
 (255, 256, NULL, NULL, 'Level 16', 103),
@@ -242,6 +248,8 @@ VALUES
 (372, 373, NULL, NULL, 'Level 50', 145),
 (374, 375, NULL, NULL, 'Level 20', 146),
 (375, 376, NULL, NULL, 'Level 45', 146),
+
+-- Sinnoh
 (387, 388, NULL, NULL, 'Level 18', 147),
 (388, 389, NULL, NULL, 'Level 32', 147),
 (390, 391, NULL, NULL, 'Level 14', 148),
@@ -283,6 +291,8 @@ VALUES
 (456, 457, NULL, NULL, 'Level 31', 174),
 (458, 226, NULL, NULL, 'Level Up with Remoraid in the Party', 175),
 (459, 460, NULL, NULL, 'Level 40', 176),
+
+-- Unova
 (495, 496, NULL, NULL, 'Level 17', 177),
 (496, 497, NULL, NULL, 'Level 36', 177),
 (498, 499, NULL, NULL, 'Level 17', 178),
@@ -365,6 +375,8 @@ VALUES
 (633, 634, NULL, NULL, 'Level 50', 231),
 (634, 635, NULL, NULL, 'Level 64', 231),
 (636, 637, NULL, NULL, 'Level 59', 232),
+
+-- Kalos
 (650, 651, NULL, NULL, 'Level 16', 233),
 (651, 652, NULL, NULL, 'Level 36', 233),
 (653, 654, NULL, NULL, 'Level 16', 234),
@@ -402,6 +414,8 @@ VALUES
 (712, 713, NULL, NULL, 'Level 37', 257),
 (712, 713, NULL, 3, 'Level 37 in Legends: Arceus', 257),
 (714, 715, NULL, NULL, 'Level 48', 258),
+
+-- Alola
 (722, 723, NULL, NULL, 'Level 17', 259),
 (723, 724, NULL, NULL, 'Level 34', 259),
 (723, 724, NULL, 3, 'Level 36 in Legends: Arceus', 259),
@@ -436,6 +450,8 @@ VALUES
 (790, 792, NULL, NULL, 'Level 53 in Pokémon Violet', 280),
 (803, 804, NULL, NULL, 'Level Up after Learning Dragon Pulse', 281),
 (808, 809, NULL, NULL, '400 Meltan Candies in Pokémon Go', 282),
+
+-- Galar
 (810, 811, NULL, NULL, 'Level 16', 283),
 (811, 812, NULL, NULL, 'Level 35', 283),
 (813, 814, NULL, NULL, 'Level 16', 284),
@@ -474,6 +490,8 @@ VALUES
 (885, 886, NULL, NULL, 'Level 50', 308),
 (886, 887, NULL, NULL, 'Level 60', 308),
 (891, 892, NULL, NULL, 'Use Scroll of Darkness or in Tower of Darkness in Galar', 309),
+
+-- Paldea
 (906, 907, NULL, NULL, 'Level 16', 310),
 (907, 908, NULL, NULL, 'Level 36', 310),
 (909, 910, NULL, NULL, 'Level 16', 311),

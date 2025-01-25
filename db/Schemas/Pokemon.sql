@@ -1,7 +1,9 @@
 BEGIN TRANSACTION;
 
 INSERT INTO Pokemon (pokedex_number, region_id, name, image, species, primary_type_id, secondary_type_id, primary_ability_id, secondary_ability_id, hidden_ability_id, description)
-VALUES 
+VALUES
+
+-- Kanto
 (1, NULL, 'Bulbasaur', 'https://i.imgur.com/uxemRFU.png', 'Seed Pokémon', 12, 4, 161, NULL, 27, 'For some time after its birth, it grows by taking nourishment from the seed on its back.'),
 (2, NULL, 'Ivysaur', 'https://i.imgur.com/vlqnvvP.png', 'Seed Pokémon', 12, 4, 161, NULL, 27, 'When the bud on its back starts swelling, a sweet aroma wafts to indicate the flower''s coming bloom.'),
 (3, NULL, 'Venusaur', 'https://i.imgur.com/jledOia.png', 'Seed Pokémon', 12, 4, 161, NULL, 27, 'After a rainy day, the flower on its back smells stronger. The scent attracts other Pokémon.'),
@@ -187,6 +189,8 @@ VALUES
 (149, NULL, 'Dragonite', 'https://i.imgur.com/F8Nn5hJ.png', 'Dragon Pokémon', 16, 3, 112, NULL, 148, 'It can fly in spite of its big and bulky physique. It circles the globe in just 16 hours.'),
 (150, NULL, 'Mewtwo', 'https://i.imgur.com/LkgNBVj.png', 'Genetic Pokémon', 14, NULL, 178, NULL, 286, 'Mewtwo was created by recombining Mew''s genes. It''s said to have the most savage heart among Pokémon.'),
 (151, NULL, 'Mew', 'https://i.imgur.com/pJ2GNBV.png', 'New Species Pokémon', 14, NULL, 261, NULL, NULL, 'Because it can use all kinds of moves, many scientists believe Mew to be the ancestor of Pokémon.'),
+
+-- Johto
 (152, NULL, 'Chikorita', 'https://i.imgur.com/pexateW.png', 'Leaf Pokémon', 12, NULL, 161, NULL, 121, 'It uses the leaf on its head to determine the air''s temperature and humidity. It loves to sunbathe.'),
 (153, NULL, 'Bayleef', 'https://i.imgur.com/5bVREAw.png', 'Leaf Pokémon', 12, NULL, 161, NULL, 121, 'The buds that ring its neck give off a spicy aroma that perks people up.'),
 (154, NULL, 'Meganium', 'https://i.imgur.com/av0Panc.png', 'Herb Pokémon', 12, NULL, 161, NULL, 121, 'Its breath has the fantastic ability to revive dead plants and flowers.'),
@@ -293,6 +297,8 @@ VALUES
 (249, NULL, 'Lugia', 'https://i.imgur.com/mOxlMYy.png', 'Diving Pokémon', 14, 3, 178, NULL, 148, 'It sleeps in a deep-sea trench. If it flaps its wings, it is said to cause a 40-day storm.'),
 (250, NULL, 'Ho-oh', 'https://i.imgur.com/2AjKHfD.png', 'Rainbow Pokémon', 10, 3, 178, NULL, 197, 'Its feathers are in seven colors. It is said that anyone seeing it is promised eternal happiness.'),
 (251, NULL, 'Celebi', 'https://i.imgur.com/NofZKKW.png', 'Time Travel Pokémon', 14, 12, 152, NULL, NULL, 'It has the power to travel across time, but it is said to appear only in peaceful times.'),
+
+-- Hoenn
 (252, NULL, 'Treecko', 'https://i.imgur.com/bYxHkY7.png', 'Wood Gecko Pokémon', 12, NULL, 161, NULL, 285, 'The soles of its feet are covered by countless tiny hooks, enabling it to walk on walls and ceilings.'),
 (253, NULL, 'Grovyle', 'https://i.imgur.com/oPGUTay.png', 'Wood Gecko Pokémon', 12, NULL, 161, NULL, 285, 'It lives in dense jungles. While closing in on its prey, it leaps from branch to branch.'),
 (254, NULL, 'Sceptile', 'https://i.imgur.com/vPh0VIE.png', 'Forest Pokémon', 12, NULL, 161, NULL, 285, 'The leaves that grow on its arms can slice down thick trees. It is without peer in jungle combat.'),
@@ -430,6 +436,8 @@ VALUES
 (384, NULL, 'Rayquaza', 'https://i.imgur.com/HsPiZR3.png', 'Sky High Pokémon', 16, 3, 4, NULL, NULL, 'It lives in the ozone layer far above the clouds and cannot be seen from the ground.'),
 (385, NULL, 'Jirachi', 'https://i.imgur.com/uDBh4Yj.png', 'Wish Pokémon', 9, 14, 215, NULL, NULL, 'It is said to wake up for just seven days every 1,000 years and use its power to grant any wish.'),
 (386, NULL, 'Deoxys', 'https://i.imgur.com/16dB7HE.png', 'DNA Pokémon', 14, NULL, 178, NULL, NULL, 'An alien virus that fell to earth on a meteorite underwent a DNA mutation to become this Pokémon.'),
+
+-- Sinnoh
 (387, NULL, 'Turtwig', 'https://i.imgur.com/eAaCNWs.png', 'Tiny Leaf Pokémon', 12, NULL, 161, NULL, 221, 'This Pokémon becomes more energetic the more sunlight there is. The part resembling a shell is similar to silt and is slightly damp and warm to the touch.'),
 (388, NULL, 'Grotle', 'https://i.imgur.com/rltLTMi.png', 'Grove Pokémon', 12, NULL, 161, NULL, 221, 'Appears where there is clean spring water. The fruit that grows on the shrubs on its shell is sweet, nutritious, and truly delicious.'),
 (389, NULL, 'Torterra', 'https://i.imgur.com/bsT5SDC.png', 'Continent Pokémon', 12, 5, 161, NULL, 221, 'This remarkable, large-bodied Pokémon would serve beautifully as borrowed scenery for a garden, and its strength is peerless. Torterra roams the wilderness in search of clean water.'),
@@ -537,6 +545,8 @@ VALUES
 (491, NULL, 'Darkrai', 'https://i.imgur.com/2INe73D.png', 'Pitch-Black Pokémon', 17, NULL, 14, NULL, NULL, 'Folklore has it that on moonless nights, this Pokémon will make people see horrific nightmares.'),
 (492, NULL, 'Shaymin', 'https://i.imgur.com/vfs5bGa.png', 'Gratitude Pokémon', 12, NULL, 152, NULL, 215, 'It can dissolve toxins in the air to instantly transform ruined land into a lush field of flowers.'),
 (493, NULL, 'Arceus', 'https://i.imgur.com/KuTU1Aq.png', 'Alpha Pokémon', 1, NULL, 149, NULL, NULL, 'It is told in mythology that this Pokémon was the first Pokémon born before the universe even existed.'),
+
+-- Unova
 (494, NULL, 'Victini', 'https://i.imgur.com/rgjpaPg.png', 'Victory Pokémon', 14, 10, 289, NULL, NULL, 'This Pokémon brings victory. It is said that Trainers with Victini always win, regardless of the type of encounter.'),
 (495, NULL, 'Snivy', 'https://i.imgur.com/evqTFIO.png', 'Grass Snake Pokémon', 12, NULL, 161, NULL, 35, 'They photosynthesize by bathing their tails in sunlight. When they are not feeling well, their tails droop.'),
 (496, NULL, 'Servine', 'https://i.imgur.com/qW5CyhO.png', 'Grass Snake Pokémon', 12, NULL, 161, NULL, 35, 'It moves along the ground as if sliding. Its swift movements befuddle its foes, and it then attacks with a vine whip.'),
@@ -702,6 +712,8 @@ VALUES
 (647, NULL, 'Keldeo', 'https://i.imgur.com/b4MHKQp.png', 'Colt Pokémon', 11, 2, 118, NULL, NULL, 'When it is resolute, its body fills with power and it becomes swifter. Its jumps are then too fast to follow.'),
 (648, NULL, 'Meloetta', 'https://i.imgur.com/C16NQR8.png', 'Melody Pokémon', 1, 14, 215, NULL, NULL, 'Its melodies are sung with a special vocalization method that can control the feelings of those who hear it.'),
 (649, NULL, 'Genesect', 'https://i.imgur.com/uj3QCL7.png', 'Paleozoic Pokémon', 7, 9, 53, NULL, NULL, 'This Pokémon existed 300 million years ago. Team Plasma altered it and attached a cannon to its back.'),
+
+-- Kalos
 (650, NULL, 'Chespin', 'https://i.imgur.com/iM7txVh.png', 'Spiny Nut Pokémon', 12, NULL, 161, NULL, 24, 'Such a thick shell of wood covers its head and back that even a direct hit from a truck wouldn''t faze it.'),
 (651, NULL, 'Quilladin', 'https://i.imgur.com/Sjcu7xL.png', 'Spiny Armor Pokémon', 12, NULL, 161, NULL, 24, 'They strengthen their lower bodies by running into one another. They are very kind and won''t start fights.'),
 (652, NULL, 'Chesnaught', 'https://i.imgur.com/9vXdsLz.png', 'Spiny Armor Pokémon', 12, 2, 161, NULL, 24, 'When it takes a defensive posture with its fists guarding its face, it could withstand a bomb blast.'),
@@ -777,6 +789,8 @@ VALUES
 (719, NULL, 'Diancie', 'https://i.imgur.com/YVa3JV4.png', 'Jewel Pokémon', 6, 18, 28, NULL, NULL, 'A sudden transformation of Carbink, its pink, glimmering body is said to be the loveliest sight in the whole world.'),
 (720, NULL, 'Hoopa', 'https://i.imgur.com/Cfjxs9w.png', 'Mischief Pokémon', 14, 8, 133, NULL, NULL, 'It is said to be able to seize anything it desires with its six rings and six huge arms. With its power sealed, it is transformed into a much smaller form.'),
 (721, NULL, 'Volcanion', 'https://i.imgur.com/Bm0UjHJ.png', 'Steam Pokémon', 10, 11, 293, NULL, NULL, 'It lets out billows of steam and disappears into the dense fog. It''s said to live in mountains where humans do not tread.'),
+
+-- Alola
 (722, NULL, 'Rowlet', 'https://i.imgur.com/PpPheyX.png', 'Grass Quill Pokémon', 12, 3, 161, NULL, 130, 'During the day, it builds up energy via photosynthesis. At night, it flies silently through the sky, on the prowl for prey.'),
 (723, NULL, 'Dartrix', 'https://i.imgur.com/yJEq7zW.png', 'Blade Quill Pokémon', 12, 3, 161, NULL, 130, 'It never slacks when it comes to the task of cleaning its feathers. Thorough preening keeps it looking spiffy and its blade quills nice and sharp.'),
 (724, NULL, 'Decidueye', 'https://i.imgur.com/FH0OGSt.png', 'Arrow Quill Pokémon', 12, 8, 161, NULL, 130, 'In a tenth of a second, it can nock and fire an arrow quill, piercing an opponent''s weak point before they notice what''s happening.'),
@@ -866,6 +880,8 @@ VALUES
 (807, NULL, 'Zeraora', 'https://i.imgur.com/r2seJ1i.png', 'Thunderclap Pokémon', 13, NULL, 291, NULL, NULL, 'Electricity sparks from the pads on its limbs. Wherever Zeraora runs, lightning flashes and thunder echoes.'),
 (808, NULL, 'Meltan', 'https://i.imgur.com/jRW3gXP.png', 'Hex Nut Pokémon', 9, NULL, 135, NULL, NULL, 'They live as a group, but when the time comes, one strong Meltan will absorb all the others and evolve.'),
 (809, NULL, 'Melmetal', 'https://i.imgur.com/UMhdsO2.png', 'Hex Nut Pokémon', 9, NULL, 117, NULL, NULL, 'Centrifugal force is behind the punches of Melmetal''s heavy hex-nut arms. Melmetal is said to deliver the strongest punches of all Pokémon.'),
+
+-- Galar
 (810, NULL, 'Grookey', 'https://i.imgur.com/OJXiJR4.png', 'Chimp Pokémon', 12, NULL, 161, NULL, 86, 'When it uses its special stick to strike up a beat, the sound waves produced carry revitalizing energy to the plants and flowers in the area.'),
 (811, NULL, 'Thwackey', 'https://i.imgur.com/xPuf8CT.png', 'Beat Pokémon', 12, NULL, 161, NULL, 86, 'When it''s drumming out rapid beats in battle, it gets so caught up in the rhythm that it won''t even notice that it''s already knocked out its opponent.'),
 (812, NULL, 'Rillaboom', 'https://i.imgur.com/jr2zc9F.png', 'Drummer Pokémon', 12, NULL, 161, NULL, 86, 'The one with the best drumming techniques becomes the boss of the troop. It has a gentle disposition and values harmony among its group.'),
@@ -955,6 +971,8 @@ VALUES
 (896, NULL, 'Glastrier', 'https://i.imgur.com/wkcikb4.png', 'Wild Horse Pokémon', 15, NULL, 26, NULL, NULL, 'Glastrier emits intense cold from its hooves. It''s also a belligerent Pokémon—anything it wants, it takes by force.'),
 (897, NULL, 'Spectrier', 'https://i.imgur.com/JIpAcxA.png', 'Swift Horse Pokémon', 8, NULL, 87, NULL, NULL, 'It probes its surroundings with all its senses save one—it doesn''t use its sense of sight. Spectrier''s kicks are said to separate soul from body.'),
 (898, NULL, 'Calyrex', 'https://i.imgur.com/NroaJYH.png', 'King Pokémon', 14, 12, 286, NULL, NULL, 'Calyrex is a merciful Pokémon, capable of providing healing and blessings. It reigned over the Galar region in times of yore.'),
+
+-- Hisui
 (899, NULL, 'Wyrdeer', 'https://i.imgur.com/Pf9iqsB.png', 'Big Horn Pokémon', 1, 14, 114, 76, 210, 'The black orbs shine with an uncanny light when the Pokémon is erecting invisible barriers. The fur shed from its beard retains heat well and is a highly useful material for winter clothing.'),
 (900, NULL, 'Kleavor', 'https://i.imgur.com/NiOOkPy.png', 'Axe Pokémon', 7, 6, 256, 220, 218, 'A violent creature that fells towering trees with its crude axes and shields itself with hard stone. If one should chance upon this Pokémon in the wilds, one''s only recourse is to flee.'),
 (901, NULL, 'Ursaluna', 'https://i.imgur.com/UXI38xi.png', 'Peat Pokémon', 5, 1, 90, 24, 286, 'I believe it was Hisui''s swampy terrain that gave Ursaluna its burly physique and newfound capacity to manipulate peat at will.'),
@@ -962,6 +980,8 @@ VALUES
 (903, NULL, 'Sneasler', 'https://i.imgur.com/pRwqn2x.png', 'Free Climb Pokémon', 2, 4, 178, 285, 173, 'Because of Sneasler''s virulent poison and daunting physical prowess, no other species could hope to best it on the frozen highlands. Preferring solitude, this species does not form packs.'),
 (904, NULL, 'Overqwil', 'https://i.imgur.com/gBAJqEb.png', 'Pin Cluster Pokémon', 17, 4, 171, 258, 114, 'Its lancelike spikes and savage temperament have earned it the nickname “sea fiend.” It slurps up poison to nourish itself.'),
 (905, NULL, 'Enamorus', 'https://i.imgur.com/o4V9tMs.png', 'Love-Hate Pokémon', 18, 3, 42, NULL, 35, 'When it flies to this land from across the sea, the bitter winter comes to an end. According to legend, this Pokémon''s love gives rise to the budding of fresh life across Hisui.'),
+
+-- Paldea
 (906, NULL, 'Sprigatito', 'https://i.imgur.com/iFu5VnR.png', 'Grass Cat Pokémon', 12, NULL, 161, NULL, 182, 'The sweet scent its body gives off mesmerizes those around it. The scent grows stronger when this Pokémon is in the sun.'),
 (907, NULL, 'Floragato', 'https://i.imgur.com/2e4UMjL.png', 'Grass Cat Pokémon', 12, NULL, 161, NULL, 182, 'The hardness of Floragato''s fur depends on the Pokémon''s mood. When Floragato is prepared to battle, its fur becomes pointed and needle sharp.'),
 (908, NULL, 'Meowscarada', 'https://i.imgur.com/V6bFMre.png', 'Magician Pokémon', 12, 17, 161, NULL, 182, 'This Pokémon uses the reflective fur lining its cape to camouflage the stem of its flower, creating the illusion that the flower is floating.'),
