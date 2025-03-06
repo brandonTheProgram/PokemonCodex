@@ -13,6 +13,7 @@ Pokedex::Pokedex()
 {
     this->initializeRegions();
     this->initializePokemonTypes();
+    this->initializeGames();
 }
 
 Json::Value Pokedex::getRegionPokemonData(const std::string& region, const bool& shouldLimit)
@@ -234,6 +235,8 @@ Json::Value Pokedex::getPokemonData(const std::string& pokedexNumber,
         targetPokemon["hidden_ability"]    = hiddenAbility;
         targetPokemon["description"]       = description;
         targetPokemon["evolutionary_line"] = this->queryEvolutionTable(std::stoi(pokedexNumber));
+        targetPokemon["game_locations"] =
+            this->queryLocationTable(std::stoi(pokedexNumber), regionalFormId);
     }
     catch (const std::invalid_argument& e)
     {
@@ -247,7 +250,7 @@ Json::Value Pokedex::getPokemonData(const std::string& pokedexNumber,
 
 Json::Value Pokedex::getPokemonTypes() const
 {
-    Json::Value pokemonTypes(Json::arrayValue);
+    Json::Value pokemonTypesJson(Json::arrayValue);
 
     this->logger.debug("Pokedex::getPokemonTypes invoked");
 
@@ -256,10 +259,10 @@ Json::Value Pokedex::getPokemonTypes() const
         Json::Value type(Json::objectValue);
         type["name"] = pokemonType;
 
-        pokemonTypes.append(type);
+        pokemonTypesJson.append(type);
     }
 
-    return pokemonTypes;
+    return pokemonTypesJson;
 }
 
 Json::Value Pokedex::getRegionData() const
@@ -280,6 +283,23 @@ Json::Value Pokedex::getRegionData() const
     return regionNames;
 }
 
+Json::Value Pokedex::getPokemonGames() const
+{
+    Json::Value pokemonGamesJson(Json::arrayValue);
+
+    this->logger.debug("Pokedex::getGames invoked");
+
+    for (std::string pokemonGame : this->pokemonGames)
+    {
+        Json::Value game(Json::objectValue);
+        game["name"] = pokemonGame;
+
+        pokemonGamesJson.append(game);
+    }
+
+    return pokemonGamesJson;
+}
+
 void Pokedex::initializeRegions()
 {
     this->logger.debug("Pokedex::initializeRegions invoked");
@@ -289,12 +309,11 @@ void Pokedex::initializeRegions()
 
     if (results.empty())
     {
-        this->logger.critical(
+        std::string message =
             "No regions were found in the database, verify that Pokemon_Region table is populated "
-            "in the database");
-        throw std::runtime_error(
-            "No regions were found in the database, verify that Pokemon_Region table is populated "
-            "in the database");
+            "in the database";
+        this->logger.critical(message);
+        throw std::runtime_error(message);
     }
 
     try
@@ -316,6 +335,9 @@ void Pokedex::initializeRegions()
                               std::string(e.what()));
         throw e;
     }
+
+    this->logger.debug("Pokedex::initializeRegions Found " + std::to_string(this->keys.size()) +
+                       " Pokemon Regions");
 }
 
 void Pokedex::initializePokemonTypes()
@@ -328,14 +350,11 @@ void Pokedex::initializePokemonTypes()
 
     if (results.empty())
     {
-        this->logger.critical(
+        std::string message =
             "No Pokemon Types were found in the database, verify that Pokemon_Type table is "
-            "populated "
-            "in the database");
-        throw std::runtime_error(
-            "No Pokemon Types were found in the database, verify that Pokemon_Type table is "
-            "populated "
-            "in the database");
+            "populated in the database";
+        this->logger.critical(message);
+        throw std::runtime_error(message);
     }
 
     for (const auto& row : results)
@@ -343,6 +362,36 @@ void Pokedex::initializePokemonTypes()
         std::string name = Json::Value(row.at(0)).asString();
         this->pokemonTypes.push_back(name);
     }
+
+    this->logger.debug("Pokedex::initializePokemonTypes Found " +
+                       std::to_string(this->pokemonTypes.size()) + " Pokemon Types");
+}
+
+void Pokedex::initializeGames()
+{
+    this->logger.debug("Pokedex::initializeGames invoked");
+
+    this->sqlManager.prepareStatement("SELECT game_name FROM Pokemon_Game;");
+
+    auto results = this->sqlManager.fetchResults();
+
+    if (results.empty())
+    {
+        std::string message =
+            "No Pokemon Games were found in the database, verify that Pokemon_Game table is "
+            "populated in the database";
+        this->logger.critical(message);
+        throw std::runtime_error(message);
+    }
+
+    for (const auto& row : results)
+    {
+        std::string name = Json::Value(row.at(0)).asString();
+        this->pokemonGames.push_back(name);
+    }
+
+    this->logger.debug("Pokedex::initializeGames Found " +
+                       std::to_string(this->pokemonGames.size()) + " Pokemon Games");
 }
 
 std::string Pokedex::queryRegionalFormTable(const std::uint32_t& id)
@@ -575,6 +624,66 @@ Json::Value Pokedex::queryEvolutionTable(const std::uint32_t& targetPokedexNumbe
                               std::string(e.what()));
         return Json::Value(Json::arrayValue);
     }
+}
+
+Json::Value Pokedex::queryLocationTable(const std::uint32_t& pokedexNumber,
+                                        const std::string& regionalFormId)
+{
+    this->logger.debug("Pokedex::queryLocationTable invoked to query: " +
+                       std::to_string(pokedexNumber) + " and " + regionalFormId);
+
+    Json::Value pokemonLocations(Json::arrayValue);
+
+    this->sqlManager.prepareStatement(
+        "SELECT location_name FROM Pokemon_Location WHERE pokedex_number = ? AND region_id IS ?;");
+    this->sqlManager.bind(1, pokedexNumber);
+
+    try
+    {
+        if (regionalFormId.empty())
+        {
+            this->sqlManager.bind(2, nullptr);
+        }
+        else
+        {
+            this->sqlManager.bind(2, std::stoi(regionalFormId));
+        }
+
+        auto results = this->sqlManager.fetchResults();
+
+        if (results.empty())
+        {
+            this->logger.warning("No Pokemon was found that matching the Pokedex Number " +
+                                 pokedexNumber);
+            return pokemonLocations;
+        }
+
+        for (const auto& row : results)
+        {
+            std::string pokemonLocation = row[0];
+
+            if (pokemonLocation == "NULL")
+            {
+                pokemonLocations.append(
+                    Json::Value("This Pokémon is not found in the wild in this game"));
+            }
+            else
+            {
+                this->logger.debug("Pokedex::queryLocationTable found the location of: " +
+                                   pokemonLocation);
+
+                pokemonLocations.append(Json::Value(pokemonLocation));
+            }
+        }
+    }
+    catch (const std::invalid_argument& e)
+    {
+        this->logger.critical("Pokedex::queryLocationTable caught an exception: " +
+                              std::string(e.what()));
+        return Json::Value(Json::arrayValue);
+    }
+
+    return pokemonLocations;
 }
 
 Json::Value Pokedex::pokemonButtonDataToJsonValue(

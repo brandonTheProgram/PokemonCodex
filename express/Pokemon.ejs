@@ -159,7 +159,37 @@
               <% }); %>
           <% } %>
         </div>      
-    </div>
+    
+        <!-- Pokémon Locations Section -->
+        <% if (pokemon.game_locations && pokemon.game_locations.length > 0 && pokemonGames.length > 0) { %>
+          <div class="container mt-4">
+            <h3>Locations in Games</h3>
+            <div class="accordion" id="locationAccordion">
+              <% pokemonGames.forEach((game, index) => { %>
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="heading<%= index %>">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<%= index %>" aria-expanded="false" aria-controls="collapse<%= index %>">
+                      <span class="badge bg-primary me-2"><%= game.name %></span> Locations
+                    </button>
+                  </h2>
+                  <div id="collapse<%= index %>" class="accordion-collapse collapse" aria-labelledby="heading<%= index %>" data-bs-parent="#locationAccordion">
+                    <div class="accordion-body">
+                      <% if (pokemon.game_locations[index]) { %>
+                        <p><%- pokemon.game_locations[index] %></p>
+                      <% } else { %>
+                        <p class="text-muted">No known location</p>
+                      <% } %>
+                    </div>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+          </div>
+        <% } else { %>
+          <p class="text-muted">This Pokémon is not found in the wild in any game.</p>
+        <% } %>
+
+
 <% } else { %> 
   <div class="alert alert-warning text-center" role="alert">
     No Pokémon data found. Please try again or return to the <a href="/">homepage</a>.

@@ -92,3 +92,10 @@ td {
 .no_damage {
     background-color: yellow;
 }
+
+.accordion-button {
+    font-weight: bold;
+}
+.list-group-item {
+    font-size: 1.1rem;
+}

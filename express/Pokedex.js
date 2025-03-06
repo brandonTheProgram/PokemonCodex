@@ -88,15 +88,18 @@ app.get('/pokemon/:pokedex_number/:region_id?', async (req, res) => {
     try {
         // Send request to C++ backend (httplib) on port 8080 and get data from the respones
         const pokemonResponse = await axios.get(`http://localhost:8080/pokemon/${pokedexNumber}${regionId ? `/${regionId}` : ''}`);
-        const pokemonTypeResponse = await axios.get(`http://localhost:8080/getPokemonTypes`);
+        const pokemonTypesResponse = await axios.get(`http://localhost:8080/getPokemonTypes`);
+        const pokemonGamesResponse = await axios.get(`http://localhost:8080/getPokemonGames`);
 
         const pokemonData = pokemonResponse.data;
-        const pokemonTypeData = pokemonTypeResponse.data;
+        const pokemonTypeData = pokemonTypesResponse.data;
+        const pokemonGameData = pokemonGamesResponse.data;
 
         // Render Pokemon.ejs
         res.render('Pokemon', {
             pokemon: pokemonData,
-            pokemonTypes : pokemonTypeData
+            pokemonTypes : pokemonTypeData,
+            pokemonGames: pokemonGameData
         });
     } catch (error) {
     console.error('Error fetching data from backend:', error);
