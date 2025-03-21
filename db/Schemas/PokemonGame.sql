@@ -6,6 +6,8 @@ VALUES
 ('Shield'),
 ('Legends: Arceus'),
 ('Scarlet'),
-('Violet');
+('Violet'),
+('Sword & Shield'),
+('Scarlet & Violet');
 
 COMMIT TRANSACTION;

@@ -173,6 +173,7 @@ CREATE TABLE IF NOT EXISTS Pokemon_Technical_Move (
     move_id INTEGER NOT NULL,                -- Reference to the move in Pokemon_Move
     game_id INTEGER NOT NULL,                -- Reference to the game in Pokemon_Game
     techncial_number INTEGER NOT NULL,       -- TM/TR number for the move in the specified game
+    is_tr	INTEGER NOT NULL,                -- True(1) or False(0) if the move is a tr
 
     -- Key Constraints
     PRIMARY KEY (move_id, game_id),
@@ -195,7 +196,7 @@ CREATE TABLE IF NOT EXISTS Pokemon_Moveset (
     
     -- Key Constraints
     PRIMARY KEY (pokedex_number, region_id, move_id, game_id),
-    FOREIGN KEY (move_id, game_id, techncial_number) REFERENCES Pokemon_Move_TM_TR(move_id, game_id, techncial_number),
+    FOREIGN KEY (move_id, game_id, techncial_number) REFERENCES Pokemon_Technical_Move(move_id, game_id, techncial_number),
     FOREIGN KEY (pokedex_number, region_id) REFERENCES Pokemon(pokedex_number, region_id),
     FOREIGN KEY (game_id) REFERENCES Pokemon_Game(game_id)
 );
