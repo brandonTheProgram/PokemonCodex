@@ -28,10 +28,10 @@ Pokémon Type Effectiveness Table
 
 Represents the interaction between attacking types and defending types, including a damage multiplier.
 *******/
-CREATE TABLE IF NOT EXISTS Pokemon_Type_Effectivness (
+CREATE TABLE IF NOT EXISTS Pokemon_Type_Effectiveness (
     type_effectiveness_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    attacking_type_id INTEGER NOT NULL, -- Reference to the attacker's Pokémon type (from Pokemon_Move_Type table)
-    defending_type_id INTEGER NOT NULL, -- Reference to the defending's Pokémon type (from Pokemon_Move_Type table)
+    attacking_type_id INTEGER NOT NULL, -- Reference to the attacker's Pokémon type (from Pokemon_Type table)
+    defending_type_id INTEGER NOT NULL, -- Reference to the defending's Pokémon type (from Pokemon_Type table)
     damage_multiplier REAL NOT NULL,    -- Effectiveness multiplier (e.g., 2.0, 0.5, 0.0)
 
     -- Foreign key constraints to ensure valid type IDs
@@ -78,6 +78,16 @@ Store the unique Pokémon available game identifiers.
 CREATE TABLE IF NOT EXISTS Pokemon_Game (
     game_id INTEGER PRIMARY KEY AUTOINCREMENT, -- Unique identifier for each game
     game_name TEXT NOT NULL UNIQUE             -- The name of the game (e.g., Sword, Shield)
+);
+
+/*******
+Pokémon Mainline Game Table
+
+Store the unique Pokémon available game identifiers.
+*******/
+CREATE TABLE IF NOT EXISTS Pokemon_Mainline_Game (
+    mainline_game_id INTEGER PRIMARY KEY AUTOINCREMENT, -- Unique identifier for each game
+    game_name TEXT NOT NULL UNIQUE             -- The name of the game (e.g., Sword & Shield, Legends: Arceus, Scarlet & Violet)
 );
 
 /*******
@@ -171,34 +181,52 @@ Store the TM/TR details for each Pokémon move in the games.
 *******/
 CREATE TABLE IF NOT EXISTS Pokemon_Technical_Move (
     move_id INTEGER NOT NULL,                -- Reference to the move in Pokemon_Move
-    game_id INTEGER NOT NULL,                -- Reference to the game in Pokemon_Game
-    techncial_number INTEGER NOT NULL,       -- TM/TR number for the move in the specified game
+    mainline_game_id INTEGER NOT NULL,       -- Reference to the game in Pokemon_Mainline_Game
+    technical_number INTEGER NOT NULL,       -- TM/TR number for the move in the specified game
     is_tr	INTEGER NOT NULL,                -- True(1) or False(0) if the move is a tr
 
     -- Key Constraints
-    PRIMARY KEY (move_id, game_id),
+    PRIMARY KEY (move_id, mainline_game_id, technical_number),
     FOREIGN KEY (move_id) REFERENCES Pokemon_Move(move_id),
-    FOREIGN KEY (game_id) REFERENCES Pokemon_Game(game_id)
+    FOREIGN KEY (mainline_game_id) REFERENCES Pokemon_Mainline_Game(mainline_game_id)
 );
 
 /*******
-Pokémon Moveset Table
+Pokémon Level Up Moveset Table
 
-Store the movesets for each Pokémon in a specific game along with learning method details.
+Store the level up movesets for each Pokémon from specific game(s).
 *******/
-CREATE TABLE IF NOT EXISTS Pokemon_Moveset (
+CREATE TABLE IF NOT EXISTS Pokemon_Level_Up_Moveset (
     pokedex_number INTEGER NOT NULL,       -- Reference to the Pokémon's Pokédex number
-    region_id INTEGER,                     -- References the region in the Pokemon_Regional_Form table. NULL for a Pokémon not being a regional variant
-    move_id INTEGER NOT NULL,              -- Reference to the move in the Pokemon_Move table
-    game_id INTEGER NOT NULL,              -- Reference to the game in the Pokemon_Game table
-    level_learned INTEGER,                 -- What level the Pokémon can learn the move
-    techncial_number INTEGER,              -- Reference to the game in the Pokemon_Technical_Move table
-    
+    region_id INTEGER, -- References the region in the Pokemon_Regional_Form table. NULL for a Pokémon not being a regional variant
+    move_id  INTEGER NOT NULL,              -- Reference to the move in Pokemon_Move
+    mainline_game_id INTEGER NOT NULL,              -- Reference to the game in the Pokemon_Mainline_Game table
+    level_learned INTEGER NOT NULL,          -- Level at which move is learned
+
     -- Key Constraints
-    PRIMARY KEY (pokedex_number, region_id, move_id, game_id),
-    FOREIGN KEY (move_id, game_id, techncial_number) REFERENCES Pokemon_Technical_Move(move_id, game_id, techncial_number),
+    PRIMARY KEY (pokedex_number, region_id, move_id, mainline_game_id),
     FOREIGN KEY (pokedex_number, region_id) REFERENCES Pokemon(pokedex_number, region_id),
-    FOREIGN KEY (game_id) REFERENCES Pokemon_Game(game_id)
+    FOREIGN KEY (move_id) REFERENCES Pokemon_Move(move_id),
+    FOREIGN KEY (mainline_game_id) REFERENCES Pokemon_Mainline_Game(mainline_game_id)
+);
+
+/*******
+Pokémon Technical Moveset Table
+
+Store the technical movesets for each Pokémon from specific game(s).
+*******/
+CREATE TABLE IF NOT EXISTS Pokemon_Technical_Moveset (
+    pokedex_number INTEGER NOT NULL,       -- Reference to the Pokémon's Pokédex number
+    region_id INTEGER, -- References the region in the Pokemon_Regional_Form table. NULL for a Pokémon not being a regional variant
+    move_id INTEGER NOT NULL,              -- Reference to the move in the Pokemon_Move table
+    mainline_game_id INTEGER NOT NULL,              -- Reference to the game in Pokemon_Mainline_Game
+    technical_number_id INTEGER NOT NULL,  -- Reference to the technical move in the Pokemon_Technical_Move table
+
+    -- Key Constraints
+    PRIMARY KEY (pokedex_number, region_id, move_id, mainline_game_id),
+    FOREIGN KEY (pokedex_number, region_id) REFERENCES Pokemon(pokedex_number, region_id),
+    FOREIGN KEY (move_id, mainline_game_id, technical_number_id) REFERENCES Pokemon_Technical_Move(move_id, mainline_game_id, technical_number),
+    FOREIGN KEY (mainline_game_id) REFERENCES Pokemon_Mainline_Game(mainline_game_id)
 );
 
 /*******
@@ -210,12 +238,12 @@ CREATE INDEX idx_pokemon_move_category ON Pokemon_Move_Category(category_id);
 CREATE INDEX idx_pokemon_regional_form ON Pokemon_Regional_Form(region_id);
 CREATE INDEX idx_pokemon_ability ON Pokemon_Ability(ability_id);
 CREATE INDEX idx_pokemon_game ON Pokemon_Game(game_id);
+CREATE INDEX idx_pokemon_mainline_game ON Pokemon_Mainline_Game(mainline_game_id);
 CREATE INDEX idx_pokemon_move ON Pokemon_Move(move_id);
 
 -- Compound indexes
 CREATE INDEX idx_pokemon_evolution_base ON Pokemon_Evolution(base_pokedex_number, base_region_id);
 CREATE INDEX idx_pokemon_evolution_evolved ON Pokemon_Evolution(evolved_pokedex_number, evolved_region_id);
-CREATE INDEX idx_pokemon_move_game ON Pokemon_Technical_Move(move_id, game_id);
 
 CREATE INDEX idx_region_pokemon ON Pokemon(pokedex_number, region_id, name, image);
 

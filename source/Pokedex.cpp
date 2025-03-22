@@ -465,7 +465,7 @@ Json::Value Pokedex::queryTypeEffectivnessTable(const std::uint32_t& primaryType
 
     this->sqlManager.prepareStatement(
         "SELECT defending_type_id, attacking_type_id, damage_multiplier "
-        "FROM Pokemon_Type_Effectivness "
+        "FROM Pokemon_Type_Effectiveness "
         "WHERE attacking_type_id IN (?, ?)  ORDER BY defending_type_id ASC;");
     this->sqlManager.bind(1, primaryTypeId);
     this->sqlManager.bind(2, secondaryTypeId);
