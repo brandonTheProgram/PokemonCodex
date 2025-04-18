@@ -3,8 +3,6 @@ BEGIN TRANSACTION;
 INSERT INTO Pokemon_Level_Up_Moveset (pokedex_number, region_id, move_id, mainline_game_id, level_learned)
 VALUES 
 
--- Kanto
-
 -- Bulbasaur
 -- Sword & Shield
 (1, NULL, 738, 1, 1),
@@ -649,7 +647,7 @@ VALUES
 (28, 1, 733, 3, 1),
 (28, 1, 651, 3, 1),
 (28, 1, 438, 3, 1),
-(28, 1, 363, 3, 1),
+(28, 1, 362, 3, 1),
 -- Nidoran Female
 -- Sword & Shield
 (29, NULL, 302, 1, 1),
@@ -911,7 +909,7 @@ VALUES
 (37, 1, 454, 3, 40),
 (37, 1, 38, 3, 44),
 (37, 1, 271, 3, 48),
-(37, 1, 63, 1, 52),
+(37, 1, 63, 3, 52),
 -- Kanto Ninetales
 -- Sword & Shield
 (38, NULL, 472, 1, 1),
@@ -1059,27 +1057,6 @@ VALUES
 (40, NULL, 68, 3, 1),
 (40, NULL, 102, 3, 1),
 (40, NULL, 509, 3, 5),
-Conversation opened. 2 messages. All messages read.
-
-Skip to content
-Using Gmail with screen readers
-11 of 6,949
-Pokedex
-Inbox
-
-Brandon Evans
-AttachmentsThu, Apr 3, 10:35 PM (4 days ago)
-Starting with Zubat, fill in the information. Here is the list in case ChatGPT forgets.
-
-Brandon Evans <brandonevans735@gmail.com>
-Attachments
-Fri, Apr 4, 1:38 PM (3 days ago)
-to me
-
-Here is the progress that I made :)
-
- One attachment
-  •  Scanned by Gmail
 -- Zubat
 -- Sword & Shield
 (41, NULL, 1, 1, 1),
@@ -4508,9 +4485,9 @@ Here is the progress that I made :)
 (140, NULL, 705, 1, 60),
 -- Kabutops
 -- Sword & Shield
-(141, NULL, 1, 651, 1),
-(141, NULL, 1, 718, 1),
-(141, NULL, 1, 227, 1),
+(141, NULL, 651, 1, 1),
+(141, NULL, 718, 1, 1),
+(141, NULL, 227, 1, 1),
 (141, NULL, 1, 1, 1),
 (141, NULL, 315, 1, 1),
 (141, NULL, 611, 1, 1),
@@ -4663,21 +4640,21 @@ Here is the progress that I made :)
 (144, 2, 282, 1, 65),
 (144, 2, 783, 1, 70),
 -- Scarlet & Violet
-(144, 2, 309, 1, 1),
-(144, 2, 121, 1, 5),
-(144, 2, 569, 1, 10),
-(144, 2, 353, 1, 15),
-(144, 2, 11, 1, 20),
-(144, 2, 18, 1, 25),
-(144, 2, 742, 1, 30),
-(144, 2, 543, 1, 35),
-(144, 2, 567, 1, 40),
-(144, 2, 272, 1, 45),
-(144, 2, 185, 1, 50),
-(144, 2, 343, 1, 55),
-(144, 2, 168, 1, 60),
-(144, 2, 282, 1, 65),
-(144, 2, 783, 1, 70),
+(144, 2, 309, 3, 1),
+(144, 2, 121, 3, 5),
+(144, 2, 569, 3, 10),
+(144, 2, 353, 3, 15),
+(144, 2, 11, 3, 20),
+(144, 2, 18, 3, 25),
+(144, 2, 742, 3, 30),
+(144, 2, 543, 3, 35),
+(144, 2, 567, 3, 40),
+(144, 2, 272, 3, 45),
+(144, 2, 185, 3, 50),
+(144, 2, 343, 3, 55),
+(144, 2, 168, 3, 60),
+(144, 2, 282, 3, 65),
+(144, 2, 783, 3, 70),
 -- Kanto Zapdos
 -- Sword & Shield
 (145, NULL, 499, 1, 1),
@@ -4985,4 +4962,5 @@ Here is the progress that I made :)
 (151, NULL, 780, 3, 80),
 (151, NULL, 35, 3, 90),
 (151, NULL, 538, 3, 100);
+
 COMMIT TRANSACTION;

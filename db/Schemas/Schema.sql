@@ -197,6 +197,7 @@ Pokémon Level Up Moveset Table
 Store the level up movesets for each Pokémon from specific game(s).
 *******/
 CREATE TABLE IF NOT EXISTS Pokemon_Level_Up_Moveset (
+    level_up_moveset_id INTEGER PRIMARY KEY AUTOINCREMENT,
     pokedex_number INTEGER NOT NULL,       -- Reference to the Pokémon's Pokédex number
     region_id INTEGER, -- References the region in the Pokemon_Regional_Form table. NULL for a Pokémon not being a regional variant
     move_id  INTEGER NOT NULL,              -- Reference to the move in Pokemon_Move
@@ -204,7 +205,6 @@ CREATE TABLE IF NOT EXISTS Pokemon_Level_Up_Moveset (
     level_learned INTEGER NOT NULL,          -- Level at which move is learned
 
     -- Key Constraints
-    PRIMARY KEY (pokedex_number, region_id, move_id, mainline_game_id),
     FOREIGN KEY (pokedex_number, region_id) REFERENCES Pokemon(pokedex_number, region_id),
     FOREIGN KEY (move_id) REFERENCES Pokemon_Move(move_id),
     FOREIGN KEY (mainline_game_id) REFERENCES Pokemon_Mainline_Game(mainline_game_id)

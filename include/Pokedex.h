@@ -71,14 +71,25 @@ class Pokedex
         Json::Value getPokemonTypes() const;
         Json::Value getRegionData() const;
         Json::Value getPokemonGames() const;
+        Json::Value getPokemonMainlineGames() const;
 
     private:
         void initializeRegions();
         void initializePokemonTypes();
         void initializeGames();
+        void initializeMainlineGames();
+        void connectEvolutionaryChain(std::vector<EvolutionData>& evolutionaryChain) const;
+
+        std::uint32_t getLimitEnvVar(const bool& latest = false) const;
+
         std::string queryRegionalFormTable(const std::uint32_t& id);
         std::string queryTypeTable(const std::uint32_t& id);
         std::string queryAbilityTable(const std::uint32_t& id);
+        std::string queryMoveCategoryTable(const std::uint32_t& id);
+
+        Json::Value queryLevelUpMovesetTable(const std::uint32_t& pokedexNumber,
+                                             const std::string& regionalFormId);
+        Json::Value queryMoveTable(const std::uint32_t& id);
         Json::Value queryTypeEffectivnessTable(const std::uint32_t& primaryTypeId,
                                                const std::uint32_t& secondaryTypeId);
         Json::Value queryEvolutionTable(const std::uint32_t& targetPokedexNumber);
@@ -86,14 +97,13 @@ class Pokedex
                                        const std::string& regionalFormId);
         Json::Value pokemonButtonDataToJsonValue(
             const std::vector<std::vector<std::string>>& results);
-        std::uint32_t getLimitEnvVar(const bool& latest = false) const;
-        void connectEvolutionaryChain(std::vector<EvolutionData>& evolutionaryChain) const;
 
         SQLManager sqlManager;
         Logger& logger;
         std::vector<std::string> keys;
         std::vector<std::string> pokemonTypes;
         std::vector<std::string> pokemonGames;
+        std::unordered_map<std::string, std::string> pokemonMainlineGames;
         std::unordered_map<std::string, Region> regions;
 };
 

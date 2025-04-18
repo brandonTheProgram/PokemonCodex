@@ -251,4 +251,28 @@ void HttpRouter::initializeRoutes(httplib::Server &server)
 
                    res.set_content(output, "application/json");
                });
+
+    server.Get(
+        "/getPokemonMainlineGames",
+        [this](const httplib::Request &req, httplib::Response &res)
+        {
+            Json::StreamWriterBuilder writer;
+
+            this->logger.debug("HttpRouter::initializeRoutes getPokemonMainlineGames envoked");
+
+            std::string output = Json::writeString(writer, this->pokedex.getPokemonMainlineGames());
+
+            if (output.empty())
+            {
+                res.status = 404;  // Not Found
+                logger.warning(
+                    "HttpRouter::initializeRoutes Received no Pokemon information from the "
+                    "database");
+                res.set_content("{\"error\": \"Pokemon mainline games not found\"}",
+                                "application/json");
+                return;
+            }
+
+            res.set_content(output, "application/json");
+        });
 }

@@ -169,7 +169,7 @@
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="heading<%= index %>">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<%= index %>" aria-expanded="false" aria-controls="collapse<%= index %>">
-                      <span class="badge bg-primary me-2"><%= game.name %></span> Locations
+                      <span class="badge bg-primary me-2"><%= game.name %></span>
                     </button>
                   </h2>
                   <div id="collapse<%= index %>" class="accordion-collapse collapse" aria-labelledby="heading<%= index %>" data-bs-parent="#locationAccordion">
@@ -189,6 +189,61 @@
           <p class="text-muted">This Pokémon is not found in the wild in any game.</p>
         <% } %>
 
+        <!-- Pokémon Level-Up Moveset Section -->
+        <% if (pokemon.level_up_moveset && pokemon.level_up_moveset.length > 0 && pokemonMainlineGames.length > 0) { %>
+          <div class="container mt-4">
+            <h3>Level-Up Moveset</h3>
+            <div class="accordion" id="movesetAccordion">
+              <% pokemonMainlineGames.forEach((game, index) => { 
+                  const filteredMoves = pokemon.level_up_moveset.filter(m => m.mainline == game.id);
+              %>
+                <% if (filteredMoves.length > 0) { %>
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="movesetHeading<%= index %>">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#movesetCollapse<%= index %>" aria-expanded="false" aria-controls="movesetCollapse<%= index %>">
+                        <span class="badge bg-success me-2"><%= game.name %></span> Level-Up Moves
+                      </button>
+                    </h2>
+                    <div id="movesetCollapse<%= index %>" class="accordion-collapse collapse" aria-labelledby="movesetHeading<%= index %>" data-bs-parent="#movesetAccordion">
+                      <div class="accordion-body">
+                        <div class="table-responsive">
+                          <table class="table table-striped table-bordered align-middle">
+                            <thead class="table-light">
+                              <tr>
+                                <th>Level</th>
+                                <th>Attack Name</th>
+                                <th>Description</th>
+                                <th>Type</th>
+                                <th>Category</th>
+                                <th>Power</th>
+                                <th>Accuracy</th>
+                                <th>PP</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <% filteredMoves.forEach(move => { %>
+                                <tr>
+                                  <td><%= move.level_learned %></td>
+                                  <td><%= move.move.name %></td>
+                                  <td><%= move.move.description %></td>
+                                  <td><%= move.move.type %></td>
+                                  <td><%= move.move.category %></td>
+                                  <td><%= move.move.power %></td>
+                                  <td><%= move.move.accuracy %></td>
+                                  <td><%= move.move.pp %></td>
+                                </tr>
+                              <% }); %>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <% } %>
+              <% }); %>
+            </div>
+          </div>
+        <% } %>
 
 <% } else { %> 
   <div class="alert alert-warning text-center" role="alert">

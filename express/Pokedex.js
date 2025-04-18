@@ -90,16 +90,19 @@ app.get('/pokemon/:pokedex_number/:region_id?', async (req, res) => {
         const pokemonResponse = await axios.get(`http://localhost:8080/pokemon/${pokedexNumber}${regionId ? `/${regionId}` : ''}`);
         const pokemonTypesResponse = await axios.get(`http://localhost:8080/getPokemonTypes`);
         const pokemonGamesResponse = await axios.get(`http://localhost:8080/getPokemonGames`);
+        const pokemonMainlineGamesResponse = await axios.get(`http://localhost:8080/getPokemonMainlineGames`);
 
         const pokemonData = pokemonResponse.data;
         const pokemonTypeData = pokemonTypesResponse.data;
         const pokemonGameData = pokemonGamesResponse.data;
+        const pokemonMainlineGameData = pokemonMainlineGamesResponse.data;
 
         // Render Pokemon.ejs
         res.render('Pokemon', {
             pokemon: pokemonData,
             pokemonTypes : pokemonTypeData,
-            pokemonGames: pokemonGameData
+            pokemonGames: pokemonGameData,
+            pokemonMainlineGames: pokemonMainlineGameData
         });
     } catch (error) {
     console.error('Error fetching data from backend:', error);
