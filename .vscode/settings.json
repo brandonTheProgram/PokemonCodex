@@ -96,5 +96,6 @@
         "source_location": "cpp",
         "stdfloat": "cpp",
         "strstream": "cpp"
-    }
+    },
+    "cmake.configureOnOpen": false
 }

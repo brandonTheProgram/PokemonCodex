@@ -2,6 +2,7 @@ BEGIN TRANSACTION;
 
 INSERT INTO Pokemon_Move (move_name, description, type_id, category_id, power, accuracy, pp)
 VALUES 
+
 ('Absorb', 'A nutrient-draining attack. The user''s HP is restored by up to half the damage taken by the target.', 12, 2, 20, 100.00, 25),
 ('Accelerock', 'The user smashes into the target at high speed. This move always goes first.', 6, 1, 40, 100.00, 20),
 ('Acid', 'The opposing Pokemon are attacked with a spray of harsh acid. This may also lower their Sp. Def stat.', 4, 2, 40, 100.00, 30),
@@ -46,6 +47,7 @@ VALUES
 ('Baby-Doll Eyes', 'The user stares at the target with its baby-doll eyes, which lowers its Attack stat. This move always goes first.', 18, 3, 0, 100.00, 30),
 ('Baddy Bad', 'The user acts bad and attacks the target. A wondrous wall of light is put up to weaken the power of the opposing Pokemon''s physical moves.', 17, 2, 90, 100.00, 15),
 ('Baneful Bunker', 'In addition to protecting the user from attacks, this move also poisons any attacker that makes direct contact.', 4, 3, 0, 100.00, 10),
+('Barb Barrage', 'The user launches countless toxic barbs to inflict damage. This may also poison the target. This move''s power is doubled if the target has a status condition.', 4, 1, 60, 100.0, 15),
 ('Barrage', 'Round objects are hurled at the target to strike two to five times in a row.', 1, 1, 15, 85.00, 20),
 ('Barrier', 'The user throws up a sturdy wall that sharply raises its Defense stat.', 14, 3, 0, 100.00, 20),
 ('Baton Pass', 'The user switches places with a party Pokemon in waiting and passes along any stat changes.', 1, 3, 0, 100.00, 40),
