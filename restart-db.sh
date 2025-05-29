@@ -21,6 +21,8 @@ SQL_FILES=(
     "./db/Schemas/PokemonTechnicalMove.sql"
     "./db/Schemas/PokemonLevelUpMoveset-Kanto.sql"
     "./db/Schemas/PokemonLevelUpMoveset-Johto.sql"
+    "./db/Schemas/PokemonLevelUpMoveset-Hoenn.sql"
+    "./db/Schemas/PokemonLevelUpMoveset-Sinnoh.sql"
 )
 
 # Remove the existing database file if it exists
