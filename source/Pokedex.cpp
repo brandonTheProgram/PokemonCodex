@@ -571,7 +571,7 @@ Json::Value Pokedex::queryTechnicalMoveTable(const std::uint32_t& id)
     Json::Value pokemonTechnicalMove(Json::objectValue);
 
     this->sqlManager.prepareStatement(
-        "SELECT technical_number, is_tr FROM "
+        "SELECT move_id, technical_number, is_tr FROM "
         "Pokemon_Technical_Move WHERE technical_move_id = ?;");
     this->sqlManager.bind(1, id);
     auto results = this->sqlManager.fetchResults();
@@ -582,8 +582,11 @@ Json::Value Pokedex::queryTechnicalMoveTable(const std::uint32_t& id)
         return pokemonTechnicalMove;
     }
 
-    pokemonTechnicalMove["technical_number"] = results[0].at(0);
-    pokemonTechnicalMove["is_tr"]            = results[0].at(1);
+    auto moveId = std::stoi(results[0].at(0));
+
+    pokemonTechnicalMove["move"]             = this->queryMoveTable(moveId);
+    pokemonTechnicalMove["technical_number"] = results[0].at(1);
+    pokemonTechnicalMove["is_tr"]            = results[0].at(2);
 
     return pokemonTechnicalMove;
 }
@@ -884,7 +887,7 @@ std::pair<Json::Value, Json::Value> Pokedex::queryTechnicalMovesetTable(
     Json::Value trMoves(Json::arrayValue);
 
     this->sqlManager.prepareStatement(
-        "SELECT move_id, mainline_game_id, technical_move_id FROM Pokemon_Technical_Moveset WHERE "
+        "SELECT mainline_game_id, technical_move_id FROM Pokemon_Technical_Moveset WHERE "
         "pokedex_number = ? AND region_id IS ? ORDER BY technical_moveset_id;");
     this->sqlManager.bind(1, pokedexNumber);
 
@@ -912,12 +915,10 @@ std::pair<Json::Value, Json::Value> Pokedex::queryTechnicalMovesetTable(
         for (const auto& row : results)
         {
             Json::Value pokemonTechnicalMove;
-            auto moveId      = std::stoi(row[0]);
-            auto mainlineId  = row[1];
-            auto technicalId = std::stoi(row[2]);
+            auto mainlineId  = row[0];
+            auto technicalId = std::stoi(row[1]);
 
             Json::Value moveData;
-            moveData["move"]           = this->queryMoveTable(moveId);
             moveData["mainline"]       = mainlineId;
             moveData["technical_move"] = this->queryTechnicalMoveTable(technicalId);
 

@@ -219,13 +219,11 @@ CREATE TABLE IF NOT EXISTS Pokemon_Technical_Moveset (
     technical_moveset_id INTEGER PRIMARY KEY AUTOINCREMENT,
     pokedex_number INTEGER NOT NULL,       -- Reference to the Pokémon's Pokédex number
     region_id INTEGER, -- References the region in the Pokemon_Regional_Form table. NULL for a Pokémon not being a regional variant
-    move_id INTEGER NOT NULL,              -- Reference to the move in the Pokemon_Move table
     mainline_game_id INTEGER NOT NULL,              -- Reference to the game in Pokemon_Mainline_Game
     technical_move_id INTEGER NOT NULL,              -- Reference to the game in Pokemon_Technical_Move
 
     -- Key Constraints
     FOREIGN KEY (pokedex_number, region_id) REFERENCES Pokemon(pokedex_number, region_id),
-    FOREIGN KEY (move_id) REFERENCES Pokemon_Move(move_id),
     FOREIGN KEY (mainline_game_id) REFERENCES Pokemon_Mainline_Game(mainline_game_id)
 );
 

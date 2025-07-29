@@ -277,16 +277,18 @@
                               </tr>
                             </thead>
                             <tbody>
-                              <% tms.forEach(move => { %>
+                              <% tms.forEach(tm => {
+                                  const move = tm.technical_move.move;
+                              %>
                                 <tr>
-                                  <td><%= move.technical_move.technical_number %></td>
-                                  <td><%= move.move.name %></td>
-                                  <td><%= move.move.description %></td>
-                                  <td><%= move.move.type %></td>
-                                  <td><%= move.move.category %></td>
-                                  <td><%= move.move.power %></td>
-                                  <td><%= move.move.accuracy %></td>
-                                  <td><%= move.move.pp %></td>
+                                  <td><%= tm.technical_move.technical_number %></td>
+                                  <td><%= move.name %></td>
+                                  <td><%= move.description %></td>
+                                  <td><%= move.type %></td>
+                                  <td><%= move.category %></td>
+                                  <td><%= move.power %></td>
+                                  <td><%= move.accuracy %></td>
+                                  <td><%= move.pp %></td>
                                 </tr>
                               <% }); %>
                             </tbody>
@@ -333,16 +335,18 @@
                               </tr>
                             </thead>
                             <tbody>
-                              <% trs.forEach(move => { %>
+                              <% trs.forEach(tr => {
+                                  const move = tr.technical_move.move;
+                              %>
                                 <tr>
-                                  <td><%= move.technical_move.technical_number %></td>
-                                  <td><%= move.move.name %></td>
-                                  <td><%= move.move.description %></td>
-                                  <td><%= move.move.type %></td>
-                                  <td><%= move.move.category %></td>
-                                  <td><%= move.move.power %></td>
-                                  <td><%= move.move.accuracy %></td>
-                                  <td><%= move.move.pp %></td>
+                                  <td><%= tr.technical_move.technical_number %></td>
+                                  <td><%= move.name %></td>
+                                  <td><%= move.description %></td>
+                                  <td><%= move.type %></td>
+                                  <td><%= move.category %></td>
+                                  <td><%= move.power %></td>
+                                  <td><%= move.accuracy %></td>
+                                  <td><%= move.pp %></td>
                                 </tr>
                               <% }); %>
                             </tbody>
