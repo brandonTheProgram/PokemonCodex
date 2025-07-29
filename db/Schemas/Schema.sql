@@ -180,13 +180,13 @@ Pokémon Technical Moves Table
 Store the TM/TR details for each Pokémon move in the games.
 *******/
 CREATE TABLE IF NOT EXISTS Pokemon_Technical_Move (
+    technical_move_id INTEGER PRIMARY KEY AUTOINCREMENT,  -- Unique identifier for the move
     move_id INTEGER NOT NULL,                -- Reference to the move in Pokemon_Move
     mainline_game_id INTEGER NOT NULL,       -- Reference to the game in Pokemon_Mainline_Game
     technical_number INTEGER NOT NULL,       -- TM/TR number for the move in the specified game
     is_tr	INTEGER NOT NULL,                -- True(1) or False(0) if the move is a tr
 
     -- Key Constraints
-    PRIMARY KEY (move_id, mainline_game_id, technical_number),
     FOREIGN KEY (move_id) REFERENCES Pokemon_Move(move_id),
     FOREIGN KEY (mainline_game_id) REFERENCES Pokemon_Mainline_Game(mainline_game_id)
 );
@@ -216,16 +216,16 @@ Pokémon Technical Moveset Table
 Store the technical movesets for each Pokémon from specific game(s).
 *******/
 CREATE TABLE IF NOT EXISTS Pokemon_Technical_Moveset (
+    technical_moveset_id INTEGER PRIMARY KEY AUTOINCREMENT,
     pokedex_number INTEGER NOT NULL,       -- Reference to the Pokémon's Pokédex number
     region_id INTEGER, -- References the region in the Pokemon_Regional_Form table. NULL for a Pokémon not being a regional variant
     move_id INTEGER NOT NULL,              -- Reference to the move in the Pokemon_Move table
     mainline_game_id INTEGER NOT NULL,              -- Reference to the game in Pokemon_Mainline_Game
-    technical_number_id INTEGER NOT NULL,  -- Reference to the technical move in the Pokemon_Technical_Move table
+    technical_move_id INTEGER NOT NULL,              -- Reference to the game in Pokemon_Technical_Move
 
     -- Key Constraints
-    PRIMARY KEY (pokedex_number, region_id, move_id, mainline_game_id),
     FOREIGN KEY (pokedex_number, region_id) REFERENCES Pokemon(pokedex_number, region_id),
-    FOREIGN KEY (move_id, mainline_game_id, technical_number_id) REFERENCES Pokemon_Technical_Move(move_id, mainline_game_id, technical_number),
+    FOREIGN KEY (move_id) REFERENCES Pokemon_Move(move_id),
     FOREIGN KEY (mainline_game_id) REFERENCES Pokemon_Mainline_Game(mainline_game_id)
 );
 

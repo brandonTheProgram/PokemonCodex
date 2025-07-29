@@ -89,7 +89,10 @@ class Pokedex
 
         Json::Value queryLevelUpMovesetTable(const std::uint32_t& pokedexNumber,
                                              const std::string& regionalFormId);
+        std::pair<Json::Value, Json::Value> queryTechnicalMovesetTable(
+            const std::uint32_t& pokedexNumber, const std::string& regionalFormId);
         Json::Value queryMoveTable(const std::uint32_t& id);
+        Json::Value queryTechnicalMoveTable(const std::uint32_t& id);
         Json::Value queryTypeEffectivnessTable(const std::uint32_t& primaryTypeId,
                                                const std::uint32_t& secondaryTypeId);
         Json::Value queryEvolutionTable(const std::uint32_t& targetPokedexNumber);

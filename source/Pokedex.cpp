@@ -243,6 +243,10 @@ Json::Value Pokedex::getPokemonData(const std::string& pokedexNumber,
             this->queryLocationTable(std::stoi(pokedexNumber), regionalFormId);
         targetPokemon["level_up_moveset"] =
             this->queryLevelUpMovesetTable(std::stoi(pokedexNumber), regionalFormId);
+        auto [tmMoves, trMoves] =
+            this->queryTechnicalMovesetTable(std::stoi(pokedexNumber), regionalFormId);
+        targetPokemon["technical_machines"] = tmMoves;
+        targetPokemon["technical_records"]  = trMoves;
     }
     catch (const std::invalid_argument& e)
     {
@@ -560,6 +564,30 @@ Json::Value Pokedex::queryMoveTable(const std::uint32_t& id)
     return pokemonMove;
 }
 
+Json::Value Pokedex::queryTechnicalMoveTable(const std::uint32_t& id)
+{
+    this->logger.debug("Pokedex::queryTechnicalMoveTable invoked to query: " + std::to_string(id));
+
+    Json::Value pokemonTechnicalMove(Json::objectValue);
+
+    this->sqlManager.prepareStatement(
+        "SELECT technical_number, is_tr FROM "
+        "Pokemon_Technical_Move WHERE technical_move_id = ?;");
+    this->sqlManager.bind(1, id);
+    auto results = this->sqlManager.fetchResults();
+
+    if (results.empty())
+    {
+        this->logger.warning("No move was found that matches the id of " + std::to_string(id));
+        return pokemonTechnicalMove;
+    }
+
+    pokemonTechnicalMove["technical_number"] = results[0].at(0);
+    pokemonTechnicalMove["is_tr"]            = results[0].at(1);
+
+    return pokemonTechnicalMove;
+}
+
 Json::Value Pokedex::queryTypeEffectivnessTable(const std::uint32_t& primaryTypeId,
                                                 const std::uint32_t& secondaryTypeId)
 {
@@ -843,12 +871,78 @@ Json::Value Pokedex::queryLevelUpMovesetTable(const std::uint32_t& pokedexNumber
         return Json::Value(Json::arrayValue);
     }
 
-    Json::StreamWriterBuilder builder;
-    builder["indentation"] = "";
-
-    this->logger.debug("Moveset: " + Json::writeString(builder, pokemonLevelUpMoveset));
-
     return pokemonLevelUpMoveset;
+}
+
+std::pair<Json::Value, Json::Value> Pokedex::queryTechnicalMovesetTable(
+    const std::uint32_t& pokedexNumber, const std::string& regionalFormId)
+{
+    this->logger.debug("Pokedex::queryTechnicalMovesetTable invoked to query: " +
+                       std::to_string(pokedexNumber) + " and " + regionalFormId);
+
+    Json::Value tmMoves(Json::arrayValue);
+    Json::Value trMoves(Json::arrayValue);
+
+    this->sqlManager.prepareStatement(
+        "SELECT move_id, mainline_game_id, technical_move_id FROM Pokemon_Technical_Moveset WHERE "
+        "pokedex_number = ? AND region_id IS ? ORDER BY technical_moveset_id;");
+    this->sqlManager.bind(1, pokedexNumber);
+
+    try
+    {
+        if (regionalFormId.empty())
+        {
+            this->sqlManager.bind(2, nullptr);
+        }
+        else
+        {
+            this->sqlManager.bind(2, std::stoi(regionalFormId));
+        }
+
+        auto results = this->sqlManager.fetchResults();
+
+        if (results.empty())
+        {
+            this->logger.warning(
+                "No Pokemon Technical Moveset was found that matches the Pokedex Number " +
+                pokedexNumber);
+            return {tmMoves, trMoves};
+        }
+
+        for (const auto& row : results)
+        {
+            Json::Value pokemonTechnicalMove;
+            auto moveId      = std::stoi(row[0]);
+            auto mainlineId  = row[1];
+            auto technicalId = std::stoi(row[2]);
+
+            Json::Value moveData;
+            moveData["move"]           = this->queryMoveTable(moveId);
+            moveData["mainline"]       = mainlineId;
+            moveData["technical_move"] = this->queryTechnicalMoveTable(technicalId);
+
+            const std::string isTR = moveData["technical_move"]["is_tr"].asString();
+            if (isTR == "0")
+            {
+                tmMoves.append(moveData);
+            }
+            else if (isTR == "1")
+            {
+                trMoves.append(moveData);
+            }
+            else
+            {
+                this->logger.warning("Unrecognized is_tr value: " + isTR);
+            }
+        }
+    }
+    catch (const std::invalid_argument& e)
+    {
+        this->logger.critical("Pokedex::queryTechnicalMovesetTable caught an exception: " +
+                              std::string(e.what()));
+    }
+
+    return {tmMoves, trMoves};
 }
 
 Json::Value Pokedex::pokemonButtonDataToJsonValue(
