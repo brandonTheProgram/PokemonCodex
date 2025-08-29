@@ -14,6 +14,8 @@ class Config
 
         void load(const std::string& filePath);
 
+        bool addEnvVar(const std::string& key, const std::string& value);
+
         std::string get(const std::string& key) const;
 
     private:

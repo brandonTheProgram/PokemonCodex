@@ -1,4 +1,5 @@
 #include "Logger.h"
+#include "Config.h"
 #include <gtest/gtest.h>
 #include <fstream>
 #include <thread>
@@ -10,24 +11,21 @@
 class LoggerTest : public ::testing::Test {
 protected:
     void SetUp() override {
-        _putenv("LOG_DIR=logs");
-        std::string logDirEnv = std::getenv("LOG_DIR");
-        testLogFileDir = logDirEnv + "/";
+        Config::getInstance().addEnvVar("LOG_DIR", "logs");
+        Config::getInstance().addEnvVar("LOG_LEVEL", "DEBUG");
     }
 
-    void TearDown() override {
-        _putenv("LOG_DIR=");
-    }
+    void TearDown() override {}
 
     const std::string testLogFile = "test_log.txt";
-    std::string testLogFileDir;
+    const std::string testLogFileDir_ = "logs/";
 };
 
 TEST_F(LoggerTest, LogFileCreation) {
     Logger& logger = Logger::getInstance(testLogFile);
     logger.info("Testing log file creation");
 
-    ASSERT_TRUE(std::filesystem::exists(testLogFileDir));
+    ASSERT_TRUE(std::filesystem::exists(testLogFileDir_));
 }
 
 TEST_F(LoggerTest, LogContent) {
@@ -38,7 +36,7 @@ TEST_F(LoggerTest, LogContent) {
 
     logger.info(logStatement);
 
-    std::ifstream logFile(testLogFileDir + testLogFile);
+    std::ifstream logFile(testLogFileDir_ + testLogFile);
     ASSERT_TRUE(logFile.is_open());
 
     while(getline(logFile, line)) {
@@ -65,7 +63,7 @@ TEST_F(LoggerTest, ConcurrentLogging) {
     t1.join();
     t2.join();
 
-    std::ifstream logFile(testLogFileDir + testLogFile);
+    std::ifstream logFile(testLogFileDir_ + testLogFile);
     ASSERT_TRUE(logFile.is_open());
 
     int thread1Count = 0, thread2Count = 0;

@@ -46,6 +46,18 @@ void Config::load(const std::string& filePath)
     }
 }
 
+bool Config::addEnvVar(const std::string& key, const std::string& value)
+{
+    auto result = this->environment.insert({key, value});
+
+    if (!result.second)
+    {
+        return false;
+    }
+
+    return true;
+}
+
 std::string Config::get(const std::string& key) const
 {
     auto it = this->environment.find(key);
