@@ -1,4 +1,15 @@
 #!/bin/bash
+set -euo pipefail
+
+echo "[build] Node: $(node -v)  npm: $(npm -v)"
+
+if [ -f "package.json" ]; then
+  echo "[build] Installing Node dependencies at repo root..."
+  npm ci || npm install
+else
+  echo "[build] ERROR: No package.json at repo root."
+  exit 1
+fi
 
 # Set variables for the project directories
 BUILD_DIR="build"

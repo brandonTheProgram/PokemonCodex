@@ -10,12 +10,6 @@ EXECUTABLE_NAME="PokemonCodex"
 EXPRESS_SERVER_FILE="Pokedex.js"
 EXPRESS_SERVER_LINK="http://localhost:3000"
 
-# Install Node deps if missing (idempotent)
-if [ -f "express/package.json" ]; then
-  echo "Installing Node dependencies in ./express"
-  npm --prefix express ci --omit=dev
-fi
-
 # Check if the build directory and executable exists. If not, warn the user.
 if [ -d "$BUILD_DIR" ] && [ -f "$BUILD_DIR/$EXECUTABLE_NAME" ]; then
   echo "Starting the backend server"
