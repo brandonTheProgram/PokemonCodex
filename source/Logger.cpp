@@ -84,7 +84,11 @@ std::string Logger::getCurrentTime() const
 {
     auto now = std::time(nullptr);
     std::tm timeStruct{};
+#if defined(_WIN32) || defined(_WIN64)
     localtime_s(&timeStruct, &now);
+#else
+    localtime_r(&now, &timeStruct);
+#endif
     std::ostringstream oss;
     oss << std::put_time(&timeStruct, "%Y-%m-%d %H:%M:%S");
     return oss.str();
