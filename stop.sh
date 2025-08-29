@@ -1,12 +1,26 @@
 #!/bin/bash
+set -euo pipefail
 
-EXECUTABLE_NAME="PokemonCodex.exe"
-EXPRESS_SERVER="node.exe"
+# ---- config ----
+BACKEND_NAME="PokemonCodex"
+NODE_ENTRY="express/Pokedex.js"
+# ----------------
 
-echo "Stopping all servers..."
+echo "Stopping servers..."
+if [[ "${OS:-}" == "Windows_NT" ]] || [[ "$(uname -s 2>/dev/null)" =~ (MINGW|MSYS|CYGWIN) ]]; then
+    taskkill //F //IM "${BACKEND_NAME}.exe" >/dev/null 2>&1 || true
 
-# Kill the backend and Express server
-wmic process where "name='$EXECUTABLE_NAME'" delete
-wmic process where "name='$EXPRESS_SERVER'" delete
+    powershell.exe -NoProfile -Command "
+        \$pattern = [regex]::Escape('${NODE_ENTRY//\//\\}')
+        Get-CimInstance Win32_Process |
+        Where-Object { \$_.Name -ieq 'node.exe' -and \$_.CommandLine -match \$pattern } |
+        ForEach-Object {
+            try { Stop-Process -Id \$_.ProcessId -Force -ErrorAction SilentlyContinue } catch {}
+        }
+    " >/dev/null 2>&1 || true
+else
+    pkill -f '(^|/)'${BACKEND_NAME}'(\s|$)' >/dev/null 2>&1 || true
+    pkill -f "node .*${NODE_ENTRY}" >/dev/null 2>&1 || true
+fi
 
 echo "Servers stopped."

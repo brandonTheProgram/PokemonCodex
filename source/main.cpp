@@ -7,7 +7,7 @@ int main()
 {
     try
     {
-        Config::getInstance().load("../config.json");
+        Config::getInstance().load("config.json");
 
         Logger::getInstance().info("Starting the application");
 

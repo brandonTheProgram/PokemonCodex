@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 # Set variables for the project directories
 BUILD_DIR="build"
 
@@ -8,30 +10,24 @@ EXECUTABLE_NAME="PokemonCodex"
 EXPRESS_SERVER_FILE="Pokedex.js"
 EXPRESS_SERVER_LINK="http://localhost:3000"
 
-# Check if the build directory exists. If not, warn the user.
-if [ -d "$BUILD_DIR" ]; then
-  # Navigate to the build directory
-  cd "$BUILD_DIR"
+# Install Node deps if missing (idempotent)
+if [ -f "express/package.json" ]; then
+  echo "Installing Node dependencies in ./express"
+  npm --prefix express ci --omit=dev
+fi
 
-  # Check if the executable exists
-  if [[ -f "$EXECUTABLE_NAME" ]]; then
-    # Run the backend server
-    echo "Starting the backend server"
-    ./"$EXECUTABLE_NAME" &
+# Check if the build directory and executable exists. If not, warn the user.
+if [ -d "$BUILD_DIR" ] && [ -f "$BUILD_DIR/$EXECUTABLE_NAME" ]; then
+  echo "Starting the backend server"
+  "./$BUILD_DIR/$EXECUTABLE_NAME" &
 
-    # Start the Express server
-    cd ..
-    cd express
-    node "$EXPRESS_SERVER_FILE" &
+  # Start the Express server
+  echo "Starting the frontend server"
+  cd express
+  exec node "$EXPRESS_SERVER_FILE"
 
-    # Wait for both servers to be ready
-    sleep 2
+  echo "Both servers are running. Access the webpage at ${EXPRESS_SERVER_LINK}"
 
-    echo "Both servers are running. Access the webpage at ${EXPRESS_SERVER_LINK}"
-    cd ..
-  else
-    echo "Executable not found. Please make sure the project is built."
-  fi
 else
-  echo "Please make sure the project is built."
+  echo "Executable not found. Please make sure the project is built."
 fi
