@@ -2,7 +2,6 @@
 
 #include <ctime>
 #include <filesystem>
-#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -30,32 +29,38 @@ Logger::Level Logger::getCurrentLogLevel()
 }
 
 Logger::Logger(const std::string& logDir, const std::string& fileName)
-    : logFileName(fileName), currentLevel(this->getCurrentLogLevel())
+    : logFileName_(fileName), currentLevel_(this->getCurrentLogLevel())
 {
     // Create the directory if it doesn't exist
     if (!std::filesystem::exists(logDir))
     {
         std::filesystem::create_directories(logDir);
     }
+
+    this->toggleLogFile();
+
+    if (!this->logFile_.is_open())
+    {
+        std::cerr << "Unable to open/create the log file: " << fileName
+                  << " in the directory: " << logDir;
+    }
 }
 
-Logger::~Logger() = default;
+Logger::~Logger()
+{
+    this->toggleLogFile();
+}
 
 void Logger::log(const std::string& message, Level level)
 {
-    if (static_cast<int>(level) >= static_cast<int>(currentLevel))
+    if (static_cast<int>(level) >= static_cast<int>(this->currentLevel_))
     {
-        std::lock_guard<std::mutex> lock(this->loggerMutex);
-        std::ofstream logFile(logFileName, std::ios_base::app);
-        if (logFile.is_open())
+        std::lock_guard<std::mutex> lock(this->loggerMutex_);
+
+        if (this->logFile_.is_open())
         {
-            logFile << "[" << this->getCurrentTime() << "] [" << this->levelToString(level) << "] "
-                    << message << std::endl;
-            logFile.close();
-        }
-        else
-        {
-            std::cerr << "Unable to open/create the log file";
+            this->logFile_ << "[" << this->getCurrentTime() << "] [" << this->levelToString(level)
+                           << "] " << message << std::endl;
         }
     }
 }
@@ -78,6 +83,32 @@ void Logger::warning(const std::string& message)
 void Logger::critical(const std::string& message)
 {
     this->log(message, Level::CRITICAL);
+}
+
+std::string Logger::getCurrentLogs()
+{
+    if (this->logFile_.is_open())
+    {
+        this->toggleLogFile();
+    }
+    std::ifstream logFile(this->logFileName_);
+
+    if (!logFile.is_open())
+    {
+        this->warning("Failed to open the log file to get the logs for the front end");
+        return "";
+    }
+
+    std::stringstream buffer;
+    buffer << logFile.rdbuf();
+    logFile.close();
+
+    if (!this->logFile_.is_open())
+    {
+        this->toggleLogFile();
+    }
+
+    return buffer.str();
 }
 
 std::string Logger::getCurrentTime() const
@@ -108,5 +139,17 @@ std::string Logger::levelToString(const Level& level) const
             return "CRITICAL";
         default:
             return "UNKNOWN";
+    }
+}
+
+void Logger::toggleLogFile()
+{
+    if (this->logFile_.is_open())
+    {
+        this->logFile_.close();
+    }
+    else
+    {
+        this->logFile_.open(this->logFileName_, std::ios_base::app);
     }
 }

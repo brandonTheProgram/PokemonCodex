@@ -14,8 +14,8 @@ class HttpRouter
         void initializeRoutes(httplib::Server &server);
 
     private:
-        Pokedex pokedex;
-        Logger &logger;
+        Pokedex pokedex_;
+        Logger &logger_;
 };
 
 #endif

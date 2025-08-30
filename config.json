@@ -1,6 +1,6 @@
 {
   "LOG_LEVEL": "DEBUG",
-  "LOG_DIR": "logs",
+  "LOG_DIR": "build/logs",
   "LATEST_LIMIT": "5",
   "STARTING_LIMIT": "5",
   "DATABASE_PATH": "db/Data/Pokedex.db"

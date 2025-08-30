@@ -24,7 +24,7 @@ class SQLManager
     private:
         SQLite::Database db_;
         std::unique_ptr<SQLite::Statement> stmt_;
-        Logger& logger;
+        Logger& logger_;
 };
 
 #endif

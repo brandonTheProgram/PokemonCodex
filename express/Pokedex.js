@@ -56,7 +56,9 @@ app.get('/', async (req, res) => {
             startingPokemon: startingPokemonData
         });
     } catch (error) {
-        console.error('Error fetching data from backend:', error);
+        console.error("Error fetching data from backend:", error.message);
+        console.error("Error name:", error.name);
+        console.error("Error stack:", error.stack);
         res.status(500).send('Internal Server Error');
     }
 });
@@ -76,7 +78,9 @@ app.get('/region/:region', async (req, res) => {
             pokemons: pokemonData 
         });
     } catch (error) {
-        console.error('Error fetching data from backend:', error);
+        console.error("Error fetching data from backend:", error.message);
+        console.error("Error name:", error.name);
+        console.error("Error stack:", error.stack);
         res.status(500).send('Internal Server Error');
     }
 });
@@ -105,8 +109,10 @@ app.get('/pokemon/:pokedex_number/:region_id?', async (req, res) => {
             pokemonMainlineGames: pokemonMainlineGameData
         });
     } catch (error) {
-    console.error('Error fetching data from backend:', error);
-    res.status(500).send('Internal Server Error');
+        console.error("Error fetching data from backend:", error.message);
+        console.error("Error name:", error.name);
+        console.error("Error stack:", error.stack);
+        res.status(500).send('Internal Server Error');
     }
 });
 
@@ -133,8 +139,29 @@ app.get('/search', async (req, res) => {
             searchTerm: searchTerm
         });
     } catch (error) {
-    console.error('Error fetching data from backend:', error);
-    res.status(500).send('Internal Server Error');
+        console.error("Error fetching data from backend:", error.message);
+        console.error("Error name:", error.name);
+        console.error("Error stack:", error.stack);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+app.get('/logs', async (req, res) => {
+    try {
+        // Send request to C++ backend (httplib) on port 8080 and get data from the respones
+        const logResponse = await axios.get(`http://localhost:8080/getLogs`);
+
+        const logData = logResponse.data;
+
+        // Render Logs.ejs
+        res.render('Logs', {
+            logs: logData
+        });
+    } catch (error) {
+        console.error("Error fetching data from backend:", error.message);
+        console.error("Error name:", error.name);
+        console.error("Error stack:", error.stack);
+        res.status(500).send('Internal Server Error');
     }
 });
 

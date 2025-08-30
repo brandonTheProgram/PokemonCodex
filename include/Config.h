@@ -20,8 +20,8 @@ class Config
 
     private:
         Config() = default;
-        std::unordered_map<std::string, std::string> environment;
-        std::mutex configMutex;
+        std::unordered_map<std::string, std::string> environment_;
+        std::mutex configMutex_;
 };
 
 #endif

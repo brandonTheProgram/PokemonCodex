@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Live Logs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="/css/styles.css" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b1020;
+      --fg: #e5e7eb;
+      --muted: #9ca3af;
+      --chip: #111827;
+      --debug: #a78bfa;
+      --info:  #34d399;
+      --warn:  #fbbf24;
+      --crit:  #f87171;
+      --card: #0f172a;
+      --border: #1f2937;
+      --accent: #60a5fa;
+    }
+    body { background: #f5f6f8; }
+    .logs-shell { max-width: 1100px; margin: 24px auto; padding: 7px; }
+    .card {
+      background: var(--card); color: var(--fg);
+      border-radius: 14px; border: 1px solid var(--border);
+      box-shadow: 0 10px 24px rgba(16,24,40,.1); overflow: hidden;
+    }
+    .card-header, .toolbar {
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding: 14px 18px; background: #0b1223; border-bottom:1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .pill { display:inline-flex; align-items:center; gap:8px; padding:6px 10px;
+      border-radius:999px; background: var(--chip); color:var(--fg);
+      border:1px solid var(--border); font-size:12px; }
+    .btn { background: var(--accent); color:#fff; border:none; border-radius:10px; padding:8px 12px; cursor:pointer; }
+    .btn.secondary { background:transparent; color:var(--fg); border:1px solid var(--border); }
+    .btn:disabled { opacity:.6; cursor:not-allowed; }
+    .field { display:flex; align-items:center; gap:8px; }
+    .field label { font-size:12px; color:var(--muted); }
+    .field input[type="text"], .field select {
+      background:#0e152a; color:var(--fg); border:1px solid var(--border);
+      border-radius:8px; padding:6px 10px; min-width:180px;
+    }
+    .field select#level { min-width: 140px; }
+
+    .badges { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+
+    .chip { border-radius:999px; padding:3px 8px; font-size:11px; border:1px solid var(--border); }
+    .chip.debug { color: var(--debug); }
+    .chip.info  { color: var(--info); }
+    .chip.warn  { color: var(--warn); }
+    .chip.crit  { color: var(--crit); }
+
+    .log-wrap {
+      background: var(--bg); color: var(--fg);
+      font: 12.5px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      padding: 14px 18px; height: 65vh; overflow: auto; white-space: pre;
+      counter-reset: line;
+    }
+    .log-wrap.wordwrap { white-space: pre-wrap; word-break: break-word; }
+    .line { display:block; padding: 2px 0; }
+    .line::before {
+      counter-increment: line;
+      content: counter(line);
+      color: var(--muted); width: 3ch; display:inline-block; margin-right:12px; text-align:right;
+    }
+    .line.debug { color: var(--debug); }
+    .line.info  { color: var(--info); }
+    .line.warn  { color: var(--warn); }
+    .line.crit  { color: var(--crit); }
+
+    .footer {
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:10px 16px; border-top:1px solid var(--border); background:#0b1223;
+      color:var(--muted); font-size:12px;
+    }
+    .kbd { font:11px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background:#0e152a; padding:2px 6px; border-radius:6px; border:1px solid var(--border); }
+  </style>
+</head>
+<body>
+  <div class="logs-shell">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <strong>Live Application Logs</strong>
+          <div class="badges" aria-hidden="true">
+            <span class="chip debug">DEBUG</span>
+            <span class="chip info">INFO</span>
+            <span class="chip warn">WARNING</span>
+            <span class="chip crit">CRITICAL</span>
+          </div>
+        </div>
+        <div class="badges" style="margin-left:auto">
+          <button id="refreshBtn" class="btn" aria-label="Refresh logs">Refresh</button>
+          <button id="copyBtn" class="btn secondary" aria-label="Copy logs to clipboard">Copy</button>
+          <a id="downloadLink" class="btn secondary" download="app-log.txt" aria-label="Download logs">Download</a>
+        </div>
+      </div>
+
+      <div class="toolbar" role="region" aria-label="Log tools">
+        <div class="field">
+          <label for="filter">Filter</label>
+          <input id="filter" type="text" placeholder="string or /regex/flags (e.g., /critical/i)" />
+        </div>
+        <div class="field">
+          <label for="tail">Tail</label>
+          <select id="tail">
+            <option value="200" selected>Last 200</option>
+            <option value="500">Last 500</option>
+            <option value="1000">Last 1000</option>
+            <option value="all">All</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="level">Level</label>
+          <select id="level" aria-label="Filter by log level">
+            <option value="">All</option>
+            <option value="debug">Debug</option>
+            <option value="info">Info</option>
+            <option value="warning">Warning</option>
+            <option value="critical">Critical</option>
+          </select>
+        </div>
+        <div class="field">
+          <label><input id="autoscroll" type="checkbox" checked /> Autoscroll</label>
+        </div>
+        <div class="field">
+          <label><input id="wrap" type="checkbox" /> Word-wrap</label>
+        </div>
+      </div>
+
+      <div id="logView" class="log-wrap" role="log" aria-live="polite" aria-relevant="additions text"></div>
+
+      <div class="footer">
+        <div>Tip: use <span class="kbd">Ctrl/⌘ + F</span> to find in page. You can also filter above.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // initial payload from server (single string with timestamps already included)
+    const initialLog = `<%- (logs || '').replace(/` + "`" + `/g, "\\`").replace(/\$/g, "$$$$") %>`;
+    let allLines = initialLog.split(/\r?\n/);
+
+    const el = {
+      view: document.getElementById('logView'),
+      tail: document.getElementById('tail'),
+      filter: document.getElementById('filter'),
+      refresh: document.getElementById('refreshBtn'),
+      autoscroll: document.getElementById('autoscroll'),
+      wrap: document.getElementById('wrap'),
+      copyBtn: document.getElementById('copyBtn'),
+      downloadLink: document.getElementById('downloadLink'),
+      level: document.getElementById('level'),
+    };
+
+    function classify(s) {
+      const t = s.toLowerCase();
+      if (/\bcritical\b/.test(t)) return 'crit';
+      if (/\bwarning\b|\bwarn\b/.test(t)) return 'warn';
+      if (/\binfo\b/.test(t)) return 'info';
+      if (/\bdebug\b/.test(t)) return 'debug';
+      return '';
+    }
+
+    function tailLines(lines, count) {
+      if (count === 'all') return lines;
+      const n = parseInt(count, 10);
+      return Number.isFinite(n) ? lines.slice(-n) : lines;
+    }
+
+    function applyFilter(lines, q) {
+      if (!q) return lines;
+      q = q.trim();
+      // /pattern/flags
+      const rx = q.startsWith('/') && q.lastIndexOf('/') > 0 ? (() => {
+        const last = q.lastIndexOf('/');
+        const pat = q.slice(1, last);
+        const flags = q.slice(last + 1);
+        try { return new RegExp(pat, flags); } catch { return null; }
+      })() : null;
+      return rx ? lines.filter(l => rx.test(l)) : lines.filter(l => l.toLowerCase().includes(q.toLowerCase()));
+    }
+
+    function render(lines) {
+      el.view.innerHTML = '';
+      for (const raw of lines) {
+        const line = document.createElement('span');
+        line.className = 'line ' + classify(raw);
+        line.textContent = raw;
+        el.view.appendChild(line);
+        el.view.appendChild(document.createTextNode('\n'));
+      }
+      if (el.autoscroll.checked) el.view.scrollTop = el.view.scrollHeight;
+    }
+
+    function matchesLevel(s, level) {
+      if (!level) return true; // "All"
+      const t = s.toLowerCase();
+      switch (level) {
+        case 'debug':    return /\bdebug\b/.test(t);
+        case 'info':     return /\binfo\b/.test(t);
+        case 'warning':  return /\bwarning\b|\bwarn\b/.test(t);
+        case 'critical': return /\bcritical\b/.test(t);
+        default:         return true;
+      }
+    }
+
+    function updateView() {
+      let lines = tailLines(allLines, el.tail.value);
+      lines = applyFilter(lines, el.filter.value);
+      lines = lines.filter(l => matchesLevel(l, el.level.value));
+      render(lines);
+    }
+
+    // Wire controls
+    el.refresh.addEventListener('click', () => { window.location.reload(); });
+    el.tail.addEventListener('change', updateView);
+    el.filter.addEventListener('input', updateView);
+    el.wrap.addEventListener('change', () => el.view.classList.toggle('wordwrap', el.wrap.checked));
+    el.copyBtn.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(allLines.join('\n')); el.copyBtn.textContent='Copied'; setTimeout(()=>el.copyBtn.textContent='Copy',1200); } catch {}
+    });
+    el.level.addEventListener('change', updateView);
+
+    // Initial render + downloadable blob
+    el.downloadLink.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(initialLog);
+    updateView();
+  </script>
+</body>
+</html>

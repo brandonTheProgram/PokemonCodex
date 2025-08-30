@@ -31,11 +31,11 @@ struct EvolutionData
         std::uint32_t evolvedRegionId;
         std::string evolutionCondition;
 
-        // Constructor for easy initialization
         EvolutionData() = default;
 
-        EvolutionData(std::uint32_t base, std::uint32_t evolved, std::uint32_t baseRegion,
-                      std::uint32_t evolvedRegion, const std::string& condition)
+        EvolutionData(const std::uint32_t& base, const std::uint32_t& evolved,
+                      const std::uint32_t& baseRegion, const std::uint32_t& evolvedRegion,
+                      const std::string& condition)
             : basePokedexNumber(base),
               evolvedPokedexNumber(evolved),
               baseRegionId(baseRegion),
@@ -62,8 +62,7 @@ class Pokedex
         Pokedex();
         ~Pokedex() = default;
 
-        Json::Value getRegionPokemonData(const std::string& region,
-                                         const bool& shouldLimit = false);
+        Json::Value getRegionPokemonData(const std::string& region, const bool shouldLimit = false);
         Json::Value getLatestsPokemon();
         Json::Value getPokemonData(const std::string& pokedexNumber,
                                    const std::string& regionalFormId);
@@ -101,13 +100,13 @@ class Pokedex
         Json::Value pokemonButtonDataToJsonValue(
             const std::vector<std::vector<std::string>>& results);
 
-        SQLManager sqlManager;
-        Logger& logger;
-        std::vector<std::string> keys;
-        std::vector<std::string> pokemonTypes;
-        std::vector<std::string> pokemonGames;
-        std::unordered_map<std::string, std::string> pokemonMainlineGames;
-        std::unordered_map<std::string, Region> regions;
+        SQLManager sqlManager_;
+        Logger& logger_;
+        std::vector<std::string> keys_;
+        std::vector<std::string> pokemonTypes_;
+        std::vector<std::string> pokemonGames_;
+        std::unordered_map<std::string, std::string> pokemonMainlineGames_;
+        std::unordered_map<std::string, Region> regions_;
 };
 
 #endif

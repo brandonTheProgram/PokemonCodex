@@ -12,7 +12,7 @@ Config& Config::getInstance()
 
 void Config::load(const std::string& filePath)
 {
-    std::lock_guard<std::mutex> lock(configMutex);
+    std::lock_guard<std::mutex> lock(this->configMutex_);
 
     std::ifstream configFile(filePath);
     if (!configFile.is_open())
@@ -36,19 +36,19 @@ void Config::load(const std::string& filePath)
         const auto& value = root[key];
         if (value.isString())
         {
-            this->environment[key] = value.asString();
+            this->environment_[key] = value.asString();
         }
         else
         {
             // Handle other types as needed, converting them to strings
-            this->environment[key] = value.toStyledString();
+            this->environment_[key] = value.toStyledString();
         }
     }
 }
 
 bool Config::addEnvVar(const std::string& key, const std::string& value)
 {
-    auto result = this->environment.insert({key, value});
+    auto result = this->environment_.insert({key, value});
 
     if (!result.second)
     {
@@ -60,8 +60,8 @@ bool Config::addEnvVar(const std::string& key, const std::string& value)
 
 std::string Config::get(const std::string& key) const
 {
-    auto it = this->environment.find(key);
-    if (it != this->environment.end())
+    auto it = this->environment_.find(key);
+    if (it != this->environment_.end())
     {
         return it->second;
     }
