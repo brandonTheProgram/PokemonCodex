@@ -2,6 +2,7 @@
 #include "Pokedex.h"
 
 #include <functional>
+#include <map>
 
 #include "Config.h"
 
@@ -616,7 +617,7 @@ Json::Value Pokedex::queryTypeEffectivnessTable(const std::uint32_t& primaryType
     }
 
     // Create a map to store effectiveness grouped by defending_type_id
-    std::unordered_map<std::uint32_t, double> effectivenessMap;
+    std::map<std::uint32_t, double> effectivenessMap;
 
     try
     {

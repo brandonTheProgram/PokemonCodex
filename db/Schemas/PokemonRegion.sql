@@ -10,6 +10,6 @@ VALUES
 ('Alola', 'https://i.imgur.com/idT172R.png', 722, 809),
 ('Galar', 'https://i.imgur.com/PBYJCjg.png', 810, 905),
 ('Paldea', 'https://i.imgur.com/Z0aWTGN.png', 906, 1025),
-('All', 'https://i.imgur.com/8R1kHGC.png', 1, 1025);
+('All', 'https://i.imgur.com/J2Fo4iy.png', 1, 1025);
 
 COMMIT TRANSACTION;

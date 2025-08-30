@@ -4,7 +4,7 @@ A full‑stack Pokédex web app with a **C++17** backend (SQLite) and a **Node.j
 
 ---
 
-## 🔗 Live Demo
+## 🔗 Live App Link
 
 **Production**: [https://pokemoncodex.onrender.com/](https://pokemoncodex.onrender.com/)
 
@@ -27,30 +27,6 @@ A full‑stack Pokédex web app with a **C++17** backend (SQLite) and a **Node.j
 * Clean EJS layouts; dark‑mode friendly styling.
 
 ---
-
-## 🧱 Architecture
-
-```
-[ Browser ]
-     ↓ HTTP (GET)
-[ Node/Express + EJS ]  — axios →  [ C++17 HTTP API ]  — SQLite3 (SQLiteCpp)
-       (port $PORT)                        (configurable port)
-```
-
-* **Frontend** (`/express`)
-
-  * Node.js (>= 18), Express, EJS, express‑ejs‑layouts, axios
-  * Renders Home, Search, Region, and Pokémon detail pages
-* **Backend** (`/source`)
-
-  * C++17 with: **SQLiteCpp**, **jsoncpp**, **cpp‑httplib**
-  * Components: `Pokedex`, `HttpRouter`, `SQLManager`, `Logger`
-  * Exposes simple JSON endpoints consumed by the frontend
-* **Database** (`/data`)
-
-  * SQLite schema covering Pokémon, types, abilities, evolutions, movesets (level‑up & TM/TR), type‑effectiveness, etc.
-  * Data gathered manually from authoritative community resources
-
 
 ## 🛠️ Tech Stack
 
@@ -79,7 +55,7 @@ Using the portable script:
 
 This configures CMake and builds a **Release** binary into `./build/`.
 
-### 3) Run
+### 2) Run
 
 ```bash
 ./start.sh
@@ -108,38 +84,6 @@ The app works out‑of‑the‑box with sensible defaults. These env vars let yo
 | `LATEST_LIMIT`   | '5' | The number of Pokemon to display on the home page for lastest Pokemon |
 | `STARTING_LIMIT`       | '5'  | The number of Pokemon to display on the home page for each region                                                   |
 | `DATABASE_PATH` | 'db/Data/Pokedex.db'  | Path to the SQLite DB                                                  |
-
----
-
-## 🌐 Deploying on Render
-
-**Service type**: Web Service
-
-* **Build Command**
-
-  ```bash
-  ./build.sh
-  ```
-* **Start Command**
-
-  ```bash
-  ./start.sh
-  ```
-* **Node version**: set via Render’s environment (e.g., `NODE_VERSION=22` or >=18)
-
----
-
-## 🔌 API (Selected)
-
-> The frontend calls the C++ API via HTTP (axios). Routes may evolve; these examples illustrate the pattern.
-
-```
-GET /search/<term>          → list of matched Pokémon (JSON)
-GET /pokemon/<id>           → detail JSON for one Pokémon
-GET /region/<regionId>      → Pokémon list for a region
-```
-
-The Express layer formats these into EJS pages.
 
 ---
 
