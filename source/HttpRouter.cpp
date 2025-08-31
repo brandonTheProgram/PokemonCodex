@@ -202,31 +202,35 @@ void HttpRouter::initializeRoutes(httplib::Server &server)
                });
 
     server.Get(
-        R"(/search/([a-zA-Z]+))",
+        "/search",
         [this](const httplib::Request &req, httplib::Response &res)
         {
             Json::StreamWriterBuilder writer;
-            std::string output = "";
+            std::string output;
 
-            this->logger_.debug("HttpRouter::initializeRoutes search envoked");
+            this->logger_.debug("HttpRouter::initializeRoutes /search (query) invoked");
 
-            std::string searchTerm = req.matches[1].str();
+            if (!req.has_param("searchTerm"))
+            {
+                res.status = 404;
+                this->logger_.warning("HttpRouter::initializeRoutes No searchTerm provided");
+                res.set_content("{\"error\": \"No search term received\"}", "application/json");
+                return;
+            }
+
+            std::string searchTerm = req.get_param_value("searchTerm");
 
             if (searchTerm.empty())
             {
                 res.status = 404;  // Not Found
-                this->logger_.warning(
-                    "HttpRouter::initializeRoutes Received no search term from the page");
+                this->logger_.warning("HttpRouter::initializeRoutes Empty searchTerm");
                 res.set_content("{\"error\": \"No search term received\"}", "application/json");
                 return;
             }
-            else
-            {
-                this->logger_.info("HttpRouter::initializeRoutes Received the search term: " +
-                                   searchTerm + " from the page");
 
-                output = Json::writeString(writer, this->pokedex_.getSearchPokemon(searchTerm));
-            }
+            this->logger_.info("HttpRouter::initializeRoutes Received the search term: " +
+                               searchTerm);
+            output = Json::writeString(writer, this->pokedex_.getSearchPokemon(searchTerm));
 
             res.set_content(output, "application/json");
         });

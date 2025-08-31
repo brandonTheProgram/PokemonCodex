@@ -129,7 +129,9 @@ app.get('/search', async (req, res) => {
         }
 
         // Send request to C++ backend (httplib) on port 8080 and get data from the respones
-        const pokemonResponse = await axios.get(`http://localhost:8080/search/${searchTerm}`);
+        const pokemonResponse = await axios.get('http://localhost:8080/search', {
+            params: { searchTerm }
+        });
 
         const pokemonData = pokemonResponse.data;
 

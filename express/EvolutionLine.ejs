@@ -1,0 +1,113 @@
+<%
+/**
+ * edges: [{ base, evolved, evolution_condition }, ...]
+ * node fields used: pokedex_number, name, image, region_id (string or 'NULL')
+ */
+
+const E = Array.isArray(edges) ? edges : [];
+
+function keyOf(n) {
+  return `${n.pokedex_number}${(n.region_id && n.region_id !== 'NULL') ? `-${n.region_id}` : ''}`;
+}
+
+// ---- Build maps ----
+const nodes = new Map();
+const indeg  = {};
+const outMap = new Map(); // baseKey -> [{ toKey, toNode, label }]
+const labelMap = new Map(); // baseKey->toKey -> label
+
+E.forEach(e => {
+  const b = e.base, kB = keyOf(b);
+  const v = e.evolved, kV = keyOf(v);
+  nodes.set(kB, b); nodes.set(kV, v);
+  indeg[kB] = indeg[kB] ?? 0;
+  indeg[kV] = (indeg[kV] ?? 0) + 1;
+
+  if (!outMap.has(kB)) outMap.set(kB, []);
+  outMap.get(kB).push({ toKey: kV, toNode: v, label: e.evolution_condition || '' });
+  labelMap.set(`${kB}->${kV}`, e.evolution_condition || '');
+});
+
+// Roots (some lines start from 2+ bases, e.g., Vulpix + Alolan Vulpix)
+let roots = Array.from(nodes.entries()).filter(([k]) => (indeg[k] ?? 0) === 0).map(([,n]) => n);
+if (roots.length === 0 && E.length) roots = [E[0].base]; // linear fallback
+
+// ---- Build ALL paths (rows) via DFS ----
+const paths = []; // array<array<node>>
+
+function dfs(currentNode, path) {
+  const k = keyOf(currentNode);
+  const outs = outMap.get(k) || [];
+  if (outs.length === 0) {
+    paths.push([...path, currentNode]); // terminal
+    return;
+  }
+  for (const { toNode } of outs) {
+    dfs(toNode, [...path, currentNode]);
+  }
+}
+
+for (const root of roots) dfs(root, []);
+
+// Normalize lengths by padding with nulls so grid renders rectangularly
+const maxCols = paths.reduce((m, p) => Math.max(m, p.length), 0);
+paths.forEach(p => { while (p.length < maxCols) p.push(null); });
+%>
+
+<div class="evo-grid">
+  <% for (let c = 0; c < maxCols; c++) { %>
+    <!-- Stage column c -->
+    <div class="evo-stage"
+        style="grid-template-rows: repeat(<%= paths.length %>, var(--evo-row-h));">
+    <% for (let r = 0; r < paths.length; r++) {
+        const n = paths[r][c]; %>
+        <% if (n) { %>
+        <div class="evo-card" style="grid-row:<%= r + 1 %>;">
+            <a href="/pokemon/<%= n.pokedex_number %><%= n.region_id && n.region_id !== 'NULL' ? '/' + n.region_id : '' %>">
+            <img src="<%= n.image %>" alt="<%- n.name %> sprite" loading="lazy" decoding="async">
+            </a>
+            <div class="evo-caption">#<%- n.pokedex_number %> <%- n.name %></div>
+        </div>
+        <% } else { %>
+        <!-- Empty placeholder that still claims its row -->
+        <div class="evo-empty" style="grid-row:<%= r + 1 %>;"></div>
+        <% } %>
+    <% } %>
+    </div>
+
+    <% if (c < maxCols - 1) { %>
+      <!-- Connector column to next stage -->
+      <div class="evo-arrow-col">
+        <div class="evo-lanes" style="grid-template-rows: repeat(<%= paths.length %>, var(--evo-row-h));">
+          <% for (let r = 0; r < paths.length; r++) {
+               const a = paths[r][c], b = paths[r][c+1];
+               if (!a || !b) { %>
+                 <div></div>
+               <% continue; }
+               const label = labelMap.get(`${keyOf(a)}->${keyOf(b)}`) || '';
+          %>
+            <div class="evo-lane" style="grid-row:<%= r + 1 %>;">
+              <svg class="evo-arrow" aria-hidden="true"><use href="#arrow-right"></use></svg>
+              <span class="evo-trigger" title="<%- label %>">
+                <i class="<%
+                  if (label.includes('Happiness')) { %>bi bi-heart-fill text-danger<%
+                  } else if (label.includes('Stone')) { %>bi bi-gem text-primary<%
+                  } else if (label.includes('Trade')) { %>bi bi-arrow-repeat<%
+                  } else if (label.includes('Level')) { %>bi bi-bar-chart text-success<%
+                  } else { %>bi bi-gear text-info<% } %>"></i>
+                <span class="evo-trigger-text"><%- label %></span>
+              </span>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    <% } %>
+  <% } %>
+</div>
+
+<svg style="display:none" aria-hidden="true">
+  <symbol id="arrow-right" viewBox="0 0 64 24">
+    <path d="M2 12h50" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M52 4l10 8-10 8" fill="currentColor"/>
+  </symbol>
+</svg>

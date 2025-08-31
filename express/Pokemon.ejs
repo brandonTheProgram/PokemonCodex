@@ -1,368 +1,250 @@
 <% if (Object.keys(pokemon).length != 0) { %>
 
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item active" aria-current="page"><%- pokemon.name %>  </li>
-        </ol>
-    </nav>
+  <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><%- pokemon.name %>  </li>
+      </ol>
+  </nav>
 
-    <!-- Navigation Buttons for Next and Previous Pokémon -->
-    <div class="d-flex justify-content-between mb-3">
-      <% let prevPokedexNumber = parseInt(pokemon.pokedex_number) - 1; %>
-      <% if (prevPokedexNumber > 0) { %>
-        <a href="/pokemon/<%= prevPokedexNumber %>" class="btn btn-primary">
-          Previous Pokémon (#<%= prevPokedexNumber %>)
-        </a>
-      <% } %>
-      <% let nextPokedexNumber = parseInt(pokemon.pokedex_number) + 1; %>
-      <a href="/pokemon/<%= nextPokedexNumber %>" class="btn btn-success">
-          Next Pokémon (#<%= nextPokedexNumber %>)
+  <!-- Navigation Buttons for Next and Previous Pokémon -->
+  <div class="d-flex justify-content-between mb-3">
+    <% let prevPokedexNumber = parseInt(pokemon.pokedex_number) - 1; %>
+    <% if (prevPokedexNumber > 0) { %>
+      <a href="/pokemon/<%= prevPokedexNumber %>" class="btn btn-primary">
+        Previous Pokémon (#<%= prevPokedexNumber %>)
       </a>
-    </div>
+    <% } %>
+    <% let nextPokedexNumber = parseInt(pokemon.pokedex_number) + 1; %>
+    <a href="/pokemon/<%= nextPokedexNumber %>" class="btn btn-success">
+        Next Pokémon (#<%= nextPokedexNumber %>)
+    </a>
+  </div>
 
-    <div class="row">
-        <!-- Display the Pokemon's Image -->
-        <div class="col-12 col-md-4">
-            <img src="<%= pokemon.image %>" class="img-fluid sticky-top" style="top: 20px" alt=<%- pokemon.name %> loading="lazy">
+  <div class="row">
+    <!-- Pokémon sprite, name, and types -->
+    <div class="table-wrap table-summary mb-3 p-3">
+      <div class="row align-items-center">
+        <!-- Pokémon sprite -->
+        <div class="col-md-4 text-center mb-3 mb-md-0">
+          <img src="<%= pokemon.image %>" class="img-fluid" alt="<%- pokemon.name %>"
+              loading="lazy" decoding="async" style="max-height: 220px;">
         </div>
 
-        <!-- Display the Pokemon's pokedex num, name, species, and typing -->
-        <div class="col-12 col-md-8">
-            <div class="row">
-              <div class="col-sm">
-                <h3>#<%- pokemon.pokedex_number %> <%- pokemon.name %></h3>
-              </div>
-              <div class="col-sm">
-                <h3>Species:<br><%- pokemon.species %></h3>
-              </div>
-              <% if ( !pokemon.secondary_type) { %> 
-                <div class="col-sm">
-                    <h3>Type: <%- pokemon.primary_type %></h3>
-                </div>
-              <% } else { %>
-                <div class="col-sm">
-                    <h3>Type: <%- pokemon.primary_type %> & <%- pokemon.secondary_type %></h3>
-                </div>
-              <% } %> 
-            </div>
-        </div>
-
-        <!-- Display the Pokemon's description -->
-        <div class="container">
-          <h3>Description</h3>
-          <div class="row">
-            <%- pokemon.description %>
-          </div>
-        </div>
-
-        <p></p>
-
-        <!-- Display the Pokemon's abilities -->
-        <div class="container">
-            <h3>Abilities</h3>
-            <div class="row">
-                <%- pokemon.primary_ability  %>
-            </div>
-            <% if ( pokemon.secondary_ability) { %>
-                <div class="row">
-                    <%- pokemon.secondary_ability %>
-                </div>
-            <% } %>
-            <% if ( pokemon.hidden_ability) { %>
-                <div class="row">
-                    (Hidden) <%- pokemon.hidden_ability %>
-                </div> 
-            <% } %>
-            <br>
-        </div>
-
-        <!-- Display the Pokemon's type effectiveness -->
-        <% if (pokemonTypes != null) { %>
-          <table>
-            <h3>Weakness</h3>
-            <thead>
-                <tr>
-                  <% pokemonTypes.forEach(pokemonType => { %>
-                    <th><%= pokemonType.name %></th>
-                  <% }); %>
-                </tr>
-            </thead>
+        <!-- Name, species, types -->
+        <div class="col-md-8">
+          <table class="table table-kv mb-0">
             <tbody>
-                <tr>
-                    <% pokemon.type_effectiveness.forEach(effectiveness => { %>
-                        <td class="<% if (effectiveness.damage_multiplier === 4) { %>quadrice_damge<%} else if (effectiveness.damage_multiplier === 2) { %>twice_damage<%} else if (effectiveness.damage_multiplier === 1) { %>normal_damge<%} else if (effectiveness.damage_multiplier === 0.5) { %>half_damage<%} else if (effectiveness.damage_multiplier === 0.25) { %>quarter_damage<%} else { %>no_damage<%} %>">
-                          <%= effectiveness.damage_multiplier %>
-                        </td>
-                    <% }); %>
-                </tr>
+              <tr>
+                <th scope="row">National #</th>
+                <td><%= pokemon.pokedex_number %></td>
+              </tr>
+              <tr>
+                <th scope="row">Name</th>
+                <td><%= pokemon.name %></td>
+              </tr>
+              <tr>
+                <th scope="row">Species</th>
+                <td><%= pokemon.species %></td>
+              </tr>
+              <tr>
+                <th scope="row">Type(s)</th>
+                <td class="badge-row">
+                  <% const priType = pokemon.primary_type.toString(); %>
+                  <span class="type-badge type-<%= priType.toLowerCase() %>"><%= priType %></span>
+                  <% if (pokemon.secondary_type) { %>
+                    <% const secType = pokemon.secondary_type.toString(); %>
+                    <span class="type-badge type-<%= secType.toLowerCase() %>"><%= secType %></span>
+                  <% } %>
+                </td>
+              </tr>
             </tbody>
           </table>
-        <% } %>
+        </div>
+      </div>
+    </div>
 
-        <!-- Display the Pokemon's evolutionary line -->
-        <div class="container text-center">
-          <br>
-          <% if (pokemon.evolutionary_line && pokemon.evolutionary_line.length > 0) { %>
-              <h3 align="left">Evolutionary Line</h3>
-              <% pokemon.evolutionary_line.forEach(evolution => { %>
-                <div class="row justify-content-center align-items-center mb-2">
-                      <!-- Base Pokémon -->
-                      <div class="col-auto text-center">
-                          <a href="/pokemon/<%= evolution.base.pokedex_number %><%= evolution.base.region_id !== 'NULL' ? '/' + evolution.base.region_id : '' %>" class="region__link">
-                              <div class="pokemon__button shadow">
-                                  <img src="<%= evolution.base.image %>" width="200" height="200" alt="<%- evolution.base.name %>" loading="lazy">
-                              </div>
-                              <div class="pt-1">#<%- evolution.base.pokedex_number %> <%- evolution.base.name %></div>
-                          </a>
-                      </div>
-      
-                      <!-- Evolution Condition -->
-                      <div class="col-auto text-center">
-                          <h5 class="mb-0">
-                              <i class="bi bi-arrow-right"></i>
-                              <i class="<% 
-                                if (evolution.evolution_condition.includes('Happiness')) 
-                                { %>
-                                  bi bi-heart-fill text-danger
-                                <% } 
-                                else if (evolution.evolution_condition.includes('Stone')) 
-                                { %>
-                                  bi bi-gem text-primary
-                                <% } 
-                                else if (evolution.evolution_condition.includes('Trade')) 
-                                { %>
-                                  bi bi-arrow-repeat
-                                <% } 
-                                else if (evolution.evolution_condition.includes('Level')) 
-                                { %>
-                                  bi bi-bar-chart text-success
-                                <% } 
-                                else 
-                                { %>
-                                  bi bi-gear text-info
-                                <% } %>"></i>
-                          </h5>
-                          <h6><%- evolution.evolution_condition %></h6>
-                      </div>
-      
-                      <!-- Evolved Pokémon -->
-                      <div class="col-auto text-center">
-                          <a href="/pokemon/<%= evolution.evolved.pokedex_number %><%= evolution.evolved.region_id !== 'NULL' ? '/' + evolution.evolved.region_id : '' %>" class="region__link">
-                              <div class="pokemon__button shadow">
-                                  <img src="<%= evolution.evolved.image %>" width="200" height="200" alt="<%- evolution.evolved.name %>" loading="lazy">
-                              </div>
-                              <div class="pt-1">#<%- evolution.evolved.pokedex_number %> <%- evolution.evolved.name %></div>
-                          </a>
-                      </div>
-                  </div>
-              <% }); %>
-          <% } %>
-        </div>      
-    
-        <!-- Pokémon Locations Section -->
-        <% if (pokemon.game_locations && pokemon.game_locations.length > 0 && pokemonGames.length > 0) { %>
-          <div class="container mt-4">
-            <h3>Locations</h3>
-            <div class="accordion" id="locationAccordion">
-              <% pokemonGames.forEach((game, index) => { %>
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="heading<%= index %>">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<%= index %>" aria-expanded="false" aria-controls="collapse<%= index %>">
-                      <span class="badge bg-primary me-2"><%= game.name %></span>
-                    </button>
-                  </h2>
-                  <div id="collapse<%= index %>" class="accordion-collapse collapse" aria-labelledby="heading<%= index %>" data-bs-parent="#locationAccordion">
-                    <div class="accordion-body">
-                      <% if (pokemon.game_locations[index]) { %>
-                        <p><%- pokemon.game_locations[index] %></p>
-                      <% } else { %>
-                        <p class="text-muted">No known location</p>
-                      <% } %>
-                    </div>
-                  </div>
+    <!-- Display the Pokemon's description and ability -->
+    <div class="table-wrap table-info mb-4">
+      <table class="table table-kv">
+        <tbody>
+          <tr>
+            <th scope="row">Description</th>
+            <td><%= pokemon.description %></td>
+          </tr>
+          <tr>
+            <th scope="row">Abilities</th>
+            <td>
+              <div><%- pokemon.primary_ability %></div>
+              <% if ( pokemon.secondary_ability) { %>
+                  <div><%- pokemon.secondary_ability %></div>
+              <% } %>
+              <% if ( pokemon.hidden_ability) { %>
+                <div>(Hidden) <%- pokemon.hidden_ability %></div>
+              <% } %>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Display the Pokemon's type effectiveness -->
+    <% if (pokemonTypes != null) { %>
+      <div class="container mt-4">
+        <h3>Weakness</h3>
+        <div class="table-wrap weakness-table">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <% pokemonTypes.forEach(t => { const typeName = t.name || ''; %>
+                  <th title="<%= typeName %>">
+                    <span class="type-badge type-<%= typeName.toLowerCase() %>">
+                      <span class="type-vert"><%= typeName %></span>
+                    </span>
+                  </th>
+                <% }); %>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <% pokemon.type_effectiveness.forEach(eff => {
+                    const m = eff.damage_multiplier;
+                    // map to badge class
+                    let cls = 'mult-x1', label = `x${m}`;
+                    if (m === 4)          cls = 'mult-x4';
+                    else if (m === 2)     cls = 'mult-x2';
+                    else if (m === 1)     cls = 'mult-x1';
+                    else if (m === 0.5)   cls = 'mult-x0_5';
+                    else if (m === 0.25)  cls = 'mult-x0_25';
+                    else if (m === 0)     cls = 'mult-x0';
+                %>
+                  <td><span class="mult-badge <%= cls %>"><%= label %></span></td>
+                <% }); %>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% } %>
+
+    <!-- Display the Pokemon's evolutionary line -->
+    <div class="container text-center">
+      <br>
+      <% if (pokemon.evolutionary_line && pokemon.evolutionary_line.length > 0) { %>
+        <div class="evo-container">
+          <h3 class="text-start">Evolutionary Line</h3>
+          <%- include('EvolutionLine', { edges: pokemon.evolutionary_line }) %>
+        </div>
+      <% } %>
+    </div>      
+
+    <!-- Pokémon Locations Section -->
+    <% if (pokemon.game_locations && pokemon.game_locations.length > 0 && pokemonGames.length > 0) { %>
+      <div class="container mt-4">
+        <h3>Locations</h3>
+        <div class="accordion" id="locationAccordion">
+          <% pokemonGames.forEach((game, index) => { %>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading<%= index %>">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<%= index %>" aria-expanded="false" aria-controls="collapse<%= index %>">
+                  <span class="badge bg-primary me-2"><%= game.name %></span>
+                </button>
+              </h2>
+              <div id="collapse<%= index %>" class="accordion-collapse collapse" aria-labelledby="heading<%= index %>" data-bs-parent="#locationAccordion">
+                <div class="accordion-body">
+                  <% if (pokemon.game_locations[index]) { %>
+                    <p><%- pokemon.game_locations[index] %></p>
+                  <% } else { %>
+                    <p class="text-muted">No known location</p>
+                  <% } %>
                 </div>
-              <% }); %>
+              </div>
             </div>
-          </div>
-        <% } else { %>
-          <p class="text-muted">This Pokémon is not found in the wild in any game.</p>
-        <% } %>
+          <% }); %>
+        </div>
+      </div>
+    <% } else { %>
+      <p class="text-muted">This Pokémon is not found in the wild in any game.</p>
+    <% } %>
 
-        <!-- Pokémon Level-Up Moveset Section -->
-        <% if (pokemon.level_up_moveset && pokemon.level_up_moveset.length > 0 && pokemonMainlineGames.length > 0) { %>
-          <div class="container mt-4">
-            <h3>Level-Up Moveset</h3>
-            <div class="accordion" id="movesetAccordion">
-              <% pokemonMainlineGames.forEach((game, index) => { 
-                  const filteredMoves = pokemon.level_up_moveset.filter(m => m.mainline == game.id);
-              %>
-                <% if (filteredMoves.length > 0) { %>
-                  <div class="accordion-item">
-                    <h2 class="accordion-header" id="movesetHeading<%= index %>">
-                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#movesetCollapse<%= index %>" aria-expanded="false" aria-controls="movesetCollapse<%= index %>">
-                        <span class="badge bg-success me-2"><%= game.name %></span>
-                      </button>
-                    </h2>
-                    <div id="movesetCollapse<%= index %>" class="accordion-collapse collapse" aria-labelledby="movesetHeading<%= index %>" data-bs-parent="#movesetAccordion">
-                      <div class="accordion-body">
-                        <div class="table-responsive">
-                          <table class="table table-striped table-bordered align-middle">
-                            <thead class="table-light">
-                              <tr>
-                                <th>Level</th>
-                                <th>Attack Name</th>
-                                <th>Description</th>
-                                <th>Type</th>
-                                <th>Category</th>
-                                <th>Power</th>
-                                <th>Accuracy</th>
-                                <th>PP</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <% filteredMoves.forEach(move => { %>
-                                <tr>
-                                  <td><%= move.level_learned %></td>
-                                  <td><%= move.move.name %></td>
-                                  <td><%= move.move.description %></td>
-                                  <td><%= move.move.type %></td>
-                                  <td><%= move.move.category %></td>
-                                  <td><%= move.move.power %></td>
-                                  <td><%= move.move.accuracy %></td>
-                                  <td><%= move.move.pp %></td>
-                                </tr>
-                              <% }); %>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                <% } %>
-              <% }); %>
-            </div>
-          </div>
-        <% } %>
+    <!-- Pokémon Level-Up Moveset Section -->
+    <% if (pokemon.level_up_moveset && pokemon.level_up_moveset.length > 0 && pokemonMainlineGames.length > 0) { %>
+      <div class="container mt-4">
+        <h3>Level-Up Moveset</h3>
+        <% pokemonMainlineGames.forEach((game, index) => { 
+            const filteredMoves = pokemon.level_up_moveset.filter(m => m.mainline == game.id);
+        %>
+          <% if (filteredMoves.length > 0) { %>
+            <%- include('MovesTable', {
+              id: `levelup-${index}`,
+              sectionTitle: 'Level-Up Moveset',
+              badgeText: game.name,
+              badgeClass: 'bg-success',
+              rows: filteredMoves,
+              firstColLabel: 'Level',
+              firstColKey: 'level_learned'
+            }) %>
+          <% } %>
+        <% }); %>
+      </div>
+    <% } %>
 
-        <!-- Pokémon Technical Machines Section -->
-        <% if (pokemon.technical_machines && pokemon.technical_machines.length > 0 && pokemonMainlineGames.length > 0) { %>
-          <div class="container mt-4">
-            <h3>Technical Machines (TMs)</h3>
-            <div class="accordion" id="tmAccordion">
-              <% pokemonMainlineGames.forEach((game, index) => {
-                  const tms = pokemon.technical_machines.filter(m => m.mainline == game.id);
-              %>
-                <% if (tms.length > 0) { %>
-                  <div class="accordion-item">
-                    <h2 class="accordion-header" id="tmHeading<%= index %>">
-                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#tmCollapse<%= index %>" aria-expanded="false" aria-controls="tmCollapse<%= index %>">
-                        <span class="badge bg-warning text-dark me-2"><%= game.name %></span>
-                      </button>
-                    </h2>
-                    <div id="tmCollapse<%= index %>" class="accordion-collapse collapse" aria-labelledby="tmHeading<%= index %>" data-bs-parent="#tmAccordion">
-                      <div class="accordion-body">
-                        <div class="table-responsive">
-                          <table class="table table-striped table-bordered align-middle">
-                            <thead class="table-light">
-                              <tr>
-                                <th>TM #</th>
-                                <th>Attack Name</th>
-                                <th>Description</th>
-                                <th>Type</th>
-                                <th>Category</th>
-                                <th>Power</th>
-                                <th>Accuracy</th>
-                                <th>PP</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <% tms.forEach(tm => {
-                                  const move = tm.technical_move.move;
-                              %>
-                                <tr>
-                                  <td><%= tm.technical_move.technical_number %></td>
-                                  <td><%= move.name %></td>
-                                  <td><%= move.description %></td>
-                                  <td><%= move.type %></td>
-                                  <td><%= move.category %></td>
-                                  <td><%= move.power %></td>
-                                  <td><%= move.accuracy %></td>
-                                  <td><%= move.pp %></td>
-                                </tr>
-                              <% }); %>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                <% } %>
-              <% }); %>
-            </div>
-          </div>
-        <% } %>
+    <!-- Pokémon Technical Machines Section -->
+    <% if (pokemon.technical_machines && pokemon.technical_machines.length > 0 && pokemonMainlineGames.length > 0) { %>
+      <div class="container mt-4">
+        <h3>Technical Machines (TMs)</h3>
+        <% pokemonMainlineGames.forEach((game, index) => {
+            const tms = pokemon.technical_machines.filter(m => m.mainline == game.id);
+            const tmRows = tms.map(tm => ({
+              move: tm.technical_move.move,
+              technical_number: tm.technical_move.technical_number,
+              mainline_game_id: tm.mainline
+            }));
+        %>
+          <% if (tms.length > 0) { %>
+            <%- include('MovesTable', {
+              id: `tms-${index}`,
+              sectionTitle: 'Technical Machines (TMs)',
+              badgeText: game.name,
+              badgeClass: 'bg-warning text-dark',
+              rows: tmRows,
+              firstColLabel: 'TM',
+              firstColKey: 'technical_number'
+            }) %>
+          <% } %>
+        <% }); %>
+      </div>
+    <% } %>
 
-        <!-- Pokémon Technical Records Section -->
-        <% if (pokemon.technical_records && pokemon.technical_records.length > 0 && pokemonMainlineGames.length > 0) { %>
-          <div class="container mt-4">
-            <h3>Technical Records (TRs)</h3>
-            <div class="accordion" id="trAccordion">
-              <% pokemonMainlineGames.forEach((game, index) => {
-                  const trs = pokemon.technical_records.filter(m => m.mainline == game.id);
-              %>
-                <% if (trs.length > 0) { %>
-                  <div class="accordion-item">
-                    <h2 class="accordion-header" id="trHeading<%= index %>">
-                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#trCollapse<%= index %>" aria-expanded="false" aria-controls="trCollapse<%= index %>">
-                        <span class="badge bg-info text-dark me-2"><%= game.name %></span>
-                      </button>
-                    </h2>
-                    <div id="trCollapse<%= index %>" class="accordion-collapse collapse" aria-labelledby="trHeading<%= index %>" data-bs-parent="#trAccordion">
-                      <div class="accordion-body">
-                        <div class="table-responsive">
-                          <table class="table table-striped table-bordered align-middle">
-                            <thead class="table-light">
-                              <tr>
-                                <th>TR #</th>
-                                <th>Attack Name</th>
-                                <th>Description</th>
-                                <th>Type</th>
-                                <th>Category</th>
-                                <th>Power</th>
-                                <th>Accuracy</th>
-                                <th>PP</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <% trs.forEach(tr => {
-                                  const move = tr.technical_move.move;
-                              %>
-                                <tr>
-                                  <td><%= tr.technical_move.technical_number %></td>
-                                  <td><%= move.name %></td>
-                                  <td><%= move.description %></td>
-                                  <td><%= move.type %></td>
-                                  <td><%= move.category %></td>
-                                  <td><%= move.power %></td>
-                                  <td><%= move.accuracy %></td>
-                                  <td><%= move.pp %></td>
-                                </tr>
-                              <% }); %>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                <% } %>
-              <% }); %>
-            </div>
-          </div>
-        <% } %>
-
+    <!-- Pokémon Technical Records Section -->
+    <% if (pokemon.technical_records && pokemon.technical_records.length > 0 && pokemonMainlineGames.length > 0) { %>
+      <div class="container mt-4">
+        <h3>Technical Records (TRs)</h3>
+        <% pokemonMainlineGames.forEach((game, index) => {
+            const trs = pokemon.technical_records.filter(m => m.mainline == game.id);
+            const trRows = trs.map(tr => ({
+              move: tr.technical_move.move,
+              technical_number: tr.technical_move.technical_number,
+              mainline_game_id: tr.mainline
+            }));
+        %>
+          <% if (trs.length > 0) { %>
+            <%- include('MovesTable', {
+              id: `trs-${index}`,
+              sectionTitle: 'Technical Records (TRs)',
+              badgeText: game.name,
+              badgeClass: 'bg-info text-dark',
+              rows: trRows,
+              firstColLabel: 'TR',
+              firstColKey: 'technical_number'
+            }) %>
+          <% } %>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
 <% } else { %> 
   <div class="alert alert-warning text-center" role="alert">
     No Pokémon data found. Please try again or return to the <a href="/">homepage</a>.
   </div>
-<% } %> 
+<% } %>

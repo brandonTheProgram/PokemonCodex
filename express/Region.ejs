@@ -5,12 +5,19 @@
     </ol>
 </nav>
 
+<button class="btn btn-primary back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+<script>
+const btn = document.getElementById('backToTop');
+window.addEventListener('scroll', () => btn.classList.toggle('show', window.scrollY > 600));
+btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+</script>
+
 <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3 mb-4">
     <% if(pokemons != '') { %>
         <% pokemons.forEach(function(pokemon, index) { %>
             <a href="/pokemon/<%= pokemon.pokedex_number %><%= pokemon.region_id !== 'NULL' ? '/' + pokemon.region_id : '' %>" class="col text-center region__link">
                 <div class="pokemon__button shadow">
-                    <img src="<%= pokemon.image %>" width="200" height="200"  alt=<%- pokemon.name %> loading="lazy">
+                    <img src="<%= pokemon.image %>" width="256" height="256"  alt=<%- pokemon.name %> loading="lazy" decoding="async">
                 </div>
                 <div class="pt-1">#<%- pokemon.pokedex_number %> <%- pokemon.name %></div>
             </a>

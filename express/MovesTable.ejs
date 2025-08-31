@@ -1,0 +1,65 @@
+<%
+// Props:
+//   id            : unique id for this accordion item (string)
+//   sectionTitle  : e.g., "Level-Up Moveset", "Technical Machines (TMs)"
+//   badgeText     : e.g., the game name
+//   badgeClass    : e.g., "bg-success", "bg-warning text-dark", "bg-info text-dark"
+//   rows          : [{ move: {...}, [firstColKey]: number, mainline_game_id?: number }, ...]
+//   firstColLabel : "Level" | "TM" | "TR"
+//   firstColKey   : "level_learned" | "technical_number" | etc.
+
+function safe(v, fallback='-'){ return (v===null || v===undefined || v==='') ? fallback : v; }
+function catClass(c){ const t=(c||'').toLowerCase(); return t==='special'?'special':t==='physical'?'physical':t==='status'?'status':''; }
+%>
+
+<div class="accordion" id="<%= id %>-Accordion">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="heading-<%= id %>">
+      <button class="accordion-button collapsed" type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapse-<%= id %>"
+              aria-expanded="false"
+              aria-controls="collapse-<%= id %>">
+        <span class="badge <%= badgeClass %> me-2"><%= badgeText %></span>
+      </button>
+    </h2>
+
+    <div id="collapse-<%= id %>" class="accordion-collapse collapse"
+        aria-labelledby="heading-<%= id %>">
+      <div class="accordion-body">
+        <div class="table-wrap" role="region" aria-label="<%= sectionTitle %>">
+          <table class="table table-striped" id="table-<%= id %>">
+            <thead>
+              <tr>
+                <th class="col-first"><%= firstColLabel %></th>
+                <th>Attack Name</th>
+                <th class="desc-col">Description</th>
+                <th>Type</th>
+                <th>Category</th>
+                <th>Power</th>
+                <th>Accuracy</th>
+                <th>PP</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% rows.forEach(row => { const m = row.move || {}; %>
+                <tr data-game="<%= row.mainline_game_id %>">
+                  <td class="col-first"><%= safe(row[firstColKey]) %></td>
+                  <td><%= safe(m.name) %></td>
+                  <td class="desc-col"><%= safe(m.description) %></td>
+                  <td><span class="type-badge type-<%= (m.type||'').toLowerCase() %>"><%= safe(m.type) %></span></td>
+                  <td><span class="cat-badge <%= catClass(m.category) %>"><%= safe(m.category) %></span></td>
+                  <td><%= safe(m.power) %></td>
+                  <td><%= safe(m.accuracy) %></td>
+                  <td><%= safe(m.pp) %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
