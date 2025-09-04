@@ -230,24 +230,24 @@ h2, .h2 { font-weight: 600; margin-bottom: .75rem; }
 .cat-badge.physical{ background:#ecfdf5; color:#065f46; border-color:#d1fae5; }
 .cat-badge.status  { background:#fef3c7; color:#92400e; border-color:#fde68a; }
 
-.type-normal  { background: #A8A77A; }
-.type-fighting{ background: #C22E28; }
-.type-flying  { background: #A98FF3; }
-.type-poison  { background: #A33EA1; }
-.type-ground  { background: #E2BF65; }
-.type-rock    { background: #B6A136; }
-.type-bug     { background: #A6B91A; }
-.type-ghost   { background: #735797; }
-.type-steel   { background: #B7B7CE; }
-.type-fire    { background: #EE8130; }
-.type-water   { background: #6390F0; }
-.type-grass   { background: #7AC74C; }
-.type-electric{ background: #F7D02C; color:#000; }
-.type-psychic { background: #F95587; }
-.type-ice     { background: #96D9D6; color:#000; }
-.type-dragon  { background: #6F35FC; }
-.type-dark    { background: #705746; }
-.type-fairy   { background: #D685AD; }
+.type-normal  { background: #A8A77A; color:#000000; }
+.type-fighting{ background: #C22E28; color:#000000; }
+.type-flying  { background: #A98FF3; color:#000000; }
+.type-poison  { background: #A33EA1; color:#000000; }
+.type-ground  { background: #E2BF65; color:#000000; }
+.type-rock    { background: #B6A136; color:#000000; }
+.type-bug     { background: #A6B91A; color:#000000; }
+.type-ghost   { background: #735797; color:#000000; }
+.type-steel   { background: #B7B7CE; color:#000000; }
+.type-fire    { background: #EE8130; color:#000000; }
+.type-water   { background: #6390F0; color:#000000; }
+.type-grass   { background: #7AC74C; color:#000000; }
+.type-electric{ background: #F7D02C; color:#000000; }
+.type-psychic { background: #F95587; color:#000000; }
+.type-ice     { background: #96D9D6; color:#000000; }
+.type-dragon  { background: #6F35FC; color:#000000; }
+.type-dark    { background: #705746; color:#000000; }
+.type-fairy   { background: #D685AD; color:#000000; }
 
 .back-to-top {
   position: fixed; right: 16px; bottom: 16px; z-index: 1000;

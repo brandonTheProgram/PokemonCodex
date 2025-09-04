@@ -20,12 +20,16 @@
 <div class="row row-cols-2 row-cols-lg-6 g-2 g-lg-3 py-4">
 
     <% if(regions != '') { %>
-        <% regions.forEach(function(region, index) { %>
+        <% regions.forEach(function(region, index, array) { %>
             <a href="/region/<%- region.name %>" class="col text-center region__link">
                 <div class="region__img shadow">
                     <img src="<%= region.image %>" width="220" height="200"  alt=<%- region.name %> loading="lazy">
                 </div>
-                <div class="pt-1"><%- region.name %> Region</div>
+                <% if(index === array.length - 1) { %>
+                    <div class="pt-1"><%- region.name %> Regions</div>
+                <% } else {%>
+                    <div class="pt-1"><%- region.name %> Region</div>
+                <% } %>
             </a>
         <% }) %>
     <% } %>
