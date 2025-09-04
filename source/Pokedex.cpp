@@ -428,7 +428,8 @@ void Pokedex::initializeMainlineGames()
     this->logger_.debug("Pokedex::initializeMainlineGames invoked");
 
     this->sqlManager_.prepareStatement(
-        "SELECT mainline_game_id, game_name FROM Pokemon_Mainline_Game;");
+        "SELECT mainline_game_id, game_name FROM Pokemon_Mainline_Game ORDER BY mainline_game_id "
+        "ASC;");
 
     auto results = this->sqlManager_.fetchResults();
 

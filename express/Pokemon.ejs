@@ -169,10 +169,9 @@
 
     <!-- Pokémon Level-Up Moveset Section -->
     <% if (pokemon.level_up_moveset && pokemon.level_up_moveset.length > 0 && pokemonMainlineGames.length > 0) { %>
-      <% const mainlineSorted = [...pokemonMainlineGames].sort((a,b) => Number(a.id) - Number(b.id)); %>
       <div class="container mt-4">
         <h3>Level-Up Moveset</h3>
-        <% mainlineSorted.forEach((game, index) => { 
+        <% pokemonMainlineGames.forEach((game, index) => { 
             const filteredMoves = pokemon.level_up_moveset.filter(m => m.mainline == game.id);
         %>
           <% if (filteredMoves.length > 0) { %>
@@ -193,9 +192,8 @@
     <!-- Pokémon Technical Machines Section -->
     <% if (pokemon.technical_machines && pokemon.technical_machines.length > 0 && pokemonMainlineGames.length > 0) { %>
       <div class="container mt-4">
-        <% const mainlineSorted = [...pokemonMainlineGames].sort((a,b) => Number(a.id) - Number(b.id)); %>
         <h3>Technical Machines (TMs)</h3>
-        <% mainlineSorted.forEach((game, index) => {
+        <% pokemonMainlineGames.forEach((game, index) => {
             const tms = pokemon.technical_machines.filter(m => m.mainline == game.id);
             const tmRows = tms.map(tm => ({
               move: tm.technical_move.move,
@@ -220,10 +218,9 @@
 
     <!-- Pokémon Technical Records Section -->
     <% if (pokemon.technical_records && pokemon.technical_records.length > 0 && pokemonMainlineGames.length > 0) { %>
-      <% const mainlineSorted = [...pokemonMainlineGames].sort((a,b) => Number(a.id) - Number(b.id)); %>
       <div class="container mt-4">
         <h3>Technical Records (TRs)</h3>
-        <% mainlineSorted.forEach((game, index) => {
+        <% pokemonMainlineGames.forEach((game, index) => {
             const trs = pokemon.technical_records.filter(m => m.mainline == game.id);
             const trRows = trs.map(tr => ({
               move: tr.technical_move.move,
