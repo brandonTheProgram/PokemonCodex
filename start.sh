@@ -2,13 +2,12 @@
 
 set -euo pipefail
 
-# Set variables for the project directories
 BUILD_DIR="build"
-
-# Set the executable name
+FRONTEND_PORT="${FRONTEND_PORT:-3000}"
+BACKEND_PORT="${BACKEND_PORT:-8080}"
 EXECUTABLE_NAME="PokemonCodex"
 EXPRESS_SERVER_FILE="Pokedex.js"
-EXPRESS_SERVER_LINK="http://localhost:3000"
+EXPRESS_SERVER_LINK="http://localhost:${FRONTEND_PORT}"
 
 # Check if the build directory and executable exists. If not, warn the user.
 if [ -d "$BUILD_DIR" ] && [ -f "$BUILD_DIR/$EXECUTABLE_NAME" ]; then
