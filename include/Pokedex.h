@@ -48,7 +48,7 @@ class Pokedex
     private:
         void connectEvolutionaryChain(std::vector<EvolutionData>& evolutionaryChain) const;
 
-        std::uint32_t getLimitEnvVar(const bool& latest = false) const;
+        uint32_t getLimitEnvVar(const bool latest = false) const;
 
         Json::Value pokemonButtonDataToJsonValue(
             const std::vector<std::vector<std::string>>& results);

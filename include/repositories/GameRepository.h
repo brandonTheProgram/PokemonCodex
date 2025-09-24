@@ -6,7 +6,7 @@
 #include <json/json.h>
 #include <map>
 
-class GameRepository : public Respository
+class GameRepository : public Repository
 {
     public:
         GameRepository(SQLManager& sqlManager);

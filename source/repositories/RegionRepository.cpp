@@ -2,21 +2,20 @@
 #include "SQLManager.h"
 #include <algorithm>
 
-RegionRepository::RegionRepository(SQLManager& sqlManager) : Respository(sqlManager)
+RegionRepository::RegionRepository(SQLManager& sqlManager) : Repository(sqlManager)
 {
     this->loadRegionTable();
 }
 
-std::string RegionRepository::queryRegionalFormTable(const std::uint32_t& id)
+std::string RegionRepository::queryRegionalFormTable(const uint32_t id)
 {
     this->logger_.debug("RegionRepository::queryRegionalFormTable invoked to query: " + std::to_string(id));
 
     std::string regionalFormName = "";
 
-    this->sqlManager_.prepareStatement(
-        "SELECT region_name FROM Pokemon_Regional_Form WHERE region_id = ?;");
-    this->sqlManager_.bind(1, id);
-    auto results = this->sqlManager_.fetchResults();
+    auto results = this->sqlManager_.query("SELECT region_name FROM Pokemon_Regional_Form WHERE region_id = ?;", [id](SQLite::Statement& statement){
+        statement.bind(1, id);
+    });
 
     if (results.empty())
     {
@@ -77,8 +76,7 @@ void RegionRepository::loadRegionTable()
 {
     this->logger_.debug("RegionRepository::loadRegionTable invoked");
 
-    this->sqlManager_.prepareStatement("SELECT region_id, name, image, start, end FROM Pokemon_Region ORDER BY region_id ASC;");
-    auto results = this->sqlManager_.fetchResults();
+    auto results = this->sqlManager_.query("SELECT region_id, name, image, start, end FROM Pokemon_Region ORDER BY region_id ASC;");
 
     if (results.empty())
     {
@@ -99,7 +97,7 @@ void RegionRepository::loadRegionTable()
             std::uint32_t start = std::stoi(Json::Value(row.at(3)).asString());
             std::uint32_t end   = std::stoi(Json::Value(row.at(4)).asString());
 
-            this->regions_[id] = Region(name, image, start, end);
+            this->regions_.emplace(id, Region(name, image, start, end));
         }
     }
     catch (const std::invalid_argument& e)

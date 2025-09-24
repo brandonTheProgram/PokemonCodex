@@ -7,7 +7,7 @@
 #include <map>
 #include <utility>
 
-class RegionRepository : public Respository
+class RegionRepository : public Repository
 {
     struct Region
     {
@@ -17,8 +17,8 @@ class RegionRepository : public Respository
         std::uint32_t end;
 
         Region() = default;
-        Region(const std::string& name, const std::string& image, const std::uint32_t& start,
-                const std::uint32_t& end)
+        Region(const std::string& name, const std::string& image, const uint32_t start,
+                const uint32_t end)
             : name(name), image(image), start(start), end(end)
         {}
 
@@ -33,7 +33,7 @@ class RegionRepository : public Respository
 
         ~RegionRepository() = default;
 
-        std::string queryRegionalFormTable(const std::uint32_t& id);
+        std::string queryRegionalFormTable(const uint32_t id);
 
         Json::Value getRegions() const;
 

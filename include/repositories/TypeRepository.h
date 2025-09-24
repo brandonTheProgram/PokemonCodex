@@ -6,20 +6,20 @@
 #include <json/json.h>
 #include <map>
 
-class TypeRepository : public Respository
+class TypeRepository : public Repository
 {
     public:
         TypeRepository(SQLManager& sqlManager);
 
         ~TypeRepository() = default;
 
-        std::string queryTypeTable(const std::uint32_t& id);
+        std::string queryTypeTable(const uint32_t id);
 
-        Json::Value queryTypeEffectivnessTable(const std::uint32_t& primaryTypeId, const std::uint32_t& secondaryTypeId);
+        Json::Value queryTypeEffectivenessTable(const uint32_t primaryTypeId, const uint32_t secondaryTypeId);
 
         Json::Value getTypes() const;
 
-        bool typeExists(const std::uint32_t& id) const;
+        bool typeExists(const uint32_t id) const;
 
     private:
         void loadTypeTable();

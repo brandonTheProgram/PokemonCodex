@@ -166,7 +166,7 @@ Json::Value Pokedex::pokemonButtonDataToJsonValue(
     return pokemonButtons;
 }
 
-std::uint32_t Pokedex::getLimitEnvVar(const bool& latest) const
+std::uint32_t Pokedex::getLimitEnvVar(const bool latest) const
 {
     std::uint32_t limit = 1;
     std::string envVar;

@@ -5,7 +5,7 @@
 #include "repositories/AttackRepository.h"
 #include "SQLManager.h"
 
-PokemonRepository::PokemonRepository(SQLManager& sqlManager, RegionRepository& regionRepository, TypeRepository& typeRepository, AttackRepository& attackRepository) : Respository(sqlManager), regionRepository_(regionRepository), typeRepository_(typeRepository), attackRepository_(attackRepository) {}
+PokemonRepository::PokemonRepository(SQLManager& sqlManager, RegionRepository& regionRepository, TypeRepository& typeRepository, AttackRepository& attackRepository) : Repository(sqlManager), regionRepository_(regionRepository), typeRepository_(typeRepository), attackRepository_(attackRepository) {}
 
 Json::Value PokemonRepository::queryPokemon(const std::string& pokedexNumber, const std::string& regionalFormId, ConnectorFunction connectorFunction, ButtonFunction buttonFunction)
 {
@@ -14,22 +14,19 @@ Json::Value PokemonRepository::queryPokemon(const std::string& pokedexNumber, co
     this->logger_.debug("PokemonRepository::queryPokemon invoked for Pokedex Number: " + pokedexNumber +
                         " and Regional Form: " + regionalFormId);
 
-    this->sqlManager_.prepareStatement(
-        "SELECT * FROM Pokemon WHERE pokedex_number = ? AND region_id IS ?;");
-    this->sqlManager_.bind(1, pokedexNumber);
-
     try
     {
-        if (regionalFormId.empty())
-        {
-            this->sqlManager_.bind(2, nullptr);
-        }
-        else
-        {
-            this->sqlManager_.bind(2, std::stoi(regionalFormId));
-        }
-
-        auto results = this->sqlManager_.fetchResults();
+        auto results = this->sqlManager_.query("SELECT * FROM Pokemon WHERE pokedex_number = ? AND region_id IS ?;", [pokedexNumber, regionalFormId](SQLite::Statement& statement){
+            statement.bind(1, pokedexNumber);
+            if (regionalFormId.empty())
+            {
+                statement.bind(2, nullptr);
+            }
+            else
+            {
+                statement.bind(2, std::stoi(regionalFormId));
+            }
+        });
 
         if (results.empty())
         {
@@ -63,13 +60,13 @@ Json::Value PokemonRepository::queryPokemon(const std::string& pokedexNumber, co
         if (secondaryType == "NULL")
         {
             targetPokemon["type_effectiveness"] =
-                this->typeRepository_.queryTypeEffectivnessTable(std::stoi(primaryType), 0);
+                this->typeRepository_.queryTypeEffectivenessTable(std::stoi(primaryType), 0);
             secondaryType = "";
         }
         else
         {
             targetPokemon["type_effectiveness"] =
-                this->typeRepository_.queryTypeEffectivnessTable(std::stoi(primaryType), std::stoi(secondaryType));
+                this->typeRepository_.queryTypeEffectivenessTable(std::stoi(primaryType), std::stoi(secondaryType));
             secondaryType = this->typeRepository_.queryTypeTable(std::stoi(secondaryType));
         }
         primaryType = this->typeRepository_.queryTypeTable(std::stoi(primaryType));
@@ -146,29 +143,26 @@ std::vector<Json::Value::Members> PokemonRepository::queryRegionPokemon(const st
     // Grab the Pokemon from the respective region
     this->logger_.info("PokemonRepository::queryRegionPokemon Grabbing the Pokemon from the " + region +
                        " region");
-    this->sqlManager_.prepareStatement(
-        "SELECT pokedex_number, region_id, name, image FROM Pokemon WHERE pokedex_number BETWEEN ? "
-        "AND ?;");
-    this->sqlManager_.bind(1, start);
 
-    // Grab the start of the region for the homepage
-    if (shouldLimit)
-    {
-        if (((end - start) - limit) >= 0)
+    auto results = this->sqlManager_.query("SELECT pokedex_number, region_id, name, image FROM Pokemon WHERE pokedex_number BETWEEN ? AND ?;", [start, end, shouldLimit, limit](SQLite::Statement& statement){
+        statement.bind(1, start);
+
+        if (shouldLimit)
         {
-            this->sqlManager_.bind(2, start + limit - 1);
+            if (((end - start) - limit) >= 0)
+            {
+                statement.bind(2, start + limit - 1);
+            }
+            else
+            {
+                statement.bind(2, start + 1);
+            }
         }
         else
         {
-            this->sqlManager_.bind(2, start + 1);
+            statement.bind(2, end);
         }
-    }
-    else
-    {
-        this->sqlManager_.bind(2, end);
-    }
-
-    auto results = this->sqlManager_.fetchResults();
+    });
 
     if (shouldLimit && results.size() > limit)
     {
@@ -188,16 +182,14 @@ std::vector<Json::Value::Members> PokemonRepository::querySearchPokemon(const st
         return {};
     }
 
-    // Grab the Pokemon from the respective region
-    this->logger_.info("PokemonRepository::querySearchPokemon Searching for the Pokemon named " + name);
-    this->sqlManager_.prepareStatement(
-        "SELECT pokedex_number, region_id, name, image FROM Pokemon WHERE name LIKE ?;");
-    this->sqlManager_.bind(1, name + '%');
+    auto results = this->sqlManager_.query("SELECT pokedex_number, region_id, name, image FROM Pokemon WHERE name LIKE ? COLLATE NOCASE;", [name](SQLite::Statement& statement){
+            statement.bind(1, name + '%');
+        });
 
-    return this->sqlManager_.fetchResults();
+    return results;
 }
 
-std::vector<Json::Value::Members> PokemonRepository::queryLatestsPokemon(const std::uint32_t& limit)
+std::vector<Json::Value::Members> PokemonRepository::queryLatestsPokemon(const uint32_t limit)
 {
     this->logger_.debug("PokemonRepository::queryLatestsPokemon invoked");
 
@@ -211,53 +203,43 @@ std::vector<Json::Value::Members> PokemonRepository::queryLatestsPokemon(const s
 
     // Get the latest region range
     std::uint32_t start = endpoints.first; 
-    std::uint32_t end   = endpoints.second; 
-
+    std::uint32_t end   = endpoints.second;
+    
     // Grab the latest Pokemon
-    if (limit < start || limit > end)
-    {
-        this->logger_.warning("The limit of " + std::to_string(limit) +
-                              " is out of range. The latests Pokemon will be limited to 1");
-        this->sqlManager_.prepareStatement(
-            "SELECT pokedex_number, region_id, name, image FROM Pokemon ORDER BY pokedex_number "
-            "DESC LIMIT 1;");
-    }
-    else
-    {
-        this->logger_.info("PokemonRepository::queryLatestsPokemon Grabbing the latests " +
-                           std::to_string(limit) + " Pokemon");
-        this->sqlManager_.prepareStatement(
-            "SELECT pokedex_number, region_id, name, image FROM Pokemon ORDER BY pokedex_number "
-            "DESC LIMIT ?;");
-        this->sqlManager_.bind(1, limit);
-    }
+    auto results = this->sqlManager_.query("SELECT pokedex_number, region_id, name, image FROM Pokemon ORDER BY pokedex_number DESC LIMIT ?;", [start, end, limit](SQLite::Statement& statement){
+        if (limit < start || limit > end)
+        {
+            statement.bind(1, 1);
+        }
+        else
+        {
+            statement.bind(1, limit);
+        }
+    });
 
-    return this->sqlManager_.fetchResults();
+    return results;
 }
 
-Json::Value PokemonRepository::queryLocationTable(const std::uint32_t& pokedexNumber, const std::string& regionalFormId)
+Json::Value PokemonRepository::queryLocationTable(const uint32_t pokedexNumber, const std::string& regionalFormId)
 {
     this->logger_.debug("PokemonRepository::queryLocationTable invoked to query: " +
                         std::to_string(pokedexNumber) + " and " + regionalFormId);
 
     Json::Value pokemonLocations(Json::arrayValue);
 
-    this->sqlManager_.prepareStatement(
-        "SELECT location_name FROM Pokemon_Location WHERE pokedex_number = ? AND region_id IS ?;");
-    this->sqlManager_.bind(1, pokedexNumber);
-
     try
     {
-        if (regionalFormId.empty())
-        {
-            this->sqlManager_.bind(2, nullptr);
-        }
-        else
-        {
-            this->sqlManager_.bind(2, std::stoi(regionalFormId));
-        }
-
-        auto results = this->sqlManager_.fetchResults();
+        auto results = this->sqlManager_.query("SELECT location_name FROM Pokemon_Location WHERE pokedex_number = ? AND region_id IS ?;", [pokedexNumber, regionalFormId](SQLite::Statement& statement){
+            statement.bind(1, pokedexNumber);
+            if (regionalFormId.empty())
+            {
+                statement.bind(2, nullptr);
+            }
+            else
+            {
+                statement.bind(2, std::stoi(regionalFormId));
+            }
+        });
 
         if (results.empty())
         {
@@ -294,16 +276,15 @@ Json::Value PokemonRepository::queryLocationTable(const std::uint32_t& pokedexNu
     return pokemonLocations;
 }
 
-std::string PokemonRepository::queryAbilityTable(const std::uint32_t& id)
+std::string PokemonRepository::queryAbilityTable(const uint32_t id)
 {
     this->logger_.debug("PokemonRepository::queryAbilityTable invoked to query: " + std::to_string(id));
 
     std::string ability = "";
 
-    this->sqlManager_.prepareStatement(
-        "SELECT name, description FROM Pokemon_Ability WHERE ability_id = ?;");
-    this->sqlManager_.bind(1, id);
-    auto results = this->sqlManager_.fetchResults();
+    auto results = this->sqlManager_.query("SELECT name, description FROM Pokemon_Ability WHERE ability_id = ?;", [id](SQLite::Statement& statement){
+        statement.bind(1, id);
+    });
 
     if (results.empty())
     {
@@ -315,24 +296,19 @@ std::string PokemonRepository::queryAbilityTable(const std::uint32_t& id)
            Json::Value(results[0].at(1)).asString();
 }
 
-Json::Value PokemonRepository::queryEvolutionTable(const std::uint32_t& targetPokedexNumber, ConnectorFunction connectorFunction, ButtonFunction buttonFunction)
+Json::Value PokemonRepository::queryEvolutionTable(const uint32_t targetPokedexNumber, ConnectorFunction connectorFunction, ButtonFunction buttonFunction)
 {
     this->logger_.debug("PokemonRepository::queryEvolutionTable invoked to query: " +
                         std::to_string(targetPokedexNumber));
 
     Json::Value evolutionList(Json::arrayValue);
 
-    this->sqlManager_.prepareStatement(
-        "SELECT base_pokedex_number, evolved_pokedex_number, base_region_id, evolved_region_id, "
-        "evolution_condition "
-        "FROM Pokemon_Evolution "
-        "WHERE chain_id = (SELECT chain_id FROM Pokemon_Evolution WHERE base_pokedex_number = ? OR "
-        "evolved_pokedex_number = ? LIMIT 1);");
+    std::string sqlQuery = "SELECT base_pokedex_number, evolved_pokedex_number, base_region_id, evolved_region_id, evolution_condition FROM Pokemon_Evolution WHERE chain_id = (SELECT chain_id FROM Pokemon_Evolution WHERE base_pokedex_number = ? OR evolved_pokedex_number = ? LIMIT 1);";
 
-    this->sqlManager_.bind(1, targetPokedexNumber);
-    this->sqlManager_.bind(2, targetPokedexNumber);
-
-    auto results = this->sqlManager_.fetchResults();
+    auto results = this->sqlManager_.query(sqlQuery, [targetPokedexNumber](SQLite::Statement& statement){
+        statement.bind(1, targetPokedexNumber);
+        statement.bind(2, targetPokedexNumber);
+    });
 
     if (results.empty())
     {
@@ -366,38 +342,34 @@ Json::Value PokemonRepository::queryEvolutionTable(const std::uint32_t& targetPo
             Json::Value entry(Json::objectValue);
 
             // Fetch data to turn the evolutionary line into buttons
-            this->sqlManager_.prepareStatement(
-                "SELECT pokedex_number, region_id, name, image FROM Pokemon WHERE pokedex_number = "
-                "? AND region_id IS ?;");
-            this->sqlManager_.bind(1, data.basePokedexNumber);
+            auto baseButtonData = this->sqlManager_.query("SELECT pokedex_number, region_id, name, image FROM Pokemon WHERE pokedex_number = ? AND region_id IS ?;", [data](SQLite::Statement& statement){
+                statement.bind(1, data.basePokedexNumber);
 
-            if (data.baseRegionId == 0)
-            {
-                this->sqlManager_.bind(2, nullptr);
-            }
-            else
-            {
-                this->sqlManager_.bind(2, data.baseRegionId);
-            }
-
-            auto baseButtonData    = this->sqlManager_.fetchResults();
+                if (data.baseRegionId == 0)
+                {
+                    statement.bind(2, nullptr);
+                }
+                else
+                {
+                    statement.bind(2, data.baseRegionId);
+                }
+            });
+            
             Json::Value baseButton = buttonFunction(baseButtonData);
 
-            this->sqlManager_.prepareStatement(
-                "SELECT pokedex_number, region_id, name, image FROM Pokemon WHERE pokedex_number = "
-                "? AND region_id IS ?;");
-            this->sqlManager_.bind(1, data.evolvedPokedexNumber);
+            auto evolvedButtonData = this->sqlManager_.query("SELECT pokedex_number, region_id, name, image FROM Pokemon WHERE pokedex_number = ? AND region_id IS ?;", [data](SQLite::Statement& statement){
+                statement.bind(1, data.evolvedPokedexNumber);
 
-            if (data.evolvedRegionId == 0)
-            {
-                this->sqlManager_.bind(2, nullptr);
-            }
-            else
-            {
-                this->sqlManager_.bind(2, data.evolvedRegionId);
-            }
+                if (data.evolvedRegionId == 0)
+                {
+                    statement.bind(2, nullptr);
+                }
+                else
+                {
+                    statement.bind(2, data.evolvedRegionId);
+                }
+            });
 
-            auto evolvedButtonData    = this->sqlManager_.fetchResults();
             Json::Value evolvedButton = buttonFunction(evolvedButtonData);
 
             // Populate the entry

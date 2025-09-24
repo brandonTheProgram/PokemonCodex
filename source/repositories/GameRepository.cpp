@@ -2,7 +2,7 @@
 #include "repositories/GameRepository.h"
 #include "SQLManager.h"
 
-GameRepository::GameRepository(SQLManager& sqlManager) : Respository(sqlManager)
+GameRepository::GameRepository(SQLManager& sqlManager) : Repository(sqlManager)
 {
     this->loadGameTable();
     this->loadMainlineGameTable();
@@ -47,9 +47,7 @@ void GameRepository::loadGameTable()
 {
     this->logger_.debug("GameRepository::loadGameTable invoked");
 
-    this->sqlManager_.prepareStatement("SELECT game_id, game_name FROM Pokemon_Game ORDER BY game_id ASC;");
-
-    auto results = this->sqlManager_.fetchResults();
+    auto results = this->sqlManager_.query("SELECT game_id, game_name FROM Pokemon_Game ORDER BY game_id ASC;");
 
     if (results.empty())
     {
@@ -65,7 +63,7 @@ void GameRepository::loadGameTable()
         std::uint32_t id = std::stoi(Json::Value(row.at(0)).asString());
         std::string name = Json::Value(row.at(1)).asString();
 
-        this->games_[id] = name;
+        this->games_.emplace(id, name);
     }
 
     this->logger_.debug("GameRepository::loadGameTable Found " +
@@ -76,11 +74,7 @@ void GameRepository::loadMainlineGameTable()
 {
     this->logger_.debug("GameRepository::loadMainlineGameTable invoked");
 
-    this->sqlManager_.prepareStatement(
-        "SELECT mainline_game_id, game_name FROM Pokemon_Mainline_Game ORDER BY mainline_game_id "
-        "ASC;");
-
-    auto results = this->sqlManager_.fetchResults();
+    auto results = this->sqlManager_.query("SELECT mainline_game_id, game_name FROM Pokemon_Mainline_Game ORDER BY mainline_game_id ASC;");
 
     if (results.empty())
     {
@@ -96,7 +90,7 @@ void GameRepository::loadMainlineGameTable()
     {
         std::uint32_t id = std::stoi(Json::Value(row.at(0)).asString());
         std::string name = Json::Value(row.at(1)).asString();
-        this->mainlineGames_[id] = name;
+        this->mainlineGames_.emplace(id, name);
     }
 
     this->logger_.debug("GameRepository::loadMainlineGameTable Found " +

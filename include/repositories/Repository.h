@@ -5,14 +5,18 @@
 
 class SQLManager;
 
-class Respository
+class Repository
 {
     protected:
-        Respository(SQLManager& sqlManager) : logger_(Logger::getInstance()), sqlManager_(sqlManager) 
-        {}
+        explicit Repository(SQLManager& sqlManager) : logger_(Logger::getInstance()), sqlManager_(sqlManager) {}
 
         Logger& logger_;
         SQLManager& sqlManager_;
+
+    public:
+        virtual ~Repository() = default;
+        Repository(const Repository&) = delete;
+        Repository& operator=(const Repository&) = delete;
 };
 
 #endif

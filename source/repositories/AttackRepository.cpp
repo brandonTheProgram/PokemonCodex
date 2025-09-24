@@ -3,18 +3,17 @@
 #include "repositories/TypeRepository.h"
 #include "SQLManager.h"
 
-AttackRepository::AttackRepository(SQLManager& sqlManager, TypeRepository& typeRepository) : Respository(sqlManager), typeRepository_(typeRepository) {}
+AttackRepository::AttackRepository(SQLManager& sqlManager, TypeRepository& typeRepository) : Repository(sqlManager), typeRepository_(typeRepository) {}
 
-std::string AttackRepository::queryMoveCategoryTable(const std::uint32_t& id)
+std::string AttackRepository::queryMoveCategoryTable(const uint32_t id)
 {
     this->logger_.debug("AttackRepository::queryMoveCategoryTable invoked to query: " + std::to_string(id));
 
     std::string moveCategory = "";
 
-    this->sqlManager_.prepareStatement(
-        "SELECT category_name FROM Pokemon_Move_Category WHERE category_id = ?;");
-    this->sqlManager_.bind(1, id);
-    auto results = this->sqlManager_.fetchResults();
+    auto results = this->sqlManager_.query("SELECT category_name FROM Pokemon_Move_Category WHERE category_id = ?;", [id](SQLite::Statement& statement){
+        statement.bind(1, id);
+    });
 
     if (results.empty())
     {
@@ -26,17 +25,15 @@ std::string AttackRepository::queryMoveCategoryTable(const std::uint32_t& id)
     return results[0].at(0);
 }
 
-Json::Value AttackRepository::queryMoveTable(const std::uint32_t& id)
+Json::Value AttackRepository::queryMoveTable(const uint32_t id)
 {
     this->logger_.debug("AttackRepository::queryMoveTable invoked to query: " + std::to_string(id));
 
     Json::Value pokemonMove(Json::objectValue);
 
-    this->sqlManager_.prepareStatement(
-        "SELECT move_name, description, type_id, category_id, power, accuracy, pp FROM "
-        "Pokemon_Move WHERE move_id = ?;");
-    this->sqlManager_.bind(1, id);
-    auto results = this->sqlManager_.fetchResults();
+    auto results = this->sqlManager_.query("SELECT move_name, description, type_id, category_id, power, accuracy, pp FROM Pokemon_Move WHERE move_id = ?;", [id](SQLite::Statement& statement){
+        statement.bind(1, id);
+    });
 
     if (results.empty())
     {
@@ -55,17 +52,15 @@ Json::Value AttackRepository::queryMoveTable(const std::uint32_t& id)
     return pokemonMove;
 }
 
-Json::Value AttackRepository::queryTechnicalMoveTable(const std::uint32_t& id)
+Json::Value AttackRepository::queryTechnicalMoveTable(const uint32_t id)
 {
     this->logger_.debug("AttackRepository::queryTechnicalMoveTable invoked to query: " + std::to_string(id));
 
     Json::Value pokemonTechnicalMove(Json::objectValue);
 
-    this->sqlManager_.prepareStatement(
-        "SELECT move_id, technical_number, is_tr FROM "
-        "Pokemon_Technical_Move WHERE technical_move_id = ?;");
-    this->sqlManager_.bind(1, id);
-    auto results = this->sqlManager_.fetchResults();
+    auto results = this->sqlManager_.query("SELECT move_id, technical_number, is_tr FROM Pokemon_Technical_Move WHERE technical_move_id = ?;", [id](SQLite::Statement& statement){
+        statement.bind(1, id);
+    });
 
     if (results.empty())
     {
@@ -82,36 +77,32 @@ Json::Value AttackRepository::queryTechnicalMoveTable(const std::uint32_t& id)
     return pokemonTechnicalMove;
 }
 
-Json::Value AttackRepository::queryLevelUpMovesetTable(const std::uint32_t& pokedexNumber, const std::string& regionalFormId)
+Json::Value AttackRepository::queryLevelUpMovesetTable(const uint32_t pokedexNumber, const std::string& regionalFormId)
 {
     this->logger_.debug("AttackRepository::queryLevelUpMovesetTable invoked to query: " +
                         std::to_string(pokedexNumber) + " and " + regionalFormId);
 
     Json::Value pokemonLevelUpMoveset(Json::arrayValue);
 
-    this->sqlManager_.prepareStatement(
-        "SELECT move_id, mainline_game_id, level_learned FROM Pokemon_Level_Up_Moveset WHERE "
-        "pokedex_number = ? AND region_id IS ? ORDER BY level_up_moveset_id;");
-    this->sqlManager_.bind(1, pokedexNumber);
-
     try
     {
-        if (regionalFormId.empty())
-        {
-            this->sqlManager_.bind(2, nullptr);
-        }
-        else
-        {
-            this->sqlManager_.bind(2, std::stoi(regionalFormId));
-        }
-
-        auto results = this->sqlManager_.fetchResults();
+        auto results = this->sqlManager_.query("SELECT move_id, mainline_game_id, level_learned FROM Pokemon_Level_Up_Moveset WHERE pokedex_number = ? AND region_id IS ? ORDER BY level_up_moveset_id;", [pokedexNumber, regionalFormId](SQLite::Statement& statement){
+            statement.bind(1, pokedexNumber);
+            if (regionalFormId.empty())
+            {
+                statement.bind(2, nullptr);
+            }
+            else
+            {
+                statement.bind(2, std::stoi(regionalFormId));
+            }
+        });
 
         if (results.empty())
         {
             this->logger_.warning(
                 "No Pokemon LevelUp Moveset was found that matches the Pokedex Number " +
-                pokedexNumber);
+                std::to_string(pokedexNumber));
             return pokemonLevelUpMoveset;
         }
 
@@ -136,7 +127,7 @@ Json::Value AttackRepository::queryLevelUpMovesetTable(const std::uint32_t& poke
     return pokemonLevelUpMoveset;
 }
 
-std::pair<Json::Value, Json::Value> AttackRepository::queryTechnicalMovesetTable(const std::uint32_t& pokedexNumber, const std::string& regionalFormId)
+std::pair<Json::Value, Json::Value> AttackRepository::queryTechnicalMovesetTable(const uint32_t pokedexNumber, const std::string& regionalFormId)
 {
     this->logger_.debug("AttackRepository::queryTechnicalMovesetTable invoked to query: " +
                         std::to_string(pokedexNumber) + " and " + regionalFormId);
@@ -144,29 +135,25 @@ std::pair<Json::Value, Json::Value> AttackRepository::queryTechnicalMovesetTable
     Json::Value tmMoves(Json::arrayValue);
     Json::Value trMoves(Json::arrayValue);
 
-    this->sqlManager_.prepareStatement(
-        "SELECT mainline_game_id, technical_move_id FROM Pokemon_Technical_Moveset WHERE "
-        "pokedex_number = ? AND region_id IS ? ORDER BY technical_moveset_id;");
-    this->sqlManager_.bind(1, pokedexNumber);
-
     try
     {
-        if (regionalFormId.empty())
-        {
-            this->sqlManager_.bind(2, nullptr);
-        }
-        else
-        {
-            this->sqlManager_.bind(2, std::stoi(regionalFormId));
-        }
-
-        auto results = this->sqlManager_.fetchResults();
+        auto results = this->sqlManager_.query("SELECT mainline_game_id, technical_move_id FROM Pokemon_Technical_Moveset WHERE pokedex_number = ? AND region_id IS ? ORDER BY technical_moveset_id;", [pokedexNumber, regionalFormId](SQLite::Statement& statement){
+            statement.bind(1, pokedexNumber);
+            if (regionalFormId.empty())
+            {
+                statement.bind(2, nullptr);
+            }
+            else
+            {
+                statement.bind(2, std::stoi(regionalFormId));
+            }
+        });
 
         if (results.empty())
         {
             this->logger_.warning(
                 "No Pokemon Technical Moveset was found that matches the Pokedex Number " +
-                pokedexNumber);
+                std::to_string(pokedexNumber));
             return {tmMoves, trMoves};
         }
 

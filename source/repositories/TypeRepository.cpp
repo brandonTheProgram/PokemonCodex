@@ -2,12 +2,12 @@
 #include "repositories/TypeRepository.h"
 #include "SQLManager.h"
 
-TypeRepository::TypeRepository(SQLManager& sqlManager) : Respository(sqlManager)
+TypeRepository::TypeRepository(SQLManager& sqlManager) : Repository(sqlManager)
 {
     this->loadTypeTable();
 }
 
-std::string TypeRepository::queryTypeTable(const std::uint32_t& id)
+std::string TypeRepository::queryTypeTable(const uint32_t id)
 {
     this->logger_.debug("TypeRepository::queryTypeTable invoked to query: " + std::to_string(id));
 
@@ -20,20 +20,17 @@ std::string TypeRepository::queryTypeTable(const std::uint32_t& id)
     return this->types_.at(id);
 }
 
-Json::Value TypeRepository::queryTypeEffectivnessTable(const std::uint32_t& primaryTypeId, const std::uint32_t& secondaryTypeId)
+Json::Value TypeRepository::queryTypeEffectivenessTable(const uint32_t primaryTypeId, const uint32_t secondaryTypeId)
 {
-    this->logger_.debug("TypeRepository::queryTypeEffectivnessTable invoked to query: " +
+    this->logger_.debug("TypeRepository::queryTypeEffectivenessTable invoked to query: " +
                         std::to_string(primaryTypeId) + " and " + std::to_string(secondaryTypeId));
 
     Json::Value pokemonTypeEffective(Json::arrayValue);
 
-    this->sqlManager_.prepareStatement(
-        "SELECT defending_type_id, attacking_type_id, damage_multiplier "
-        "FROM Pokemon_Type_Effectiveness "
-        "WHERE attacking_type_id IN (?, ?)  ORDER BY defending_type_id ASC;");
-    this->sqlManager_.bind(1, primaryTypeId);
-    this->sqlManager_.bind(2, secondaryTypeId);
-    auto results = this->sqlManager_.fetchResults();
+    auto results = this->sqlManager_.query("SELECT defending_type_id, attacking_type_id, damage_multiplier FROM Pokemon_Type_Effectiveness WHERE attacking_type_id IN (?, ?)  ORDER BY defending_type_id ASC;", [primaryTypeId, secondaryTypeId](SQLite::Statement& statement){
+        statement.bind(1, primaryTypeId);
+        statement.bind(2, secondaryTypeId);
+    });
 
     if (results.empty())
     {
@@ -74,7 +71,7 @@ Json::Value TypeRepository::queryTypeEffectivnessTable(const std::uint32_t& prim
     }
     catch (const std::invalid_argument& e)
     {
-        this->logger_.critical("TypeRepository::queryTypeEffectivnessTable caught an exception: " +
+        this->logger_.critical("TypeRepository::queryTypeEffectivenessTable caught an exception: " +
                                std::string(e.what()));
         return Json::Value(Json::arrayValue);
     }
@@ -99,7 +96,7 @@ Json::Value TypeRepository::getTypes() const
     return pokemonTypes;
 }
 
-bool TypeRepository::typeExists(const std::uint32_t& id) const
+bool TypeRepository::typeExists(const uint32_t id) const
 {
     return this->types_.find(id) != this->types_.end();
 }
@@ -108,9 +105,7 @@ void TypeRepository::loadTypeTable()
 {
     this->logger_.debug("TypeRepository::loadTypeTable invoked");
 
-    this->sqlManager_.prepareStatement("SELECT type_id, type_name FROM Pokemon_Type ORDER BY type_id ASC;");
-
-    auto results = this->sqlManager_.fetchResults();
+    auto results = this->sqlManager_.query("SELECT type_id, type_name FROM Pokemon_Type ORDER BY type_id ASC;");
 
     if (results.empty())
     {
@@ -126,7 +121,7 @@ void TypeRepository::loadTypeTable()
         std::uint32_t id = std::stoi(Json::Value(row.at(0)).asString());
         std::string name = Json::Value(row.at(1)).asString();
 
-        this->types_[id] = name;
+        this->types_.emplace(id, name);
     }
 
     this->logger_.debug("TypeRepository::loadTypeTable Found " +

@@ -3,7 +3,9 @@
 
 #include <SQLiteCpp/SQLiteCpp.h>
 
+#include <functional>
 #include <mutex>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -15,16 +17,12 @@ class SQLManager
         SQLManager(const std::string& dbPath);
         ~SQLManager() = default;
 
-        void executeQuery(const std::string& query);
-        void prepareStatement(const std::string& query);
-        void bind(const int& index, const int& value);
-        void bind(const int& index, const std::string& value);
-        void bind(const int& index, const int* value);
-        std::vector<std::vector<std::string>> fetchResults();
+        std::vector<std::vector<std::string>> query(
+            const std::string& sql,
+            const std::function<void(SQLite::Statement&)>& binder = nullptr);
 
     private:
         SQLite::Database db_;
-        std::unique_ptr<SQLite::Statement> stmt_;
         Logger& logger_;
         mutable std::mutex mutex_;
 };

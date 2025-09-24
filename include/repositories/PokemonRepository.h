@@ -24,8 +24,8 @@ struct EvolutionData
 
         EvolutionData() = default;
 
-        EvolutionData(const std::uint32_t& base, const std::uint32_t& evolved,
-                    const std::uint32_t& baseRegion, const std::uint32_t& evolvedRegion,
+        EvolutionData(const uint32_t base, const uint32_t evolved,
+                    const uint32_t baseRegion, const uint32_t evolvedRegion,
                     const std::string& condition)
             : basePokedexNumber(base),
             evolvedPokedexNumber(evolved),
@@ -39,7 +39,7 @@ struct EvolutionData
 using ConnectorFunction = std::function<void(std::vector<EvolutionData>&)>;
 using ButtonFunction = std::function<Json::Value(const std::vector<std::vector<std::string>>&)>;
 
-class PokemonRepository : public Respository
+class PokemonRepository : public Repository
 {
     public:
         
@@ -54,15 +54,15 @@ class PokemonRepository : public Respository
         
         std::vector<Json::Value::Members> querySearchPokemon(const std::string& name);
 
-        std::vector<Json::Value::Members> queryLatestsPokemon(const std::uint32_t& limit);
+        std::vector<Json::Value::Members> queryLatestsPokemon(const uint32_t limit);
 
         std::vector<Json::Value::Members> queryEvolution(const uint32_t& pokedexNumber, const uint32_t& regionalFormId);
 
-        Json::Value queryLocationTable(const std::uint32_t& pokedexNumber, const std::string& regionalFormId);
+        Json::Value queryLocationTable(const uint32_t pokedexNumber, const std::string& regionalFormId);
 
-        std::string queryAbilityTable(const std::uint32_t& id);
+        std::string queryAbilityTable(const uint32_t id);
 
-        Json::Value queryEvolutionTable(const std::uint32_t& targetPokedexNumber, ConnectorFunction connectorFunction, ButtonFunction buttonFunction);
+        Json::Value queryEvolutionTable(const uint32_t targetPokedexNumber, ConnectorFunction connectorFunction, ButtonFunction buttonFunction);
 
     private:
         RegionRepository& regionRepository_;
