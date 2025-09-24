@@ -3,6 +3,7 @@
 
 #include <SQLiteCpp/SQLiteCpp.h>
 
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -25,6 +26,7 @@ class SQLManager
         SQLite::Database db_;
         std::unique_ptr<SQLite::Statement> stmt_;
         Logger& logger_;
+        mutable std::mutex mutex_;
 };
 
 #endif

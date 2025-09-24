@@ -7,6 +7,11 @@ set(SOURCES
     Pokedex.cpp
     SQLManager.cpp
     Config.cpp
+    repositories/AttackRepository.cpp
+    repositories/GameRepository.cpp
+    repositories/PokemonRepository.cpp
+    repositories/RegionRepository.cpp
+    repositories/TypeRepository.cpp
 )
 
 add_library(PokemonCodexLib ${SOURCES})

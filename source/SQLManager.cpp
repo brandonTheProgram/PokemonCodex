@@ -12,6 +12,7 @@ SQLManager::SQLManager(const std::string& dbPath)
 void SQLManager::executeQuery(const std::string& query)
 {
     this->logger_.debug("SQLManager::executeQuery invoked");
+    std::lock_guard<std::mutex> lock(this->mutex_);
 
     try
     {
@@ -92,6 +93,7 @@ void SQLManager::bind(const int& index, const int* value)
 std::vector<std::vector<std::string>> SQLManager::fetchResults()
 {
     this->logger_.debug("SQLManager::fetchResults");
+    std::lock_guard<std::mutex> lock(this->mutex_);
 
     std::vector<std::vector<std::string>> results;
 

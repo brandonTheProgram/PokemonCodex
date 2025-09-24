@@ -9,7 +9,6 @@
 class Config
 {
     public:
-        // Get the singleton instance
         static Config& getInstance();
 
         void load(const std::string& filePath);
