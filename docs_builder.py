@@ -15,6 +15,7 @@ Usage:
 
 import argparse
 import os
+import re
 import sqlite3
 from collections import defaultdict
 
@@ -56,6 +57,47 @@ def indexes(cur, table):
     # Newer SQLite: seq, name, unique, origin, partial
     # Older SQLite: name, unique, origin, partial
     return fetchall(cur, f"PRAGMA index_list('{table}')")
+
+# ---------- Mermaid helpers ----------
+def mermaid_ident(name: str) -> str:
+    """
+    Ensure the identifier is Mermaid-friendly: letters, digits, underscore only.
+    """
+    ident = re.sub(r'[^A-Za-z0-9_]', '_', name)
+    if re.match(r'^[0-9]', ident):
+        ident = 'T_' + ident
+    return ident or 'T_unnamed'
+
+def mermaid_type(sqlite_type: str) -> str:
+    """
+    Map various SQLite type decls to simple Mermaid ER types.
+    Mermaid expects a single token (no parentheses/commas).
+    """
+    if not sqlite_type:
+        return "string"
+    t = sqlite_type.strip().upper()
+    # Remove parenthetical modifiers like VARCHAR(255), DECIMAL(5,2)
+    t = re.sub(r'\(.*\)', '', t)
+    # Normalize whitespace
+    t = re.sub(r'\s+', ' ', t).strip()
+
+    # SQLite type affinity rules
+    if "INT" in t:
+        return "int"
+    if "CHAR" in t or "CLOB" in t or "TEXT" in t or "STRING" in t:
+        return "string"
+    if "BLOB" in t:
+        return "blob"
+    if "REAL" in t or "FLOA" in t or "DOUB" in t:
+        return "float"
+    if "NUMERIC" in t or "DEC" in t:
+        return "float"
+    if "BOOL" in t:
+        return "boolean"
+    if "DATE" in t or "TIME" in t:
+        return "date"
+    # Fallback
+    return "string"
 
 def table_markdown(cur, table, sample_rows=15):
     # Row count
@@ -187,31 +229,32 @@ def write_overview_md(cur, out_dir, tables):
         f.write("\n".join(lines))
     return overview_md
 
-# ---------- Mermaid ER generation ----------
+# ---------- Mermaid ER generation (no Graphviz needed) ----------
 def make_mermaid_er(cur, tables):
     """
     Generate a Mermaid `erDiagram` string describing tables and FKs.
-    We'll approximate cardinalities: ref_table ||--o{ from_table
-    and include columns for each entity.
+    Mermaid grammar expects single-token types (no parentheses or commas) and simple identifiers.
     """
     lines = ["erDiagram"]
     # Entities
     for t in tables:
         cols = columns(cur, t)
-        # Mermaid entity block
-        lines.append(f"  {t} {{")
+        mt = mermaid_ident(t)
+        lines.append(f"  {mt} {{")
         for cid, name, ctype, notnull, dflt, pk in cols:
-            label = ctype or "TEXT"
+            label = mermaid_type(ctype)
+            colname = mermaid_ident(name)
             suffix = " PK" if pk else ""
-            lines.append(f"    {label} {name}{suffix}")
+            lines.append(f"    {label} {colname}{suffix}")
         lines.append("  }")
     # Relationships
     for t in tables:
+        mt = mermaid_ident(t)
         for (id_, seq, ref_table, from_col, to_col, on_upd, on_del, match) in fks(cur, t):
-            # One referenced row can be linked by many in the referencing table:
-            # ref_table ||--o{ t : "from_col→to_col"
-            rel_label = f"{from_col}→{to_col}"
-            lines.append(f"  {ref_table} ||--o{{ {t} : \"{rel_label}\"")
+            rt = mermaid_ident(ref_table)
+            # One referenced row can be linked by many in the referencing table
+            rel_label = f"{mermaid_ident(from_col)}->{mermaid_ident(to_col)}"
+            lines.append(f"  {rt} ||--o{{ {mt} : \"{rel_label}\"")
     return "\n".join(lines) + "\n"
 
 def write_mermaid_files(cur, out_dir, tables):
