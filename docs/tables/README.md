@@ -1,0 +1,17 @@
+# Database Tables
+
+- [Pokemon](./Pokemon.md)
+- [Pokemon_Ability](./Pokemon_Ability.md)
+- [Pokemon_Evolution](./Pokemon_Evolution.md)
+- [Pokemon_Game](./Pokemon_Game.md)
+- [Pokemon_Level_Up_Moveset](./Pokemon_Level_Up_Moveset.md)
+- [Pokemon_Location](./Pokemon_Location.md)
+- [Pokemon_Mainline_Game](./Pokemon_Mainline_Game.md)
+- [Pokemon_Move](./Pokemon_Move.md)
+- [Pokemon_Move_Category](./Pokemon_Move_Category.md)
+- [Pokemon_Region](./Pokemon_Region.md)
+- [Pokemon_Regional_Form](./Pokemon_Regional_Form.md)
+- [Pokemon_Technical_Move](./Pokemon_Technical_Move.md)
+- [Pokemon_Technical_Moveset](./Pokemon_Technical_Moveset.md)
+- [Pokemon_Type](./Pokemon_Type.md)
+- [Pokemon_Type_Effectiveness](./Pokemon_Type_Effectiveness.md)
