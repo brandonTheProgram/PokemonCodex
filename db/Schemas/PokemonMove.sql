@@ -293,7 +293,7 @@ VALUES
 ('Giga Drain', 'A nutrient-draining attack. The user''s HP is restored by half the damage taken by the target.', 12, 2, 75, 100.00, 10),
 ('Giga Impact', 'The user charges at the target using every bit of its power. The user can''t move on the next turn.', 1, 1, 150, 90.00, 5),
 ('Gigaton Hammer', 'The user swings its whole body around to attack with its huge hammer. This move can''t be used twice in a row.', 9, 1, 160, 100.00, 5),
-('Glacial Lance', 'The user attacks by hurling a blizzard-cloaked icicle lance at opposing Pokemon.', 15, 1, 1220, 100.00, 5),
+('Glacial Lance', 'The user attacks by hurling a blizzard-cloaked icicle lance at opposing Pokemon.', 15, 1, 130, 100.00, 5),
 ('Glaciate', 'The user attacks by blowing freezing cold air at opposing Pokemon. This lowers their Speed stat.', 15, 2, 65, 95.00, 10),
 ('Glaive Rush', 'The user throws its entire body into a reckless charge. Attacks from opposing Pokemon during the next turn cannot miss and will inflict double damage.', 16, 1, 120, 100.00, 5),
 ('Glare', 'The user intimidates the target with the pattern on its belly to cause paralysis.', 1, 3, 0, 100.00, 30),
