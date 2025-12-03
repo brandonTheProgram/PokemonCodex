@@ -137,7 +137,7 @@ std::pair<Json::Value, Json::Value> AttackRepository::queryTechnicalMovesetTable
 
     try
     {
-        auto results = this->sqlManager_.query("SELECT mainline_game_id, technical_move_id FROM Pokemon_Technical_Moveset WHERE pokedex_number = ? AND region_id IS ? ORDER BY technical_moveset_id;", [pokedexNumber, regionalFormId](SQLite::Statement& statement){
+        auto results = this->sqlManager_.query("SELECT mainline_game_id, technical_move_id FROM Pokemon_Technical_Moveset WHERE pokedex_number = ? AND region_id IS ? ORDER BY technical_moveset_id ASC;", [pokedexNumber, regionalFormId](SQLite::Statement& statement){
             statement.bind(1, pokedexNumber);
             if (regionalFormId.empty())
             {
