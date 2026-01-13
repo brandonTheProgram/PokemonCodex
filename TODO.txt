@@ -1,0 +1,6 @@
+TODO:
+
+Future Nice to Haves
+* Include the shiny form of the pokemon
+* Use slugs for ability and moves instead of indicies to allow for easier time with new data/missing data
+* Missing Moves: No Retreat

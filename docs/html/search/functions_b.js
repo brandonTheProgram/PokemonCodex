@@ -1,0 +1,20 @@
+var searchData=
+[
+  ['query_0',['query',['../d8/d2e/class_s_q_l_manager.html#afd72da13d71a79673e637d775a5c3647',1,'SQLManager']]],
+  ['queryabilitytable_1',['queryAbilityTable',['../d7/df0/class_pokemon_repository.html#aa61329bdf37583b320134a604809e39f',1,'PokemonRepository']]],
+  ['queryevolution_2',['queryEvolution',['../d7/df0/class_pokemon_repository.html#a4b0c2eaec00621ee71598c6d45a028f9',1,'PokemonRepository']]],
+  ['queryevolutiontable_3',['queryEvolutionTable',['../d7/df0/class_pokemon_repository.html#ac968b43a5e6f0e810f681eaab0890e7e',1,'PokemonRepository']]],
+  ['querylatestspokemon_4',['queryLatestsPokemon',['../d7/df0/class_pokemon_repository.html#a4790df120ac01390a064a38306018e85',1,'PokemonRepository']]],
+  ['querylevelupmovesettable_5',['queryLevelUpMovesetTable',['../da/d6c/class_attack_repository.html#a5844c9933ad798b26909ef2e609e1845',1,'AttackRepository']]],
+  ['querylocationtable_6',['queryLocationTable',['../d7/df0/class_pokemon_repository.html#a3b0ec63f7b71d5d7f47e7ccb19727058',1,'PokemonRepository']]],
+  ['querymovecategorytable_7',['queryMoveCategoryTable',['../da/d6c/class_attack_repository.html#a928c51dd603c3ffe4c88be82bde05951',1,'AttackRepository']]],
+  ['querymovetable_8',['queryMoveTable',['../da/d6c/class_attack_repository.html#ac695819cd54691b064a6b560de783e62',1,'AttackRepository']]],
+  ['querypokemon_9',['queryPokemon',['../d7/df0/class_pokemon_repository.html#a670e09801e0c133039c62c78e8fc3fe2',1,'PokemonRepository']]],
+  ['queryregionalformtable_10',['queryRegionalFormTable',['../d7/d47/class_region_repository.html#ab90bd753120f33738cb94a32afacb776',1,'RegionRepository']]],
+  ['queryregionpokemon_11',['queryRegionPokemon',['../d7/df0/class_pokemon_repository.html#a3391bf17f5628a47faac760d260c983a',1,'PokemonRepository']]],
+  ['querysearchpokemon_12',['querySearchPokemon',['../d7/df0/class_pokemon_repository.html#a23ddbd11c56bf758473cc45858f39e64',1,'PokemonRepository']]],
+  ['querytechnicalmovesettable_13',['queryTechnicalMovesetTable',['../da/d6c/class_attack_repository.html#a3b197bc6415fdd80703aaaef994fa267',1,'AttackRepository']]],
+  ['querytechnicalmovetable_14',['queryTechnicalMoveTable',['../da/d6c/class_attack_repository.html#a4c6239030ba08704b8826db87ec3f834',1,'AttackRepository']]],
+  ['querytypeeffectivenesstable_15',['queryTypeEffectivenessTable',['../d5/db7/class_type_repository.html#afc200de7577c5570818f1979ea113417',1,'TypeRepository']]],
+  ['querytypetable_16',['queryTypeTable',['../d5/db7/class_type_repository.html#a3bb2d2a3ea4219befda5ad4537c86684',1,'TypeRepository']]]
+];

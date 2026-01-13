@@ -2,3 +2,4 @@
 /node_modules/
 db/Schemas/ExampleQueries.sql
 /logs
+/docs/doxygen-warnings.log

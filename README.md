@@ -6,10 +6,6 @@ A full‑stack Pokédex web app with a **C++17** backend (SQLite) and a **Node.j
 
 ## 🔗 Live App Link
 
-**Production**: [https://pokemoncodex.onrender.com/](https://pokemoncodex.onrender.com/)
-
-> Note: The Render service may cold‑start if idle; give it a moment on first load.
-
 ---
 
 ## ✨ Features

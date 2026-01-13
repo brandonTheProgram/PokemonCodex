@@ -1,0 +1,90 @@
+# Project related configuration
+PROJECT_NAME           = "PokemonCodex"
+PROJECT_BRIEF          = "Pokémon Codex — C++ backend and repositories with Express UI"
+OUTPUT_DIRECTORY       = docs
+CREATE_SUBDIRS         = YES
+ALLOW_UNICODE_NAMES    = YES
+
+# Build configuration
+OPTIMIZE_OUTPUT_FOR_C  = NO
+OPTIMIZE_OUTPUT_JAVA   = NO
+OPTIMIZE_FOR_FORTRAN   = NO
+OPTIMIZE_OUTPUT_VHDL   = NO
+MARKDOWN_SUPPORT       = YES
+JAVADOC_AUTOBRIEF      = YES
+QT_AUTOBRIEF           = NO
+BUILTIN_STL_SUPPORT    = YES
+TAB_SIZE               = 2
+
+# Input
+INPUT                  = include source
+FILE_PATTERNS          = *.h *.cpp
+RECURSIVE              = YES
+
+# Paths
+STRIP_FROM_PATH        = .
+STRIP_FROM_INC_PATH    = include
+
+# Extraction
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = YES
+HIDE_UNDOC_MEMBERS     = NO
+HIDE_UNDOC_CLASSES     = NO
+
+# Warnings
+WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_DOC_ERROR      = YES
+WARN_NO_PARAMDOC       = YES
+QUIET                  = NO
+WARN_LOGFILE           = docs/doxygen-warnings.log
+
+# Source browsing
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+REFERENCED_BY_RELATION = YES
+REFERENCES_RELATION    = YES
+
+# Diagrams (Graphviz)
+HAVE_DOT               = NO
+DOT_NUM_THREADS        = 0
+DOT_MULTI_TARGETS      = NO
+CALL_GRAPH             = NO
+CALLER_GRAPH           = NO
+DOT_IMAGE_FORMAT       = svg
+INTERACTIVE_SVG        = NO
+
+# HTML output
+GENERATE_HTML          = YES
+HTML_OUTPUT = html
+HTML_DYNAMIC_SECTIONS  = YES
+GENERATE_TREEVIEW      = YES
+SEARCHENGINE           = YES
+
+# LaTeX/PDF output
+GENERATE_LATEX         = NO
+
+# Man pages / RTF / others
+GENERATE_MAN           = NO
+GENERATE_RTF           = NO
+GENERATE_XML           = NO
+
+# Aliases & groups
+ALIASES                = "todo=\par TODO:\n" \
+                         "warning=\par WARNING:\n"
+
+# Main page
+USE_MDFILE_AS_MAINPAGE = 
+
+# Preprocessor
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = NO
+EXPAND_ONLY_PREDEF     = NO
+PREDEFINED             = DOXYGEN_SHOULD_SKIP_THIS
+
+# Misc
+SORT_MEMBER_DOCS       = YES
+SORT_BRief_DOCS        = YES
+SORT_MEMBERS_CTORS_1ST = YES
+FULL_PATH_NAMES        = NO

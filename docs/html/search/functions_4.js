@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['gamerepository_0',['GameRepository',['../df/d64/class_game_repository.html#a329398b2f15738e18baaf04b29daea44',1,'GameRepository']]],
+  ['get_1',['get',['../dd/d34/class_config.html#a689d82b448d9bead044d6e63c21b8d6b',1,'Config']]],
+  ['getcurrentloglevel_2',['getCurrentLogLevel',['../d3/d42/class_logger.html#a159fe31426d8e22feaa56381e664eb04',1,'Logger']]],
+  ['getcurrentlogs_3',['getCurrentLogs',['../d3/d42/class_logger.html#ac0e43e10ddba447010334947b86030e7',1,'Logger']]],
+  ['getendpoints_4',['getEndpoints',['../d7/d47/class_region_repository.html#acd479f65ee6f34c07d041b3a138028cb',1,'RegionRepository']]],
+  ['getgames_5',['getGames',['../df/d64/class_game_repository.html#aeb131a9343ca30bbe9aaa3ed92005ce9',1,'GameRepository']]],
+  ['getinstance_6',['getInstance',['../dd/d34/class_config.html#a52ae1e3685e26ba3689691b627d33647',1,'Config::getInstance()'],['../d3/d42/class_logger.html#acfc75f46afdb7613dcc432c2bdf2a066',1,'Logger::getInstance()']]],
+  ['getlatestspokemon_7',['getLatestsPokemon',['../dc/d95/class_pokedex.html#a7112e74a4a270ba2977a0217f922b0c4',1,'Pokedex']]],
+  ['getmainlinegames_8',['getMainlineGames',['../df/d64/class_game_repository.html#a4e2373d6dc1c1aad74d7939357595f68',1,'GameRepository']]],
+  ['getpokemondata_9',['getPokemonData',['../dc/d95/class_pokedex.html#af8aa60c56bd70267294a13e70400d68a',1,'Pokedex']]],
+  ['getpokemongames_10',['getPokemonGames',['../dc/d95/class_pokedex.html#a9c377158d45a18ce02833f193b727d5b',1,'Pokedex']]],
+  ['getpokemonmainlinegames_11',['getPokemonMainlineGames',['../dc/d95/class_pokedex.html#a09d509dcb08cc9b59bf28568ca10c586',1,'Pokedex']]],
+  ['getpokemontypes_12',['getPokemonTypes',['../dc/d95/class_pokedex.html#a8906ac8e63c71507560f4b14970a8d33',1,'Pokedex']]],
+  ['getregiondata_13',['getRegionData',['../dc/d95/class_pokedex.html#aa9846c2faae2bf303a35650ce9637381',1,'Pokedex']]],
+  ['getregionpokemondata_14',['getRegionPokemonData',['../dc/d95/class_pokedex.html#a2f162fb2ee2d7f3674a5ed2df529e252',1,'Pokedex']]],
+  ['getregions_15',['getRegions',['../d7/d47/class_region_repository.html#a4033c45b604495513f816bb21703aa2a',1,'RegionRepository']]],
+  ['getsearchpokemon_16',['getSearchPokemon',['../dc/d95/class_pokedex.html#a75e050e3c0cd5d00599936d1c602d077',1,'Pokedex']]],
+  ['gettypes_17',['getTypes',['../d5/db7/class_type_repository.html#acd9ea8abf0e3bcf8a0316375a9be7f31',1,'TypeRepository']]]
+];
