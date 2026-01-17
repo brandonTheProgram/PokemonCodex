@@ -5,7 +5,9 @@ A full‑stack Pokédex web app with a **C++17** backend (SQLite) and a **Node.j
 ---
 
 ## 🔗 Live App Link
+https://pokemoncodex.onrender.com
 
+Render may take 25-45 seconds to launch initially after waking up.
 ---
 
 ## ✨ Features
